@@ -11,6 +11,7 @@ import '../../../../core/widgets/google_sign_in_button.dart';
 import '../../../../core/widgets/or_divider.dart';
 import '../../../../core/widgets/page_header.dart';
 import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/medical_motifs.dart';
 import '../../../../domain/entities/mbbs_year.dart';
 import '../../../session/presentation/providers/session_provider.dart';
 import '../providers/auth_provider.dart';
@@ -49,7 +50,9 @@ class LoginPage extends StatelessWidget {
               title: AppStrings.welcomeBack,
               subtitle: AppStrings.welcomeBackHint,
             ),
-            SizedBox(height: rs.scale(24)),
+            SizedBox(height: rs.scale(16)),
+            const MedicalBadge(),
+            SizedBox(height: rs.scale(20)),
             AppTextField(
               controller: auth.emailController,
               label: AppStrings.email,

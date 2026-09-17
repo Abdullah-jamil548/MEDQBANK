@@ -8,11 +8,13 @@ class TodayFocusRow extends StatelessWidget {
     super.key,
     required this.mcqsLeft,
     required this.minutes,
+    required this.notes,
     required this.onPractice,
   });
 
   final int mcqsLeft;
   final int minutes;
+  final int notes;
   final VoidCallback onPractice;
 
   @override
@@ -46,7 +48,7 @@ class TodayFocusRow extends StatelessWidget {
             tint: AppColors.streakSoft,
             color: AppColors.streak,
             label: 'Notes',
-            value: '6',
+            value: '$notes',
           ),
         ),
       ],

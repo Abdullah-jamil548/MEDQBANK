@@ -37,6 +37,8 @@ dependencies:
   provider: ^6.1.5
   google_fonts: ^6.3.2
   shared_preferences: ^2.5.3
+  pdfrx: ^2.2.18
+  http: ^1.5.0
 
 dev_dependencies:
   flutter_test:

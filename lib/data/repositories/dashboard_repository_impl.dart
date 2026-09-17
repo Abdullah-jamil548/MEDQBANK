@@ -16,8 +16,8 @@ class DashboardRepositoryImpl implements DashboardRepository {
   @override
   Future<ContinueReading> getContinueReading() async {
     return const ContinueReading(
-      bookTitle: 'Medical Histology',
-      chapterTitle: 'Epithelial Tissue',
+      bookTitle: "Bailey & Love's Short Practice of Surgery",
+      chapterTitle: 'Continue in the library reader',
       progress: 0.18,
     );
   }

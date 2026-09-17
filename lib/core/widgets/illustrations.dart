@@ -18,6 +18,11 @@ class IllustrationFrame extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: AppColors.surfaceMuted,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFEEF2F8), Color(0xFFF7F8FB)],
+        ),
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
         border: Border.all(color: AppColors.border),
       ),

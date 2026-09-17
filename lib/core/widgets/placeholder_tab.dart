@@ -4,6 +4,7 @@ import '../responsive/app_responsive.dart';
 import '../responsive/responsive_body.dart';
 import '../theme/app_colors.dart';
 import 'app_card.dart';
+import 'page_header.dart';
 
 class PlaceholderTab extends StatelessWidget {
   const PlaceholderTab({
@@ -25,14 +26,7 @@ class PlaceholderTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  fontSize: rs.font(26),
-                  letterSpacing: -0.4,
-                ),
-          ),
+          ScreenTitle(title: title, subtitle: subtitle),
           const Spacer(),
           AppCard(
             padding: const EdgeInsets.fromLTRB(22, 28, 22, 28),
@@ -53,6 +47,7 @@ class PlaceholderTab extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: rs.font(18),
+                    letterSpacing: -0.2,
                   ),
                 ),
                 SizedBox(height: rs.scale(8)),

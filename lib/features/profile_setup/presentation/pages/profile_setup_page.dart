@@ -51,6 +51,7 @@ class ProfileSetupPage extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     fontSize: rs.font(24),
                     letterSpacing: -0.4,
+                    height: 1.2,
                   ),
             ),
             SizedBox(height: rs.scale(6)),

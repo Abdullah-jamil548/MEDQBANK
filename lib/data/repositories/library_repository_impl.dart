@@ -1,27 +1,31 @@
 import '../../domain/entities/study_book.dart';
 import '../../domain/repositories/library_repository.dart';
-import '../books/histology_book.dart';
+import '../datasources/books_api.dart';
 
 class LibraryRepositoryImpl implements LibraryRepository {
-  @override
-  Future<List<StudyBook>> getBooks() async => const [HistologyBook.meta];
+  LibraryRepositoryImpl({BooksApi? booksApi}) : _booksApi = booksApi;
+
+  final BooksApi? _booksApi;
 
   @override
-  Future<List<BookChapter>> getChapters(String bookId) async {
-    if (bookId != HistologyBook.meta.id) return const [];
-    return HistologyBook.chapters
-        .map(
-          (chapter) => BookChapter(
-            id: chapter.id,
-            title: chapter.title,
-            subtitle: chapter.subtitle,
-            body: _tidy(chapter.body),
-          ),
-        )
-        .toList();
+  Future<List<StudyBook>> getBooks() async => const [];
+
+  @override
+  Future<List<StudyBook>> getRemoteBooks() async {
+    final api = _booksApi;
+    if (api == null) return const [];
+    return api.listBooks();
   }
 
-  String _tidy(String body) {
-    return body.trim().split('\n').map((line) => line.trim()).join('\n');
+  @override
+  Future<BookAccess> getBookAccess(String bookId, {String? filename}) {
+    final api = _booksApi;
+    if (api == null) {
+      throw BooksApiException('Book library is not connected.');
+    }
+    return api.getAccess(bookId, filename: filename);
   }
+
+  @override
+  Future<List<BookChapter>> getChapters(String bookId) async => const [];
 }

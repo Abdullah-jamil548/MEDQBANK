@@ -4,10 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:medqbank/app/app.dart';
 import 'package:medqbank/core/constants/app_strings.dart';
 import 'package:medqbank/core/responsive/app_responsive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   GoogleFonts.config.allowRuntimeFetching = false;
+  SharedPreferences.setMockInitialValues({});
 
   testWidgets('AppResponsive maps mobile, tablet, and desktop widths', (tester) async {
     late AppResponsive mobile;

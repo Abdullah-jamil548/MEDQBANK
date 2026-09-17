@@ -12,6 +12,7 @@ import '../../../../core/widgets/google_sign_in_button.dart';
 import '../../../../core/widgets/or_divider.dart';
 import '../../../../core/widgets/page_header.dart';
 import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/medical_motifs.dart';
 import '../../../profile_setup/presentation/providers/profile_setup_provider.dart';
 import '../providers/auth_provider.dart';
 
@@ -38,7 +39,9 @@ class SignupPage extends StatelessWidget {
               title: AppStrings.createAccount,
               subtitle: AppStrings.createAccountHint,
             ),
-            SizedBox(height: rs.scale(24)),
+            SizedBox(height: rs.scale(16)),
+            const MedicalBadge(),
+            SizedBox(height: rs.scale(20)),
             AppTextField(
               controller: auth.fullNameController,
               label: AppStrings.fullName,

@@ -6,6 +6,7 @@ import '../../../../core/widgets/app_back_button.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../domain/entities/study_book.dart';
 import '../providers/library_provider.dart';
+import 'pdf_book_reader.dart';
 
 class BookReaderPage extends StatefulWidget {
   const BookReaderPage({super.key});
@@ -26,6 +27,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
   @override
   Widget build(BuildContext context) {
     final library = context.watch<LibraryProvider>();
+    if (library.isPdfSelected) return const PdfBookReaderPage();
     final chapter = library.currentChapter;
     final book = library.selectedBook;
 

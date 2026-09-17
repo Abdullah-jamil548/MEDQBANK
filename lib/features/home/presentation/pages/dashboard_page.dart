@@ -7,6 +7,7 @@ import '../../../../core/responsive/app_responsive.dart';
 import '../../../../core/responsive/responsive_body.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/medical_motifs.dart';
+import '../../../../domain/entities/weekly_progress.dart';
 import '../../../library/presentation/providers/library_provider.dart';
 import '../../../session/presentation/providers/session_provider.dart';
 import '../../../shell/presentation/providers/main_nav_provider.dart';
@@ -23,7 +24,16 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final session = context.watch<SessionProvider>();
     final dashboard = context.watch<DashboardProvider>();
+    final library = context.watch<LibraryProvider>();
     final rs = context.rs;
+    final book = library.selectedBook ?? (library.books.isEmpty ? null : library.books.first);
+    final reading = book == null
+        ? dashboard.continueReading
+        : ContinueReading(
+            bookTitle: book.title,
+            chapterTitle: library.progressLabelFor(book),
+            progress: library.progressFor(book),
+          );
 
     return ResponsiveBody(
       mode: ResponsiveMode.fill,
@@ -35,6 +45,7 @@ class DashboardPage extends StatelessWidget {
           TodayFocusRow(
             mcqsLeft: dashboard.dailyMcq.target - dashboard.dailyMcq.completed,
             minutes: dashboard.weeklyProgress.studyMinutes,
+            notes: library.pdfHighlights.length + library.pdfNotes.length,
             onPractice: () => context.read<MainNavProvider>().setIndex(2),
           ),
           SizedBox(height: rs.scale(24)),
@@ -51,7 +62,7 @@ class DashboardPage extends StatelessWidget {
           ),
           SizedBox(height: rs.scale(12)),
           QuickAccessCards(
-            reading: dashboard.continueReading,
+            reading: reading,
             dailyMcq: dashboard.dailyMcq,
             onContinueReading: () {
               final library = context.read<LibraryProvider>();

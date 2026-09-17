@@ -161,9 +161,10 @@ class _OnboardingSlide extends StatelessWidget {
                   title,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
-                        height: 1.3,
+                        height: 1.25,
+                        letterSpacing: -0.3,
                         fontSize: rs.font(22),
                       ),
                 ),

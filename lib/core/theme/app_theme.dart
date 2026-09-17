@@ -119,6 +119,38 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       ),
       dividerTheme: const DividerThemeData(color: AppColors.divider, space: 1),
+      cardTheme: CardThemeData(
+        color: AppColors.surface,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+          side: const BorderSide(color: AppColors.border),
+        ),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: AppColors.surface,
+        showDragHandle: false,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.textPrimary,
+        contentTextStyle: GoogleFonts.plusJakartaSans(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      tabBarTheme: const TabBarThemeData(
+        labelColor: AppColors.primary,
+        unselectedLabelColor: AppColors.textMuted,
+        indicatorColor: AppColors.primary,
+        dividerColor: AppColors.divider,
+      ),
     );
   }
 }

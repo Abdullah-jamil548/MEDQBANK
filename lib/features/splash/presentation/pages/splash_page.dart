@@ -9,6 +9,7 @@ import '../../../../core/responsive/app_responsive.dart';
 import '../../../../core/responsive/responsive_body.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/medical_motifs.dart';
 import '../../../session/presentation/providers/session_provider.dart';
 
 class SplashPage extends StatefulWidget {
@@ -55,37 +56,47 @@ class _SplashPageState extends State<SplashPage> {
     final rs = context.rs;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: ResponsiveBody(
-        mode: ResponsiveMode.fill,
-        child: Column(
-          children: [
-            const Expanded(
-              child: Center(
-                child: AppLogo(size: AppLogoSize.large, showWordmark: true),
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFF8FAFF), AppColors.primarySoft],
+          ),
+        ),
+        child: ResponsiveBody(
+          mode: ResponsiveMode.fill,
+          child: Column(
+            children: [
+              const Expanded(
+                child: Center(
+                  child: AppLogo(size: AppLogoSize.large, showWordmark: true),
+                ),
               ),
-            ),
-            Text(
-              AppStrings.tagline,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: rs.font(15),
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w500,
-                height: 1.4,
+              const MedicalBadge(),
+              SizedBox(height: rs.scale(12)),
+              Text(
+                AppStrings.tagline,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: rs.font(15),
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                  height: 1.4,
+                ),
               ),
-            ),
-            SizedBox(height: rs.scale(28)),
-            SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: AppColors.primary.withValues(alpha: 0.85),
+              SizedBox(height: rs.scale(28)),
+              SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.2,
+                  color: AppColors.primary.withValues(alpha: 0.85),
+                ),
               ),
-            ),
-            SizedBox(height: rs.scale(12)),
-          ],
+              SizedBox(height: rs.scale(16)),
+            ],
+          ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../core/constants/app_strings.dart';
 import '../core/theme/app_theme.dart';
+import '../data/datasources/books_api.dart';
 import '../data/repositories/college_repository_impl.dart';
 import '../data/repositories/dashboard_repository_impl.dart';
 import '../data/repositories/library_repository_impl.dart';
@@ -37,7 +38,7 @@ class MedQBankApp extends StatelessWidget {
       providers: [
         Provider<CollegeRepository>(create: (_) => CollegeRepositoryImpl()),
         Provider<DashboardRepository>(create: (_) => DashboardRepositoryImpl()),
-        Provider<LibraryRepository>(create: (_) => LibraryRepositoryImpl()),
+        Provider<LibraryRepository>(create: (_) => LibraryRepositoryImpl(booksApi: BooksApi())),
         ChangeNotifierProvider(create: (_) => SessionProvider()),
         ChangeNotifierProvider(create: (_) => OnboardingProvider()),
         ChangeNotifierProvider(create: (_) => MainNavProvider()),

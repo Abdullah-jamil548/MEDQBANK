@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/responsive/app_responsive.dart';
 import '../../../../core/responsive/responsive_body.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_back_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/illustrations.dart';
+import '../../../../core/widgets/page_header.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../providers/auth_provider.dart';
 
@@ -28,28 +28,11 @@ class ForgotPasswordPage extends StatelessWidget {
             SizedBox(height: rs.scale(24)),
             Center(child: auth.resetLinkSent ? const SuccessCheckmark() : const LockIllustration()),
             SizedBox(height: rs.scale(24)),
-            SizedBox(
-              width: double.infinity,
-              child: Text(
-                auth.resetLinkSent ? AppStrings.resetEmailSent : AppStrings.forgotPassword,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: rs.font(24),
-                    ),
-              ),
+            ScreenTitle(
+              title: auth.resetLinkSent ? AppStrings.resetEmailSent : AppStrings.forgotPassword,
+              subtitle: auth.resetLinkSent ? null : AppStrings.forgotPasswordHint,
+              center: true,
             ),
-            SizedBox(height: rs.scale(10)),
-            if (!auth.resetLinkSent)
-              Text(
-                AppStrings.forgotPasswordHint,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  height: 1.5,
-                  fontSize: rs.font(15),
-                ),
-              ),
             SizedBox(height: rs.scale(24)),
             if (!auth.resetLinkSent) ...[
               AppTextField(

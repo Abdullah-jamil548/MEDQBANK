@@ -5,6 +5,7 @@ import '../../../../app/routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/responsive/responsive_body.dart';
 import '../../../../core/widgets/illustrations.dart';
+import '../../../../core/widgets/medical_motifs.dart';
 import '../../../../core/widgets/page_header.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../session/presentation/providers/session_provider.dart';
@@ -26,6 +27,8 @@ class WelcomePage extends StatelessWidget {
               subtitle: AppStrings.startJourney,
               center: true,
             ),
+            const SizedBox(height: 16),
+            const MedicalBadge(label: 'Ready for MBBS revision'),
             const Spacer(),
             PrimaryButton(
               label: AppStrings.goToDashboard,
