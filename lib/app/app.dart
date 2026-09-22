@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants/app_strings.dart';
+import '../core/network/api_client.dart';
+import '../core/storage/book_cache.dart';
 import '../core/theme/app_theme.dart';
+import '../data/datasources/auth_remote.dart';
+import '../data/repositories/books_repository_impl.dart';
 import '../data/repositories/college_repository_impl.dart';
 import '../data/repositories/dashboard_repository_impl.dart';
-import '../data/repositories/library_repository_impl.dart';
+import '../domain/repositories/books_repository.dart';
 import '../domain/repositories/college_repository.dart';
 import '../domain/repositories/dashboard_repository.dart';
-import '../domain/repositories/library_repository.dart';
 import '../features/auth/presentation/pages/forgot_password_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/signup_page.dart';
@@ -35,15 +38,37 @@ class MedQBankApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => SessionProvider()),
+        ProxyProvider<SessionProvider, ApiClient>(
+          update: (_, session, previous) {
+            return ApiClient(
+              getToken: () => session.accessToken,
+              onUnauthorized: () async {
+                if (session.isLoggedIn) {
+                  await session.signOut();
+                }
+              },
+            );
+          },
+        ),
+        ProxyProvider<ApiClient, AuthRemote>(
+          update: (_, api, __) => AuthRemote(api),
+        ),
+        ProxyProvider<ApiClient, BooksRepository>(
+          update: (_, api, __) => BooksRepositoryImpl(api),
+        ),
+        Provider<BookCache>(create: (_) => BookCache()),
         Provider<CollegeRepository>(create: (_) => CollegeRepositoryImpl()),
         Provider<DashboardRepository>(create: (_) => DashboardRepositoryImpl()),
-        Provider<LibraryRepository>(create: (_) => LibraryRepositoryImpl()),
-        ChangeNotifierProvider(create: (_) => SessionProvider()),
         ChangeNotifierProvider(create: (_) => OnboardingProvider()),
         ChangeNotifierProvider(create: (_) => MainNavProvider()),
-        ChangeNotifierProxyProvider<SessionProvider, AuthProvider>(
-          create: (context) => AuthProvider(context.read<SessionProvider>()),
-          update: (_, session, previous) => previous ?? AuthProvider(session),
+        ChangeNotifierProxyProvider2<SessionProvider, AuthRemote, AuthProvider>(
+          create: (context) => AuthProvider(
+            context.read<SessionProvider>(),
+            context.read<AuthRemote>(),
+          ),
+          update: (_, session, authRemote, previous) =>
+              previous ?? AuthProvider(session, authRemote),
         ),
         ChangeNotifierProxyProvider2<CollegeRepository, SessionProvider, ProfileSetupProvider>(
           create: (context) => ProfileSetupProvider(
@@ -56,8 +81,14 @@ class MedQBankApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => DashboardProvider(context.read<DashboardRepository>()),
         ),
-        ChangeNotifierProvider(
-          create: (context) => LibraryProvider(context.read<LibraryRepository>()),
+        ChangeNotifierProxyProvider3<BooksRepository, ApiClient, BookCache, LibraryProvider>(
+          create: (context) => LibraryProvider(
+            context.read<BooksRepository>(),
+            context.read<ApiClient>(),
+            context.read<BookCache>(),
+          ),
+          update: (_, books, api, cache, previous) =>
+              previous ?? LibraryProvider(books, api, cache),
         ),
       ],
       child: MaterialApp(

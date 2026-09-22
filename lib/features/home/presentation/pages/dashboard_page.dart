@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../app/routes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/responsive/app_responsive.dart';
 import '../../../../core/responsive/responsive_body.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/medical_motifs.dart';
-import '../../../library/presentation/providers/library_provider.dart';
 import '../../../session/presentation/providers/session_provider.dart';
 import '../../../shell/presentation/providers/main_nav_provider.dart';
 import '../providers/dashboard_provider.dart';
@@ -54,11 +52,7 @@ class DashboardPage extends StatelessWidget {
             reading: dashboard.continueReading,
             dailyMcq: dashboard.dailyMcq,
             onContinueReading: () {
-              final library = context.read<LibraryProvider>();
-              if (library.books.isNotEmpty) {
-                library.selectBook(library.books.first);
-              }
-              Navigator.of(context).pushNamed(AppRoutes.bookReader);
+              context.read<MainNavProvider>().setIndex(1);
             },
             onStartPractice: () => context.read<MainNavProvider>().setIndex(2),
           ),

@@ -67,6 +67,17 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           SizedBox(height: rs.scale(20)),
+          if (context.watch<SessionProvider>().subscriptionExpiresAt != null)
+            Padding(
+              padding: EdgeInsets.only(bottom: rs.scale(12)),
+              child: Text(
+                'Access until ${context.watch<SessionProvider>().subscriptionExpiresAt}',
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(

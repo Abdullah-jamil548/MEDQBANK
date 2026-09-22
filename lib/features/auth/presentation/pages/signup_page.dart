@@ -114,12 +114,21 @@ class SignupPage extends StatelessWidget {
                   style: const TextStyle(color: AppColors.error, fontSize: 12),
                 ),
               ),
+            if (auth.formError != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  auth.formError!,
+                  style: const TextStyle(color: AppColors.error, fontSize: 13, fontWeight: FontWeight.w600),
+                ),
+              ),
             SizedBox(height: rs.scale(20)),
             PrimaryButton(
-              label: AppStrings.signUp,
-              onPressed: () {
-                if (!auth.validateSignup()) return;
-                auth.completeSignup();
+              label: auth.isLoading ? 'Creating account…' : AppStrings.signUp,
+              enabled: !auth.isLoading,
+              onPressed: () async {
+                final ok = await auth.registerWithApi();
+                if (!context.mounted || !ok) return;
                 _openSetup(context);
               },
             ),
@@ -129,7 +138,6 @@ class SignupPage extends StatelessWidget {
             GoogleSignInButton(
               onPressed: () {
                 auth.completeGoogleAuth(isSignup: true);
-                _openSetup(context);
               },
             ),
             SizedBox(height: rs.scale(28)),

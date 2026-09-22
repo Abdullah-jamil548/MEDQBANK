@@ -1,10 +1,13 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pdfrx/pdfrx.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_back_button.dart';
-import '../../../../core/widgets/primary_button.dart';
-import '../../../../domain/entities/study_book.dart';
+import '../../../../domain/entities/catalog_book.dart';
 import '../providers/library_provider.dart';
 
 class BookReaderPage extends StatefulWidget {
@@ -15,7 +18,20 @@ class BookReaderPage extends StatefulWidget {
 }
 
 class _BookReaderPageState extends State<BookReaderPage> {
-  final TextEditingController _noteController = TextEditingController();
+  final _noteController = TextEditingController();
+  PdfViewerController? _controller;
+  List<PdfTextRanges> _selections = const [];
+  String _tint = 'amber';
+
+  String get _selectedText {
+    final parts = _selections
+        .where((s) => s.isNotEmpty)
+        .map((s) => s.text.trim())
+        .where((t) => t.isNotEmpty);
+    return parts.join(' ').trim();
+  }
+
+  bool get _hasSelection => _selectedText.isNotEmpty;
 
   @override
   void dispose() {
@@ -26,473 +42,475 @@ class _BookReaderPageState extends State<BookReaderPage> {
   @override
   Widget build(BuildContext context) {
     final library = context.watch<LibraryProvider>();
-    final chapter = library.currentChapter;
     final book = library.selectedBook;
+    final path = library.localPdfPath;
+    final bytes = library.pdfBytes;
+
+    final hasSource = book != null &&
+        ((path != null && !kIsWeb && File(path).existsSync()) ||
+            (bytes != null && bytes.isNotEmpty));
+
+    if (!hasSource) {
+      return Scaffold(
+        appBar: AppBar(leading: const AppBackButton()),
+        body: const Center(child: Text('No local PDF. Download the book first.')),
+      );
+    }
+
+    final viewerParams = PdfViewerParams(
+      enableTextSelection: true,
+      onPageChanged: (pageNumber) {
+        if (pageNumber != null) {
+          context.read<LibraryProvider>().setPage(pageNumber);
+        }
+      },
+      onTextSelectionChange: (selections) {
+        setState(() => _selections = List<PdfTextRanges>.from(selections));
+      },
+      pagePaintCallbacks: [_paintSavedHighlights],
+    );
 
     return Scaffold(
       body: SafeArea(
-        child: chapter == null
-            ? const Center(child: Text('No chapter loaded.'))
-            : Column(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+              child: Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                    child: Row(
-                      children: [
-                        const AppBackButton(),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                book?.title ?? 'Reader',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              Text(
-                                'Chapter ${library.chapterIndex + 1} of ${library.chapters.length}',
-                                style: const TextStyle(
-                                  color: AppColors.textSecondary,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          tooltip: 'Contents',
-                          onPressed: () => _openContents(library),
-                          icon: const Icon(Icons.list_alt_rounded),
-                        ),
-                        IconButton(
-                          tooltip: 'Highlights & notes',
-                          onPressed: () => _openMarks(library),
-                          icon: const Icon(Icons.highlight_rounded),
-                        ),
-                        IconButton(
-                          tooltip: 'Bookmark',
-                          onPressed: library.toggleBookmark,
-                          icon: Icon(
-                            library.isCurrentBookmarked
-                                ? Icons.bookmark_rounded
-                                : Icons.bookmark_border_rounded,
-                            color: library.isCurrentBookmarked
-                                ? AppColors.primary
-                                : AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(99),
-                      child: LinearProgressIndicator(
-                        value: library.progress,
-                        minHeight: 6,
-                        backgroundColor: AppColors.surfaceMuted,
-                        color: AppColors.secondary,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-                    child: Wrap(
-                      spacing: 10,
-                      runSpacing: 8,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        const Text(
-                          'Highlight colour',
-                          style: TextStyle(
-                            color: AppColors.textMuted,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                          ),
-                        ),
-                        ...HighlightTint.values.map(
-                          (tint) => _TintDot(
-                            tint: tint,
-                            selected: library.activeTint == tint,
-                            onTap: () => library.setTint(tint),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () => _openNoteSheet(library),
-                          child: const Text('Add note'),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const AppBackButton(),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          chapter.title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 26,
-                            letterSpacing: -0.4,
-                            height: 1.2,
-                          ),
+                          book.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
                         ),
-                        const SizedBox(height: 6),
                         Text(
-                          chapter.subtitle,
+                          'Page ${library.currentPage} • Long-press to select text',
                           style: const TextStyle(
-                            color: AppColors.secondary,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Select any line → Highlight or Note',
-                          style: TextStyle(
-                            color: AppColors.textMuted,
-                            fontWeight: FontWeight.w600,
+                            color: AppColors.textSecondary,
                             fontSize: 12,
+                            fontWeight: FontWeight.w600,
                           ),
-                        ),
-                        const SizedBox(height: 18),
-                        SelectableText.rich(
-                          TextSpan(
-                            style: const TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 16.5,
-                              height: 1.65,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            children: _spans(chapter.body, library.highlightsFor(chapter.id)),
-                          ),
-                          key: ValueKey(chapter.id),
-                          contextMenuBuilder: (context, state) {
-                            return AdaptiveTextSelectionToolbar.buttonItems(
-                              anchors: state.contextMenuAnchors,
-                              buttonItems: [
-                                ContextMenuButtonItem(
-                                  label: 'Highlight',
-                                  onPressed: () {
-                                    final selection = state.textEditingValue.selection;
-                                    state.hideToolbar();
-                                    if (!selection.isValid || selection.isCollapsed) return;
-                                    library.addHighlight(
-                                      start: selection.start,
-                                      end: selection.end,
-                                    );
-                                  },
-                                ),
-                                ContextMenuButtonItem(
-                                  label: 'Note',
-                                  onPressed: () {
-                                    final selection = state.textEditingValue.selection;
-                                    state.hideToolbar();
-                                    if (!selection.isValid || selection.isCollapsed) return;
-                                    _openNoteSheet(
-                                      library,
-                                      start: selection.start,
-                                      end: selection.end,
-                                      excerpt: selection.textInside(chapter.body),
-                                    );
-                                  },
-                                ),
-                                ...state.contextMenuButtonItems,
-                              ],
-                            );
-                          },
                         ),
                       ],
                     ),
                   ),
-                  DecoratedBox(
-                    decoration: const BoxDecoration(
-                      color: AppColors.surface,
-                      border: Border(top: BorderSide(color: AppColors.border)),
+                  IconButton(
+                    tooltip: library.isPageBookmarked() ? 'Remove bookmark' : 'Bookmark page',
+                    onPressed: library.toggleBookmark,
+                    icon: Icon(
+                      library.isPageBookmarked()
+                          ? Icons.bookmark_rounded
+                          : Icons.bookmark_border_rounded,
+                      color: AppColors.primary,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-                      child: Row(
-                        children: [
-                          TextButton(
-                            onPressed: library.chapterIndex == 0 ? null : library.previousChapter,
-                            child: const Text('Previous'),
-                          ),
-                          Expanded(
-                            child: Text(
-                              chapter.title,
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: library.chapterIndex >= library.chapters.length - 1
-                                ? null
-                                : library.nextChapter,
-                            child: const Text('Next'),
-                          ),
-                        ],
-                      ),
-                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Page note',
+                    onPressed: () => _addPageNoteDialog(library),
+                    icon: const Icon(Icons.note_add_outlined),
+                  ),
+                  IconButton(
+                    tooltip: 'Highlights & notes',
+                    onPressed: () => _openMarks(library),
+                    icon: const Icon(Icons.list_alt_rounded),
                   ),
                 ],
               ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: bytes != null
+                        ? PdfViewer.data(
+                            bytes,
+                            sourceName: book.id,
+                            controller: _controller ??= PdfViewerController(),
+                            params: viewerParams,
+                          )
+                        : PdfViewer.file(
+                            path!,
+                            controller: _controller ??= PdfViewerController(),
+                            params: viewerParams,
+                          ),
+                  ),
+                  if (_hasSelection)
+                    Positioned(
+                      left: 12,
+                      right: 12,
+                      bottom: 16,
+                      child: _SelectionActionBar(
+                        tint: _tint,
+                        onTint: (c) => setState(() => _tint = c),
+                        onHighlight: () => _saveHighlight(library),
+                        onNote: () => _noteFromSelection(library),
+                        onClear: () => setState(() => _selections = const []),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  List<InlineSpan> _spans(String text, List<TextHighlight> highlights) {
-    if (highlights.isEmpty) return [TextSpan(text: text)];
-    final spans = <InlineSpan>[];
-    var cursor = 0;
-    for (final highlight in highlights) {
-      final start = highlight.start.clamp(0, text.length);
-      final end = highlight.end.clamp(0, text.length);
-      if (end <= start || start < cursor) continue;
-      if (start > cursor) {
-        spans.add(TextSpan(text: text.substring(cursor, start)));
+  void _paintSavedHighlights(Canvas canvas, Rect pageRect, PdfPage page) {
+    final library = context.read<LibraryProvider>();
+    for (final h in library.highlights) {
+      if (h.pageNo != page.pageNumber) continue;
+      final paint = Paint()
+        ..color = _tintColor(h.textColor).withValues(alpha: 0.38)
+        ..style = PaintingStyle.fill;
+
+      final rectMaps = _rectsFromHighlight(h);
+      if (rectMaps.isEmpty) continue;
+      for (final map in rectMaps) {
+        final pdfRect = PdfRect(
+          (map['left'] as num).toDouble(),
+          (map['top'] as num).toDouble(),
+          (map['right'] as num).toDouble(),
+          (map['bottom'] as num).toDouble(),
+        );
+        canvas.drawRect(
+          pdfRect.toRectInPageRect(page: page, pageRect: pageRect),
+          paint,
+        );
       }
-      spans.add(
-        TextSpan(
-          text: text.substring(start, end),
-          style: TextStyle(
-            backgroundColor: _tintColor(highlight.tint),
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      );
-      cursor = end;
     }
-    if (cursor < text.length) {
-      spans.add(TextSpan(text: text.substring(cursor)));
-    }
-    return spans;
   }
 
-  Future<void> _openContents(LibraryProvider library) async {
-    await showModalBottomSheet<void>(
+  List<Map<String, dynamic>> _rectsFromHighlight(PageHighlight h) {
+    final raw = h.rects;
+    if (raw is List) {
+      return raw
+          .whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    }
+    return const [];
+  }
+
+  Color _tintColor(String tint) {
+    switch (tint) {
+      case 'mint':
+        return const Color(0xFF34D399);
+      case 'rose':
+        return const Color(0xFFFB7185);
+      case 'amber':
+      default:
+        return const Color(0xFFFBBF24);
+    }
+  }
+
+  List<Map<String, dynamic>> _selectionRects() {
+    final out = <Map<String, dynamic>>[];
+    for (final selection in _selections) {
+      if (selection.isEmpty) continue;
+      for (final range in selection.ranges) {
+        final frag = range.toTextRangeWithFragments(selection.pageText);
+        if (frag == null) continue;
+        out.add({
+          'left': frag.bounds.left,
+          'top': frag.bounds.top,
+          'right': frag.bounds.right,
+          'bottom': frag.bounds.bottom,
+          'page': selection.pageNumber,
+        });
+      }
+    }
+    return out;
+  }
+
+  int _selectionPage() {
+    for (final s in _selections) {
+      if (s.isNotEmpty) return s.pageNumber;
+    }
+    return context.read<LibraryProvider>().currentPage;
+  }
+
+  Future<void> _saveHighlight(LibraryProvider library) async {
+    final text = _selectedText;
+    if (text.isEmpty) return;
+    await library.addHighlight(
+      selectedText: text,
+      pageNo: _selectionPage(),
+      rects: _selectionRects(),
+      color: _tint,
+    );
+    if (!mounted) return;
+    setState(() => _selections = const []);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Highlight saved'), duration: Duration(seconds: 1)),
+    );
+  }
+
+  Future<void> _noteFromSelection(LibraryProvider library) async {
+    final selected = _selectedText;
+    _noteController.text = '';
+    final ok = await showDialog<bool>(
       context: context,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(8, 16, 8, 24),
-          itemCount: library.chapters.length,
-          itemBuilder: (context, index) {
-            final chapter = library.chapters[index];
-            final selected = index == library.chapterIndex;
-            final marked = library.bookmarkedChapterIds.contains(chapter.id);
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundColor: selected ? AppColors.primary : AppColors.primarySoft,
-                foregroundColor: selected ? Colors.white : AppColors.primary,
-                child: Text('${index + 1}', style: const TextStyle(fontWeight: FontWeight.w800)),
+      builder: (ctx) => AlertDialog(
+        title: const Text('Note on selection'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (selected.isNotEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceMuted,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  selected,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                ),
               ),
-              title: Text(chapter.title, style: const TextStyle(fontWeight: FontWeight.w700)),
-              subtitle: Text(chapter.subtitle),
-              trailing: marked ? const Icon(Icons.bookmark_rounded, color: AppColors.primary) : null,
-              onTap: () {
-                library.openChapter(index);
-                Navigator.of(context).pop();
-              },
+            TextField(
+              controller: _noteController,
+              maxLines: 4,
+              autofocus: true,
+              decoration: const InputDecoration(hintText: 'Write your note…'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Save')),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    final noteText = _noteController.text.trim();
+    if (noteText.isEmpty) return;
+
+    // Store as highlight+note when there is a selection, else page note.
+    if (selected.isNotEmpty) {
+      await library.addHighlight(
+        selectedText: selected,
+        pageNo: _selectionPage(),
+        rects: _selectionRects(),
+        color: _tint,
+        note: noteText,
+      );
+    } else {
+      await library.addNote(noteText);
+    }
+    if (!mounted) return;
+    setState(() => _selections = const []);
+  }
+
+  Future<void> _addPageNoteDialog(LibraryProvider library) async {
+    _noteController.clear();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Note on page ${library.currentPage}'),
+        content: TextField(
+          controller: _noteController,
+          maxLines: 4,
+          autofocus: true,
+          decoration: const InputDecoration(hintText: 'Write your note…'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Save')),
+        ],
+      ),
+    );
+    if (ok == true) {
+      await library.addNote(_noteController.text);
+    }
+  }
+
+  void _openMarks(LibraryProvider library) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.6,
+          builder: (_, controller) {
+            final pageNotes = library.notes;
+            final pageHighlights = library.highlights;
+            final pageBookmarks = library.bookmarks;
+            return ListView(
+              controller: controller,
+              padding: const EdgeInsets.all(16),
+              children: [
+                Text(
+                  '${library.selectedBook?.title}',
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${pageHighlights.length} highlights • ${pageNotes.length} notes • ${pageBookmarks.length} bookmarks',
+                  style: const TextStyle(color: AppColors.textSecondary),
+                ),
+                const SizedBox(height: 16),
+                const Text('Bookmarks', style: TextStyle(fontWeight: FontWeight.w800)),
+                if (pageBookmarks.isEmpty)
+                  const ListTile(dense: true, title: Text('None yet'))
+                else
+                  ...pageBookmarks.map(
+                    (b) => ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.bookmark),
+                      title: Text('Page ${b.pageNo}'),
+                      onTap: () {
+                        _controller?.goToPage(pageNumber: b.pageNo);
+                        Navigator.pop(ctx);
+                      },
+                    ),
+                  ),
+                const Divider(),
+                const Text('Highlights', style: TextStyle(fontWeight: FontWeight.w800)),
+                if (pageHighlights.isEmpty)
+                  const ListTile(dense: true, title: Text('None yet'))
+                else
+                  ...pageHighlights.map(
+                    (h) => ListTile(
+                      dense: true,
+                      leading: Icon(Icons.highlight, color: _tintColor(h.textColor)),
+                      title: Text(
+                        h.selectedText ?? '(no text)',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Text(
+                        h.note.isEmpty
+                            ? 'Page ${h.pageNo} • ${h.textColor}'
+                            : 'Page ${h.pageNo} • ${h.note}',
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () => library.deleteHighlight(h),
+                      ),
+                      onTap: () {
+                        _controller?.goToPage(pageNumber: h.pageNo);
+                        Navigator.pop(ctx);
+                      },
+                    ),
+                  ),
+                const Divider(),
+                const Text('Notes', style: TextStyle(fontWeight: FontWeight.w800)),
+                if (pageNotes.isEmpty)
+                  const ListTile(dense: true, title: Text('None yet'))
+                else
+                  ...pageNotes.map(
+                    (n) => ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.notes),
+                      title: Text(n.text, maxLines: 3, overflow: TextOverflow.ellipsis),
+                      subtitle: Text('Page ${n.pageNo}'),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () => library.deleteNote(n),
+                      ),
+                      onTap: () {
+                        _controller?.goToPage(pageNumber: n.pageNo);
+                        Navigator.pop(ctx);
+                      },
+                    ),
+                  ),
+              ],
             );
           },
         );
       },
     );
   }
-
-  Future<void> _openMarks(LibraryProvider library) async {
-    final chapter = library.currentChapter;
-    if (chapter == null) return;
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: AppColors.surface,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        final marks = library.highlightsFor(chapter.id);
-        final pageNotes = library.notesFor(chapter.id);
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Highlights & notes',
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
-              ),
-              const SizedBox(height: 12),
-              if (marks.isEmpty && pageNotes.isEmpty)
-                const Text(
-                  'Select text in the chapter to highlight or attach a note.',
-                  style: TextStyle(color: AppColors.textSecondary, height: 1.45),
-                ),
-              ...marks.map(
-                (mark) => ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: CircleAvatar(backgroundColor: _tintColor(mark.tint)),
-                  title: Text(
-                    library.excerpt(mark),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: mark.note.isEmpty ? null : Text(mark.note),
-                  trailing: IconButton(
-                    onPressed: () {
-                      library.removeHighlight(mark);
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(Icons.delete_outline),
-                  ),
-                ),
-              ),
-              ...pageNotes.map(
-                (note) => ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.note_alt_outlined),
-                  title: Text(note.text),
-                  trailing: IconButton(
-                    onPressed: () {
-                      library.removeNote(note);
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(Icons.delete_outline),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _openNoteSheet(
-    LibraryProvider library, {
-    int? start,
-    int? end,
-    String? excerpt,
-  }) async {
-    _noteController.clear();
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.fromLTRB(
-            20,
-            20,
-            20,
-            20 + MediaQuery.viewInsetsOf(context).bottom,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                excerpt == null ? 'Chapter note' : 'Note on selected text',
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
-              ),
-              if (excerpt != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  excerpt,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-              const SizedBox(height: 12),
-              TextField(
-                controller: _noteController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  hintText: 'Clinical point, viva tip, or reminder…',
-                ),
-              ),
-              const SizedBox(height: 12),
-              PrimaryButton(
-                label: 'Save note',
-                onPressed: () {
-                  library.addNote(
-                    _noteController.text,
-                    start: start,
-                    end: end,
-                  );
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 }
 
-class _TintDot extends StatelessWidget {
-  const _TintDot({
+class _SelectionActionBar extends StatelessWidget {
+  const _SelectionActionBar({
     required this.tint,
-    required this.selected,
-    required this.onTap,
+    required this.onTint,
+    required this.onHighlight,
+    required this.onNote,
+    required this.onClear,
   });
 
-  final HighlightTint tint;
-  final bool selected;
-  final VoidCallback onTap;
+  final String tint;
+  final ValueChanged<String> onTint;
+  final VoidCallback onHighlight;
+  final VoidCallback onNote;
+  final VoidCallback onClear;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 22,
-        height: 22,
-        decoration: BoxDecoration(
-          color: _tintColor(tint),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: selected ? AppColors.primary : AppColors.border,
-            width: selected ? 2 : 1,
-          ),
+    return Material(
+      elevation: 8,
+      borderRadius: BorderRadius.circular(16),
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Text selected',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                for (final c in const ['amber', 'mint', 'rose'])
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(c),
+                      selected: tint == c,
+                      onSelected: (_) => onTint(c),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: onHighlight,
+                    icon: const Icon(Icons.highlight_rounded, size: 18),
+                    label: const Text('Highlight'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: onNote,
+                    icon: const Icon(Icons.note_add_outlined, size: 18),
+                    label: const Text('Note'),
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'Dismiss',
+                  onPressed: onClear,
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
-  }
-}
-
-Color _tintColor(HighlightTint tint) {
-  switch (tint) {
-    case HighlightTint.amber:
-      return const Color(0xFFFFE08A);
-    case HighlightTint.mint:
-      return const Color(0xFF9DE6C8);
-    case HighlightTint.rose:
-      return const Color(0xFFF4B6D2);
   }
 }

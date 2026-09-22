@@ -275,3 +275,48 @@ class R2Service:
         body = obj["Body"].read()
         content_type = obj.get("ContentType") or "application/octet-stream"
         return body, content_type
+
+    def open_object_stream(self, key: str) -> tuple[Any, str, int]:
+        """Return (body_stream, content_type, size) for streaming downloads."""
+        try:
+            obj = self.client.get_object(
+                Bucket=self.settings.r2_bucket_name,
+                Key=key,
+            )
+        except ClientError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail=f"R2 get_object failed: {exc}",
+            ) from exc
+
+        content_type = obj.get("ContentType") or "application/pdf"
+        size = int(obj.get("ContentLength") or 0)
+        return obj["Body"], content_type, size
+
+    def ensure_public_read_cors(self) -> None:
+        """Allow browser apps to GET presigned URLs from any origin."""
+        try:
+            self.client.put_bucket_cors(
+                Bucket=self.settings.r2_bucket_name,
+                CORSConfiguration={
+                    "CORSRules": [
+                        {
+                            "AllowedOrigins": ["*"],
+                            "AllowedMethods": ["GET", "HEAD"],
+                            "AllowedHeaders": ["*"],
+                            "ExposeHeaders": [
+                                "ETag",
+                                "Content-Length",
+                                "Content-Type",
+                                "Content-Disposition",
+                            ],
+                            "MaxAgeSeconds": 86400,
+                        }
+                    ]
+                },
+            )
+        except ClientError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail=f"Failed to set R2 CORS: {exc}",
+            ) from exc

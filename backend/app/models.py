@@ -1,0 +1,206 @@
+import uuid
+from datetime import datetime
+
+from sqlalchemy import (
+    BigInteger,
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    Text,
+    UniqueConstraint,
+    func,
+)
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.db import Base
+
+
+class College(Base):
+    __tablename__ = "college"
+    __table_args__ = {"schema": "users"}
+
+    college_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    city: Mapped[str] = mapped_column(Text, nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="true")
+
+    users: Mapped[list["User"]] = relationship(back_populates="college")
+
+
+class User(Base):
+    __tablename__ = "user"
+    __table_args__ = {"schema": "users"}
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    full_name: Mapped[str] = mapped_column(Text, nullable=False)
+    email: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
+    phone: Mapped[str | None] = mapped_column(Text, nullable=True)
+    hashed_password: Mapped[str | None] = mapped_column(Text, nullable=True)
+    auth_provider: Mapped[str] = mapped_column(Text, nullable=False, server_default="email")
+    google_sub: Mapped[str | None] = mapped_column(Text, unique=True, nullable=True)
+    college_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.college.college_id"),
+        nullable=True,
+    )
+    mbbs_year: Mapped[str | None] = mapped_column(Text, nullable=True)
+    has_avatar: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
+    avatar_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    streak_days: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    notifications_enabled: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default="false"
+    )
+    onboarding_done: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="true")
+    subscription_expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    college: Mapped[College | None] = relationship(back_populates="users")
+
+
+class Book(Base):
+    __tablename__ = "book"
+    __table_args__ = {"schema": "books"}
+
+    book_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    author: Mapped[str | None] = mapped_column(Text, nullable=True)
+    subject: Mapped[str | None] = mapped_column(Text, nullable=True)
+    year_label: Mapped[str | None] = mapped_column(Text, nullable=True)
+    blurb: Mapped[str | None] = mapped_column(Text, nullable=True)
+    size_bytes: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    format: Mapped[str] = mapped_column(Text, nullable=False, server_default="pdf")
+    r2_key: Mapped[str | None] = mapped_column(Text, nullable=True)
+    content_type: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="true")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+
+class Progress(Base):
+    __tablename__ = "progress"
+    __table_args__ = (
+        UniqueConstraint("user_id", "book_id", name="uq_progress_user_book"),
+        {"schema": "books"},
+    )
+
+    progress_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.user.user_id", ondelete="CASCADE"), nullable=False
+    )
+    book_id: Mapped[str] = mapped_column(
+        Text, ForeignKey("books.book.book_id", ondelete="CASCADE"), nullable=False
+    )
+    page_no: Mapped[int] = mapped_column(Integer, nullable=False, server_default="1")
+    progress_pct: Mapped[float | None] = mapped_column(Numeric(5, 4), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+
+class Bookmark(Base):
+    __tablename__ = "bookmark"
+    __table_args__ = (
+        UniqueConstraint("user_id", "book_id", "page_no", name="uq_bookmark_user_book_page"),
+        {"schema": "books"},
+    )
+
+    bookmark_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.user.user_id", ondelete="CASCADE"), nullable=False
+    )
+    book_id: Mapped[str] = mapped_column(
+        Text, ForeignKey("books.book.book_id", ondelete="CASCADE"), nullable=False
+    )
+    page_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+
+class Highlight(Base):
+    __tablename__ = "highlight"
+    __table_args__ = {"schema": "books"}
+
+    highlight_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.user.user_id", ondelete="CASCADE"), nullable=False
+    )
+    book_id: Mapped[str] = mapped_column(
+        Text, ForeignKey("books.book.book_id", ondelete="CASCADE"), nullable=False
+    )
+    page_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    selected_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    rects: Mapped[dict | list | None] = mapped_column(JSONB, nullable=True)
+    text_color: Mapped[str] = mapped_column(Text, nullable=False, server_default="amber")
+    note: Mapped[str] = mapped_column(Text, nullable=False, server_default="")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class Note(Base):
+    __tablename__ = "note"
+    __table_args__ = {"schema": "books"}
+
+    note_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.user.user_id", ondelete="CASCADE"), nullable=False
+    )
+    book_id: Mapped[str] = mapped_column(
+        Text, ForeignKey("books.book.book_id", ondelete="CASCADE"), nullable=False
+    )
+    page_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    text: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

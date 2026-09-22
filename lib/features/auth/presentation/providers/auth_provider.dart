@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/network/api_client.dart';
+import '../../../../data/datasources/auth_remote.dart';
 import '../../../../domain/entities/user_profile.dart';
 import '../../../session/presentation/providers/session_provider.dart';
 
 class AuthProvider extends ChangeNotifier {
-  AuthProvider(this._session);
+  AuthProvider(this._session, this._authRemote);
 
   final SessionProvider _session;
+  final AuthRemote _authRemote;
 
   final fullNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -18,6 +21,8 @@ class AuthProvider extends ChangeNotifier {
   bool obscureConfirmPassword = true;
   bool agreedToTerms = false;
   bool resetLinkSent = false;
+  bool isLoading = false;
+  String? formError;
 
   String? fullNameError;
   String? emailError;
@@ -48,11 +53,13 @@ class AuthProvider extends ChangeNotifier {
     passwordError = null;
     confirmPasswordError = null;
     termsError = null;
+    formError = null;
   }
 
   void clearLoginErrors() {
     emailError = null;
     passwordError = null;
+    formError = null;
   }
 
   bool validateSignup() {
@@ -99,6 +106,75 @@ class AuthProvider extends ChangeNotifier {
     return true;
   }
 
+  Future<bool> loginWithApi() async {
+    if (!validateLogin()) return false;
+    isLoading = true;
+    formError = null;
+    notifyListeners();
+    try {
+      final data = await _authRemote.login(
+        emailController.text.trim(),
+        passwordController.text,
+      );
+      await _session.applyAuthSuccess(
+        token: data['access_token'] as String,
+        id: data['user_id'].toString(),
+        fullName: data['full_name'] as String? ?? '',
+        email: data['email'] as String? ?? emailController.text.trim(),
+      );
+      try {
+        final me = await _authRemote.me();
+        await _session.applyAuthSuccess(
+          token: data['access_token'] as String,
+          id: data['user_id'].toString(),
+          fullName: me['full_name'] as String? ?? data['full_name'] as String? ?? '',
+          email: me['email'] as String? ?? data['email'] as String? ?? '',
+          subscriptionExpires: me['subscription_expires_at']?.toString(),
+        );
+        final streak = me['streak_days'] as int?;
+        if (streak != null) {
+          _session.updateProfile(_session.profile.copyWith(streakDays: streak));
+        }
+      } catch (_) {
+        // token already applied
+      }
+      return true;
+    } catch (e) {
+      formError = apiErrorMessage(e);
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> registerWithApi() async {
+    if (!validateSignup()) return false;
+    isLoading = true;
+    formError = null;
+    notifyListeners();
+    try {
+      final data = await _authRemote.register(
+        fullName: fullNameController.text.trim(),
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
+      await _session.applyAuthSuccess(
+        token: data['access_token'] as String,
+        id: data['user_id'].toString(),
+        fullName: data['full_name'] as String? ?? fullNameController.text.trim(),
+        email: data['email'] as String? ?? emailController.text.trim(),
+      );
+      return true;
+    } catch (e) {
+      formError = apiErrorMessage(e);
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   void completeSignup() {
     _session.updateProfile(
       UserProfile(
@@ -113,21 +189,15 @@ class AuthProvider extends ChangeNotifier {
     final existingName = _session.profile.fullName;
     _session.updateProfile(
       _session.profile.copyWith(
-        fullName: existingName.isEmpty ? 'Abdullah' : existingName,
+        fullName: existingName.isEmpty ? 'Student' : existingName,
         email: emailController.text.trim(),
-        streakDays: existingName.isEmpty ? 12 : _session.profile.streakDays,
       ),
     );
   }
 
   void completeGoogleAuth({required bool isSignup}) {
-    _session.updateProfile(
-      UserProfile(
-        fullName: isSignup ? 'Abdullah Khan' : (_session.profile.fullName.isEmpty ? 'Abdullah' : _session.profile.fullName),
-        email: 'abdullah@gmail.com',
-        streakDays: isSignup ? 1 : 12,
-      ),
-    );
+    formError = 'Google sign-in is not connected yet. Use email login.';
+    notifyListeners();
   }
 
   void sendResetLink() {

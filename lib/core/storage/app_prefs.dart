@@ -7,7 +7,7 @@ import '../../domain/entities/mbbs_year.dart';
 import '../../domain/entities/user_profile.dart';
 
 class AppPrefs {
-  static const sessionKey = 'medqbank.session.v1';
+  static const sessionKey = 'medqbank.session.v2';
 
   Future<SharedPreferences?> _prefs() async {
     try {
@@ -44,17 +44,26 @@ class SessionSnapshot {
   const SessionSnapshot({
     this.onboardingDone = false,
     this.isLoggedIn = false,
+    this.accessToken,
+    this.userId,
+    this.subscriptionExpiresAt,
     this.profile = const UserProfile(),
   });
 
   final bool onboardingDone;
   final bool isLoggedIn;
+  final String? accessToken;
+  final String? userId;
+  final String? subscriptionExpiresAt;
   final UserProfile profile;
 
   Map<String, dynamic> toJson() {
     return {
       'onboardingDone': onboardingDone,
       'isLoggedIn': isLoggedIn,
+      'accessToken': accessToken,
+      'userId': userId,
+      'subscriptionExpiresAt': subscriptionExpiresAt,
       'fullName': profile.fullName,
       'email': profile.email,
       'year': profile.year?.name,
@@ -73,6 +82,9 @@ class SessionSnapshot {
     return SessionSnapshot(
       onboardingDone: json['onboardingDone'] as bool? ?? false,
       isLoggedIn: json['isLoggedIn'] as bool? ?? false,
+      accessToken: json['accessToken'] as String?,
+      userId: json['userId'] as String?,
+      subscriptionExpiresAt: json['subscriptionExpiresAt'] as String?,
       profile: UserProfile(
         fullName: json['fullName'] as String? ?? '',
         email: json['email'] as String? ?? '',

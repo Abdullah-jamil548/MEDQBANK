@@ -1,261 +1,287 @@
-import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
-import '../../../../domain/entities/study_book.dart';
-import '../../../../domain/repositories/library_repository.dart';
+import '../../../../core/network/api_client.dart';
+import '../../../../core/storage/book_cache.dart';
+import '../../../../domain/entities/catalog_book.dart';
+import '../../../../domain/repositories/books_repository.dart';
 
 class LibraryProvider extends ChangeNotifier {
-  LibraryProvider(this._repository) {
-    load();
-  }
+  LibraryProvider(this._repository, this._api, this._cache);
 
-  static const _storageKey = 'medqbank.library.v1';
+  final BooksRepository _repository;
+  final ApiClient _api;
+  final BookCache _cache;
+  final _uuid = const Uuid();
 
-  final LibraryRepository _repository;
+  List<CatalogBook> books = const [];
+  final Map<String, bool> downloaded = {};
+  final Map<String, double> downloadProgress = {};
+  final Map<String, CancelToken> _cancelTokens = {};
 
-  List<StudyBook> books = const [];
-  List<BookChapter> chapters = const [];
-  StudyBook? selectedBook;
-  int chapterIndex = 0;
-  HighlightTint activeTint = HighlightTint.amber;
-  final Set<String> bookmarkedChapterIds = {};
-  final List<TextHighlight> highlights = [];
-  final List<ChapterNote> notes = [];
+  CatalogBook? selectedBook;
+  String? localPdfPath;
+  Uint8List? pdfBytes;
+  int currentPage = 1;
 
-  BookChapter? get currentChapter =>
-      chapters.isEmpty ? null : chapters[chapterIndex.clamp(0, chapters.length - 1)];
+  List<PageHighlight> highlights = [];
+  List<PageNote> notes = [];
+  List<PageBookmark> bookmarks = [];
 
-  bool get hasBook => currentChapter != null;
-
-  double get progress {
-    if (chapters.isEmpty) return 0;
-    return ((chapterIndex + 1) / chapters.length).clamp(0, 1);
-  }
-
-  bool get isCurrentBookmarked =>
-      currentChapter != null && bookmarkedChapterIds.contains(currentChapter!.id);
+  bool loading = false;
+  String? error;
+  String? downloadError;
 
   Future<void> load() async {
-    books = await _repository.getBooks();
-    selectedBook ??= books.isEmpty ? null : books.first;
-    if (selectedBook != null) {
-      chapters = await _repository.getChapters(selectedBook!.id);
-    }
-    await _restore();
+    loading = true;
+    error = null;
     notifyListeners();
+    try {
+      books = await _repository.listBooks();
+      for (final book in books) {
+        downloaded[book.id] = await _cache.isDownloaded(book.id);
+      }
+    } catch (e) {
+      error = apiErrorMessage(e);
+      books = const [];
+    } finally {
+      loading = false;
+      notifyListeners();
+    }
   }
 
-  Future<void> selectBook(StudyBook book) async {
+  Future<void> downloadBook(CatalogBook book) async {
+    if (downloadProgress.containsKey(book.id)) return;
+    downloadError = null;
+    downloadProgress[book.id] = 0.01;
+    notifyListeners();
+
+    final token = CancelToken();
+    _cancelTokens[book.id] = token;
+    try {
+      // Web: stream via API (same-origin) to avoid R2 browser CORS blocks.
+      // Native: direct R2 presigned URL for max speed.
+      if (kIsWeb) {
+        final res = await _api.dio.get<List<int>>(
+          '/books/${book.id}/download',
+          cancelToken: token,
+          options: Options(
+            responseType: ResponseType.bytes,
+            receiveTimeout: const Duration(minutes: 30),
+          ),
+          onReceiveProgress: (received, total) {
+            if (total > 0) {
+              downloadProgress[book.id] = (received / total).clamp(0.0, 1.0);
+              notifyListeners();
+            } else if (book.sizeBytes != null && book.sizeBytes! > 0) {
+              downloadProgress[book.id] =
+                  (received / book.sizeBytes!).clamp(0.0, 0.99);
+              notifyListeners();
+            }
+          },
+        );
+        await _cache.saveBytes(book.id, Uint8List.fromList(res.data ?? const []));
+      } else {
+        final access = await _repository.getAccess(book.id, expiresIn: 3600);
+        final path = await _cache.pathFor(book.id);
+        if (path == null) {
+          throw StateError('No local cache path available');
+        }
+        await _api.downloadUrl(
+          access.url,
+          path,
+          cancelToken: token,
+          onProgress: (received, total) {
+            if (total > 0) {
+              downloadProgress[book.id] = (received / total).clamp(0.0, 1.0);
+              notifyListeners();
+            }
+          },
+        );
+      }
+      downloaded[book.id] = true;
+      downloadProgress.remove(book.id);
+    } catch (e) {
+      downloadProgress.remove(book.id);
+      if (e is DioException && CancelToken.isCancel(e)) {
+        downloadError = 'Download cancelled';
+      } else if (e is DioException && e.type == DioExceptionType.connectionError) {
+        downloadError =
+            'Download failed (network). Check API is running and try again.';
+      } else {
+        downloadError = apiErrorMessage(e);
+      }
+    } finally {
+      _cancelTokens.remove(book.id);
+      notifyListeners();
+    }
+  }
+
+  void cancelDownload(String bookId) {
+    _cancelTokens[bookId]?.cancel('cancelled');
+  }
+
+  Future<bool> openBook(CatalogBook book) async {
     selectedBook = book;
-    chapters = await _repository.getChapters(book.id);
-    chapterIndex = chapterIndex.clamp(0, chapters.isEmpty ? 0 : chapters.length - 1);
-    notifyListeners();
-    await _persist();
-  }
+    localPdfPath = null;
+    pdfBytes = null;
 
-  void openChapter(int index) {
-    if (chapters.isEmpty) return;
-    chapterIndex = index.clamp(0, chapters.length - 1);
-    notifyListeners();
-    _persist();
-  }
-
-  void nextChapter() {
-    if (chapterIndex < chapters.length - 1) openChapter(chapterIndex + 1);
-  }
-
-  void previousChapter() {
-    if (chapterIndex > 0) openChapter(chapterIndex - 1);
-  }
-
-  void setTint(HighlightTint tint) {
-    activeTint = tint;
-    notifyListeners();
-  }
-
-  void toggleBookmark() {
-    final chapter = currentChapter;
-    if (chapter == null) return;
-    if (bookmarkedChapterIds.contains(chapter.id)) {
-      bookmarkedChapterIds.remove(chapter.id);
+    if (kIsWeb) {
+      final bytes = await _cache.memoryBytes(book.id);
+      if (bytes == null || bytes.isEmpty) {
+        downloadError = 'Download the book first';
+        notifyListeners();
+        return false;
+      }
+      pdfBytes = bytes;
     } else {
-      bookmarkedChapterIds.add(chapter.id);
+      final file = await _cache.localFile(book.id);
+      if (file == null) {
+        downloadError = 'Download the book first';
+        notifyListeners();
+        return false;
+      }
+      localPdfPath = file.path;
     }
+    currentPage = 1;
+    await _loadAnnotations(book.id);
     notifyListeners();
-    _persist();
+    return true;
   }
 
-  void addHighlight({
-    required int start,
-    required int end,
-    String note = '',
-    HighlightTint? tint,
-  }) {
-    final chapter = currentChapter;
-    if (chapter == null) return;
-    final lo = start < end ? start : end;
-    final hi = start < end ? end : start;
-    if (hi <= lo) return;
-    if (lo < 0 || hi > chapter.body.length) return;
-
-    highlights.removeWhere(
-      (item) => item.chapterId == chapter.id && item.start < hi && item.end > lo,
-    );
-    highlights.add(
-      TextHighlight(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
-        chapterId: chapter.id,
-        start: lo,
-        end: hi,
-        tint: tint ?? activeTint,
-        createdAt: DateTime.now(),
-        note: note.trim(),
-      ),
-    );
-    notifyListeners();
-    _persist();
-  }
-
-  void removeHighlight(TextHighlight highlight) {
-    highlights.removeWhere((item) => item.id == highlight.id);
-    notifyListeners();
-    _persist();
-  }
-
-  void addNote(String text, {int? start, int? end}) {
-    final chapter = currentChapter;
-    if (chapter == null) return;
-    final trimmed = text.trim();
-    if (trimmed.isEmpty) return;
-
-    if (start != null && end != null && end > start) {
-      addHighlight(start: start, end: end, note: trimmed);
-      return;
-    }
-
-    notes.insert(
-      0,
-      ChapterNote(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
-        chapterId: chapter.id,
-        text: trimmed,
-        createdAt: DateTime.now(),
-      ),
-    );
-    notifyListeners();
-    _persist();
-  }
-
-  void removeNote(ChapterNote note) {
-    notes.removeWhere((item) => item.id == note.id);
-    notifyListeners();
-    _persist();
-  }
-
-  List<TextHighlight> highlightsFor(String chapterId) {
-    final items = highlights.where((item) => item.chapterId == chapterId).toList()
-      ..sort((a, b) => a.start.compareTo(b.start));
-    return items;
-  }
-
-  List<ChapterNote> notesFor(String chapterId) {
-    return notes.where((item) => item.chapterId == chapterId).toList();
-  }
-
-  String excerpt(TextHighlight highlight) {
-    final matches = chapters.where((item) => item.id == highlight.chapterId);
-    if (matches.isEmpty) return '';
-    final chapter = matches.first;
-    final end = highlight.end.clamp(0, chapter.body.length);
-    final start = highlight.start.clamp(0, end);
-    return chapter.body.substring(start, end).replaceAll('\n', ' ').trim();
-  }
-
-  Map<String, dynamic> _toJson() {
-    return {
-      'bookId': selectedBook?.id,
-      'chapterIndex': chapterIndex,
-      'bookmarks': bookmarkedChapterIds.toList(),
-      'highlights': highlights
-          .map(
-            (item) => {
-              'id': item.id,
-              'chapterId': item.chapterId,
-              'start': item.start,
-              'end': item.end,
-              'tint': item.tint.name,
-              'createdAt': item.createdAt.toIso8601String(),
-              'note': item.note,
-            },
-          )
-          .toList(),
-      'notes': notes
-          .map(
-            (item) => {
-              'id': item.id,
-              'chapterId': item.chapterId,
-              'text': item.text,
-              'createdAt': item.createdAt.toIso8601String(),
-            },
-          )
-          .toList(),
-    };
-  }
-
-  Future<void> _restore() async {
+  Future<void> _loadAnnotations(String bookId) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final raw = prefs.getString(_storageKey);
-      if (raw == null || raw.isEmpty) return;
-      final json = jsonDecode(raw) as Map<String, dynamic>;
-      final savedIndex = json['chapterIndex'] as int? ?? 0;
-      chapterIndex = chapters.isEmpty ? 0 : savedIndex.clamp(0, chapters.length - 1);
-      bookmarkedChapterIds
-        ..clear()
-        ..addAll(((json['bookmarks'] as List?) ?? const []).cast<String>());
-      highlights
-        ..clear()
-        ..addAll(
-          ((json['highlights'] as List?) ?? const []).map((item) {
-            final map = item as Map<String, dynamic>;
-            return TextHighlight(
-              id: map['id'] as String,
-              chapterId: map['chapterId'] as String,
-              start: map['start'] as int,
-              end: map['end'] as int,
-              tint: HighlightTint.values.firstWhere(
-                (value) => value.name == map['tint'],
-                orElse: () => HighlightTint.amber,
-              ),
-              createdAt: DateTime.tryParse(map['createdAt'] as String? ?? '') ?? DateTime.now(),
-              note: map['note'] as String? ?? '',
-            );
-          }),
-        );
-      notes
-        ..clear()
-        ..addAll(
-          ((json['notes'] as List?) ?? const []).map((item) {
-            final map = item as Map<String, dynamic>;
-            return ChapterNote(
-              id: map['id'] as String,
-              chapterId: map['chapterId'] as String,
-              text: map['text'] as String,
-              createdAt: DateTime.tryParse(map['createdAt'] as String? ?? '') ?? DateTime.now(),
-            );
-          }),
-        );
+      highlights = await _repository.listHighlights(bookId: bookId);
+      notes = await _repository.listNotes(bookId: bookId);
+      bookmarks = await _repository.listBookmarks(bookId: bookId);
     } catch (_) {
-      // Tests and first launch have no plugin store.
+      // keep empty; offline annotations can be added later
     }
   }
 
-  Future<void> _persist() async {
+  void setPage(int page) {
+    currentPage = page < 1 ? 1 : page;
+    notifyListeners();
+    final book = selectedBook;
+    if (book != null) {
+      _repository.upsertProgress(book.id, currentPage).ignore();
+    }
+  }
+
+  bool isPageBookmarked([int? page]) {
+    final p = page ?? currentPage;
+    final book = selectedBook;
+    if (book == null) return false;
+    return bookmarks.any((b) => b.bookId == book.id && b.pageNo == p);
+  }
+
+  Future<void> toggleBookmark() async {
+    final book = selectedBook;
+    if (book == null) return;
+    PageBookmark? existing;
+    for (final b in bookmarks) {
+      if (b.bookId == book.id && b.pageNo == currentPage) {
+        existing = b;
+        break;
+      }
+    }
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_storageKey, jsonEncode(_toJson()));
-    } catch (_) {}
+      if (existing != null) {
+        await _repository.deleteBookmark(existing.id);
+        bookmarks = bookmarks.where((b) => b.id != existing!.id).toList();
+      } else {
+        final created = await _repository.createBookmark(book.id, currentPage);
+        bookmarks = [...bookmarks, created];
+      }
+      notifyListeners();
+    } catch (e) {
+      downloadError = apiErrorMessage(e);
+      notifyListeners();
+    }
+  }
+
+  Future<void> addNote(String text) async {
+    final book = selectedBook;
+    if (book == null || text.trim().isEmpty) return;
+    final note = PageNote(
+      id: _uuid.v4(),
+      bookId: book.id,
+      pageNo: currentPage,
+      text: text.trim(),
+    );
+    try {
+      final saved = await _repository.upsertNote(note);
+      notes = [...notes.where((n) => n.id != saved.id), saved];
+      notifyListeners();
+    } catch (e) {
+      downloadError = apiErrorMessage(e);
+      notifyListeners();
+    }
+  }
+
+  Future<void> addHighlight({
+    required String selectedText,
+    required int pageNo,
+    List<Map<String, dynamic>>? rects,
+    String color = 'amber',
+    String note = '',
+  }) async {
+    final book = selectedBook;
+    if (book == null || selectedText.trim().isEmpty) return;
+    final highlight = PageHighlight(
+      id: _uuid.v4(),
+      bookId: book.id,
+      pageNo: pageNo,
+      selectedText: selectedText.trim(),
+      textColor: color,
+      note: note,
+      rects: rects,
+    );
+    try {
+      final saved = await _repository.upsertHighlight(highlight);
+      highlights = [...highlights.where((h) => h.id != saved.id), saved];
+      notifyListeners();
+    } catch (e) {
+      downloadError = apiErrorMessage(e);
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteNote(PageNote note) async {
+    try {
+      await _repository.upsertNote(note, deleted: true);
+      notes = notes.where((n) => n.id != note.id).toList();
+      notifyListeners();
+    } catch (e) {
+      downloadError = apiErrorMessage(e);
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteHighlight(PageHighlight highlight) async {
+    try {
+      await _repository.upsertHighlight(highlight, deleted: true);
+      highlights = highlights.where((h) => h.id != highlight.id).toList();
+      notifyListeners();
+    } catch (e) {
+      downloadError = apiErrorMessage(e);
+      notifyListeners();
+    }
+  }
+
+  List<PageNote> notesForCurrentPage() =>
+      notes.where((n) => n.pageNo == currentPage).toList();
+
+  List<PageHighlight> highlightsForCurrentPage() =>
+      highlights.where((h) => h.pageNo == currentPage).toList();
+}
+
+extension _IgnoreFuture on Future<void> {
+  void ignore() {
+    // fire-and-forget progress sync
+    then((_) {}, onError: (_) {});
   }
 }
