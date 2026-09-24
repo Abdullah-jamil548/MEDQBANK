@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdfrx/pdfrx.dart';
@@ -23,6 +21,9 @@ class _BookReaderPageState extends State<BookReaderPage> {
   List<PdfTextRanges> _selections = const [];
   String _tint = 'amber';
 
+  /// When true, pan/zoom drag is disabled so text selection can capture gestures.
+  bool _selectMode = false;
+
   String get _selectedText {
     final parts = _selections
         .where((s) => s.isNotEmpty)
@@ -39,6 +40,15 @@ class _BookReaderPageState extends State<BookReaderPage> {
     super.dispose();
   }
 
+  void _toggleSelectMode() {
+    setState(() {
+      _selectMode = !_selectMode;
+      if (!_selectMode) {
+        _selections = const [];
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final library = context.watch<LibraryProvider>();
@@ -47,8 +57,8 @@ class _BookReaderPageState extends State<BookReaderPage> {
     final bytes = library.pdfBytes;
 
     final hasSource = book != null &&
-        ((path != null && !kIsWeb && File(path).existsSync()) ||
-            (bytes != null && bytes.isNotEmpty));
+        (bytes != null && bytes.isNotEmpty ||
+            (!kIsWeb && path != null && path.isNotEmpty));
 
     if (!hasSource) {
       return Scaffold(
@@ -57,15 +67,28 @@ class _BookReaderPageState extends State<BookReaderPage> {
       );
     }
 
+    // Key forces viewer rebuild when select/pan mode flips (panEnabled alone is sticky).
     final viewerParams = PdfViewerParams(
       enableTextSelection: true,
+      panEnabled: !_selectMode,
       onPageChanged: (pageNumber) {
         if (pageNumber != null) {
           context.read<LibraryProvider>().setPage(pageNumber);
         }
       },
       onTextSelectionChange: (selections) {
-        setState(() => _selections = List<PdfTextRanges>.from(selections));
+        final next = List<PdfTextRanges>.from(selections);
+        final text = next
+            .where((s) => s.isNotEmpty)
+            .map((s) => s.text.trim())
+            .where((t) => t.isNotEmpty)
+            .join(' ');
+        setState(() {
+          _selections = next;
+          if (text.isNotEmpty && !_selectMode) {
+            _selectMode = true;
+          }
+        });
       },
       pagePaintCallbacks: [_paintSavedHighlights],
     );
@@ -85,20 +108,33 @@ class _BookReaderPageState extends State<BookReaderPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          book.title,
+                          book!.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
                         ),
                         Text(
-                          'Page ${library.currentPage} • Long-press to select text',
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
+                          _selectMode
+                              ? 'Select mode: drag over text, then Highlight'
+                              : 'Page ${library.currentPage} • Tap highlighter to select text',
+                          style: TextStyle(
+                            color: _selectMode ? AppColors.primary : AppColors.textSecondary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: _selectMode ? 'Exit select mode' : 'Select text to highlight',
+                    onPressed: _toggleSelectMode,
+                    style: IconButton.styleFrom(
+                      backgroundColor: _selectMode ? AppColors.primarySoft : null,
+                    ),
+                    icon: Icon(
+                      Icons.highlight_alt_rounded,
+                      color: _selectMode ? AppColors.primary : null,
                     ),
                   ),
                   IconButton(
@@ -124,6 +160,35 @@ class _BookReaderPageState extends State<BookReaderPage> {
                 ],
               ),
             ),
+            if (_selectMode)
+              Material(
+                color: AppColors.primarySoft,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.touch_app_rounded, size: 18, color: AppColors.primary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          kIsWeb
+                              ? 'Click and drag across words to select them.'
+                              : 'Long-press a word, then drag to select.',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _toggleSelectMode,
+                        child: const Text('Done'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             const Divider(height: 1),
             Expanded(
               child: Stack(
@@ -132,12 +197,14 @@ class _BookReaderPageState extends State<BookReaderPage> {
                     child: bytes != null
                         ? PdfViewer.data(
                             bytes,
+                            key: ValueKey('pdf-data-${book.id}-$_selectMode'),
                             sourceName: book.id,
                             controller: _controller ??= PdfViewerController(),
                             params: viewerParams,
                           )
                         : PdfViewer.file(
                             path!,
+                            key: ValueKey('pdf-file-${book.id}-$_selectMode'),
                             controller: _controller ??= PdfViewerController(),
                             params: viewerParams,
                           ),
@@ -148,6 +215,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
                       right: 12,
                       bottom: 16,
                       child: _SelectionActionBar(
+                        preview: _selectedText,
                         tint: _tint,
                         onTint: (c) => setState(() => _tint = c),
                         onHighlight: () => _saveHighlight(library),
@@ -175,12 +243,12 @@ class _BookReaderPageState extends State<BookReaderPage> {
       final rectMaps = _rectsFromHighlight(h);
       if (rectMaps.isEmpty) continue;
       for (final map in rectMaps) {
-        final pdfRect = PdfRect(
-          (map['left'] as num).toDouble(),
-          (map['top'] as num).toDouble(),
-          (map['right'] as num).toDouble(),
-          (map['bottom'] as num).toDouble(),
-        );
+        final left = (map['left'] as num?)?.toDouble();
+        final top = (map['top'] as num?)?.toDouble();
+        final right = (map['right'] as num?)?.toDouble();
+        final bottom = (map['bottom'] as num?)?.toDouble();
+        if (left == null || top == null || right == null || bottom == null) continue;
+        final pdfRect = PdfRect(left, top, right, bottom);
         canvas.drawRect(
           pdfRect.toRectInPageRect(page: page, pageRect: pageRect),
           paint,
@@ -248,7 +316,9 @@ class _BookReaderPageState extends State<BookReaderPage> {
       color: _tint,
     );
     if (!mounted) return;
-    setState(() => _selections = const []);
+    setState(() {
+      _selections = const [];
+    });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Highlight saved'), duration: Duration(seconds: 1)),
     );
@@ -299,7 +369,6 @@ class _BookReaderPageState extends State<BookReaderPage> {
     final noteText = _noteController.text.trim();
     if (noteText.isEmpty) return;
 
-    // Store as highlight+note when there is a selection, else page note.
     if (selected.isNotEmpty) {
       await library.addHighlight(
         selectedText: selected,
@@ -346,12 +415,12 @@ class _BookReaderPageState extends State<BookReaderPage> {
         return DraggableScrollableSheet(
           expand: false,
           initialChildSize: 0.6,
-          builder: (_, controller) {
+          builder: (_, scrollController) {
             final pageNotes = library.notes;
             final pageHighlights = library.highlights;
             final pageBookmarks = library.bookmarks;
             return ListView(
-              controller: controller,
+              controller: scrollController,
               padding: const EdgeInsets.all(16),
               children: [
                 Text(
@@ -440,6 +509,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
 
 class _SelectionActionBar extends StatelessWidget {
   const _SelectionActionBar({
+    required this.preview,
     required this.tint,
     required this.onTint,
     required this.onHighlight,
@@ -447,6 +517,7 @@ class _SelectionActionBar extends StatelessWidget {
     required this.onClear,
   });
 
+  final String preview;
   final String tint;
   final ValueChanged<String> onTint;
   final VoidCallback onHighlight;
@@ -456,17 +527,20 @@ class _SelectionActionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      elevation: 8,
+      elevation: 10,
       borderRadius: BorderRadius.circular(16),
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Text selected',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+            Text(
+              preview,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
             ),
             const SizedBox(height: 8),
             Row(
