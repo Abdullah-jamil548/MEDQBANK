@@ -8,6 +8,7 @@ import '../../../../core/responsive/responsive_body.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/auth_switch_line.dart';
+import '../../../../core/widgets/google_sign_in_button.dart';
 import '../../../../core/widgets/or_divider.dart';
 import '../../../../core/widgets/page_header.dart';
 import '../../../../core/widgets/primary_button.dart';
@@ -103,6 +104,12 @@ class LoginPage extends StatelessWidget {
             ),
             SizedBox(height: rs.scale(20)),
             const OrDivider(),
+            SizedBox(height: rs.scale(16)),
+            GoogleSignInButton(
+              onPressed: () {
+                auth.completeGoogleAuth(isSignup: false);
+              },
+            ),
             SizedBox(height: rs.scale(28)),
             AuthSwitchLine(
               prompt: AppStrings.dontHaveAccount,
