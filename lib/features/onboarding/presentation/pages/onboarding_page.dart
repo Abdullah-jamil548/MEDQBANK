@@ -35,17 +35,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.dispose();
   }
 
-  Future<void> _finish({required bool signup}) async {
+  Future<void> _finish() async {
     await context.read<SessionProvider>().completeOnboarding();
     if (!mounted) return;
-    Navigator.of(context).pushReplacementNamed(
-      signup ? AppRoutes.signup : AppRoutes.login,
-    );
+    Navigator.of(context).pushReplacementNamed(AppRoutes.login);
   }
 
   void _next(OnboardingProvider provider) {
     if (provider.isLastPage) {
-      _finish(signup: true);
+      _finish();
       return;
     }
     _controller.nextPage(
@@ -81,7 +79,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ),
                   if (!provider.isLastPage)
                     TextButton(
-                      onPressed: () => _finish(signup: false),
+                      onPressed: _finish,
                       style: TextButton.styleFrom(
                         visualDensity: VisualDensity.compact,
                         padding: const EdgeInsets.symmetric(horizontal: 8),

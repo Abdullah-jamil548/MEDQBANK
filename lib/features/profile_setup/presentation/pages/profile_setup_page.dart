@@ -32,7 +32,7 @@ class ProfileSetupPage extends StatelessWidget {
             AppBackButton(
               onPressed: () {
                 if (setup.step == 1) {
-                  Navigator.of(context).pushReplacementNamed(AppRoutes.signup);
+                  Navigator.of(context).pushReplacementNamed(AppRoutes.login);
                   return;
                 }
                 setup.goBack();

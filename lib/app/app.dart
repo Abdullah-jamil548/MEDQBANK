@@ -14,7 +14,6 @@ import '../domain/repositories/college_repository.dart';
 import '../domain/repositories/dashboard_repository.dart';
 import '../features/auth/presentation/pages/forgot_password_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
-import '../features/auth/presentation/pages/signup_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/home/presentation/providers/dashboard_provider.dart';
 import '../features/library/presentation/pages/book_reader_page.dart';
@@ -112,7 +111,6 @@ class MedQBankApp extends StatelessWidget {
           AppRoutes.splash: (_) => const SplashPage(),
           AppRoutes.onboarding: (_) => const OnboardingPage(),
           AppRoutes.login: (_) => const LoginPage(),
-          AppRoutes.signup: (_) => const SignupPage(),
           AppRoutes.forgotPassword: (_) => const ForgotPasswordPage(),
           AppRoutes.profileSetup: (_) => const ProfileSetupPage(),
           AppRoutes.notifications: (_) => const NotificationPermissionPage(),
