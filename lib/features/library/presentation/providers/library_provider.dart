@@ -26,6 +26,7 @@ class LibraryProvider extends ChangeNotifier {
   String? localPdfPath;
   Uint8List? pdfBytes;
   int currentPage = 1;
+  int? pendingInitialPage;
 
   List<PageHighlight> highlights = [];
   List<PageNote> notes = [];
@@ -124,10 +125,11 @@ class LibraryProvider extends ChangeNotifier {
     _cancelTokens[bookId]?.cancel('cancelled');
   }
 
-  Future<bool> openBook(CatalogBook book) async {
+  Future<bool> openBook(CatalogBook book, {int? initialPage}) async {
     selectedBook = book;
     localPdfPath = null;
     pdfBytes = null;
+    pendingInitialPage = initialPage != null && initialPage > 0 ? initialPage : null;
 
     if (kIsWeb) {
       final bytes = await _cache.memoryBytes(book.id);
@@ -146,10 +148,16 @@ class LibraryProvider extends ChangeNotifier {
       }
       localPdfPath = file.path;
     }
-    currentPage = 1;
+    currentPage = pendingInitialPage ?? 1;
     await _loadAnnotations(book.id);
     notifyListeners();
     return true;
+  }
+
+  int? consumePendingInitialPage() {
+    final page = pendingInitialPage;
+    pendingInitialPage = null;
+    return page;
   }
 
   Future<void> _loadAnnotations(String bookId) async {

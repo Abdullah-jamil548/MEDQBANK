@@ -9,4 +9,7 @@ abstract final class AppRoutes {
   static const welcome = '/welcome';
   static const home = '/home';
   static const bookReader = '/book-reader';
+  static const friends = '/friends';
+  static const chats = '/chats';
+  static const chatThread = '/chat-thread';
 }

@@ -7,14 +7,23 @@ import '../core/storage/book_cache.dart';
 import '../core/theme/app_theme.dart';
 import '../data/datasources/auth_remote.dart';
 import '../data/repositories/books_repository_impl.dart';
+import '../data/repositories/chat_repository_impl.dart';
 import '../data/repositories/college_repository_impl.dart';
 import '../data/repositories/dashboard_repository_impl.dart';
+import '../data/repositories/friends_repository_impl.dart';
 import '../domain/repositories/books_repository.dart';
+import '../domain/repositories/chat_repository.dart';
 import '../domain/repositories/college_repository.dart';
 import '../domain/repositories/dashboard_repository.dart';
+import '../domain/repositories/friends_repository.dart';
 import '../features/auth/presentation/pages/forgot_password_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
+import '../features/chat/presentation/pages/chat_list_page.dart';
+import '../features/chat/presentation/pages/chat_thread_page.dart';
+import '../features/chat/presentation/providers/chat_provider.dart';
+import '../features/friends/presentation/pages/friends_page.dart';
+import '../features/friends/presentation/providers/friends_provider.dart';
 import '../features/home/presentation/providers/dashboard_provider.dart';
 import '../features/library/presentation/pages/book_reader_page.dart';
 import '../features/library/presentation/providers/library_provider.dart';
@@ -56,6 +65,12 @@ class MedQBankApp extends StatelessWidget {
         ProxyProvider<ApiClient, BooksRepository>(
           update: (_, api, __) => BooksRepositoryImpl(api),
         ),
+        ProxyProvider<ApiClient, FriendsRepository>(
+          update: (_, api, __) => FriendsRepositoryImpl(api),
+        ),
+        ProxyProvider<ApiClient, ChatRepository>(
+          update: (_, api, __) => ChatRepositoryImpl(api),
+        ),
         Provider<BookCache>(create: (_) => BookCache()),
         Provider<CollegeRepository>(create: (_) => CollegeRepositoryImpl()),
         Provider<DashboardRepository>(create: (_) => DashboardRepositoryImpl()),
@@ -89,6 +104,25 @@ class MedQBankApp extends StatelessWidget {
           update: (_, books, api, cache, previous) =>
               previous ?? LibraryProvider(books, api, cache),
         ),
+        ChangeNotifierProxyProvider2<FriendsRepository, SessionProvider, FriendsProvider>(
+          create: (context) => FriendsProvider(
+            context.read<FriendsRepository>(),
+            context.read<SessionProvider>(),
+          ),
+          update: (_, repo, session, previous) {
+            final provider = previous ?? FriendsProvider(repo, session);
+            if (session.isLoggedIn) {
+              provider.startPresence();
+            } else {
+              provider.stopPresence();
+            }
+            return provider;
+          },
+        ),
+        ChangeNotifierProxyProvider<ChatRepository, ChatProvider>(
+          create: (context) => ChatProvider(context.read<ChatRepository>()),
+          update: (_, repo, previous) => previous ?? ChatProvider(repo),
+        ),
       ],
       child: MaterialApp(
         title: AppStrings.appName,
@@ -117,6 +151,16 @@ class MedQBankApp extends StatelessWidget {
           AppRoutes.welcome: (_) => const WelcomePage(),
           AppRoutes.home: (_) => const MainShell(),
           AppRoutes.bookReader: (_) => const BookReaderPage(),
+          AppRoutes.friends: (_) => const FriendsPage(),
+          AppRoutes.chats: (_) => const ChatListPage(),
+          AppRoutes.chatThread: (context) {
+            final args = ModalRoute.of(context)?.settings.arguments;
+            final map = args is Map ? Map<String, dynamic>.from(args) : <String, dynamic>{};
+            return ChatThreadPage(
+              friendUserId: map['friendUserId']?.toString() ?? '',
+              friendName: map['friendName']?.toString() ?? 'Friend',
+            );
+          },
         },
       ),
     );

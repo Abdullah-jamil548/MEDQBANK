@@ -73,6 +73,8 @@ class SessionSnapshot {
       'hasAvatar': profile.hasAvatar,
       'streakDays': profile.streakDays,
       'notificationsEnabled': profile.notificationsEnabled,
+      'hidePresence': profile.hidePresence,
+      'hideReadingActivity': profile.hideReadingActivity,
     };
   }
 
@@ -101,6 +103,8 @@ class SessionSnapshot {
         hasAvatar: json['hasAvatar'] as bool? ?? false,
         streakDays: json['streakDays'] as int? ?? 0,
         notificationsEnabled: json['notificationsEnabled'] as bool? ?? false,
+        hidePresence: json['hidePresence'] as bool? ?? false,
+        hideReadingActivity: json['hideReadingActivity'] as bool? ?? false,
       ),
     );
   }

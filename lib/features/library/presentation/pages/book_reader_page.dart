@@ -6,6 +6,9 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_back_button.dart';
 import '../../../../domain/entities/catalog_book.dart';
+import '../../../../domain/entities/friend.dart';
+import '../../../chat/presentation/providers/chat_provider.dart';
+import '../../../friends/presentation/providers/friends_provider.dart';
 import '../providers/library_provider.dart';
 
 class BookReaderPage extends StatefulWidget {
@@ -23,6 +26,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
 
   /// When true, pan/zoom drag is disabled so text selection can capture gestures.
   bool _selectMode = false;
+  bool _didJumpInitialPage = false;
 
   String get _selectedText {
     final parts = _selections
@@ -33,6 +37,25 @@ class _BookReaderPageState extends State<BookReaderPage> {
   }
 
   bool get _hasSelection => _selectedText.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToPendingPage());
+  }
+
+  void _jumpToPendingPage() {
+    if (_didJumpInitialPage || !mounted) return;
+    final page = context.read<LibraryProvider>().consumePendingInitialPage();
+    if (page == null) return;
+    _didJumpInitialPage = true;
+    // Viewer may still be attaching; retry shortly.
+    Future<void>.delayed(const Duration(milliseconds: 350), () {
+      if (!mounted) return;
+      _controller?.goToPage(pageNumber: page);
+      context.read<LibraryProvider>().setPage(page);
+    });
+  }
 
   @override
   void dispose() {
@@ -108,7 +131,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          book!.title,
+                          book.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
@@ -220,6 +243,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
                         onTint: (c) => setState(() => _tint = c),
                         onHighlight: () => _saveHighlight(library),
                         onNote: () => _noteFromSelection(library),
+                        onSend: () => _sendSelectionToFriend(library),
                         onClear: () => setState(() => _selections = const []),
                       ),
                     ),
@@ -322,6 +346,93 @@ class _BookReaderPageState extends State<BookReaderPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Highlight saved'), duration: Duration(seconds: 1)),
     );
+  }
+
+  Future<void> _sendSelectionToFriend(LibraryProvider library) async {
+    final text = _selectedText.trim();
+    final book = library.selectedBook;
+    if (text.isEmpty || book == null) return;
+
+    final friends = context.read<FriendsProvider>();
+    if (friends.friends.isEmpty) {
+      await friends.refresh(silent: true);
+    }
+    if (!mounted) return;
+    if (friends.friends.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Add a friend first to share passages')),
+      );
+      return;
+    }
+
+    final pageNo = _selectionPage();
+    final friend = await showModalBottomSheet<Friend>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) {
+        final list = ctx.watch<FriendsProvider>().friends;
+        return SafeArea(
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            children: [
+              const Text(
+                'Send passage to…',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Page $pageNo · ${book.title}',
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...list.map(
+                (f) => ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: CircleAvatar(
+                    backgroundColor: AppColors.primarySoft,
+                    child: Text(
+                      f.initials,
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                  title: Text(f.fullName, style: const TextStyle(fontWeight: FontWeight.w800)),
+                  subtitle: Text(f.email),
+                  onTap: () => Navigator.pop(ctx, f),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (friend == null || !mounted) return;
+
+    final ok = await context.read<ChatProvider>().sendBookShare(
+          friendUserId: friend.userId,
+          bookId: book.id,
+          bookTitle: book.title,
+          pageNo: pageNo,
+          selectedText: text,
+        );
+    if (!mounted) return;
+    if (ok) {
+      setState(() => _selections = const []);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sent to ${friend.fullName}')),
+      );
+    } else {
+      final err = context.read<ChatProvider>().error;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(err ?? 'Could not send')),
+      );
+    }
   }
 
   Future<void> _noteFromSelection(LibraryProvider library) async {
@@ -514,6 +625,7 @@ class _SelectionActionBar extends StatelessWidget {
     required this.onTint,
     required this.onHighlight,
     required this.onNote,
+    required this.onSend,
     required this.onClear,
   });
 
@@ -522,6 +634,7 @@ class _SelectionActionBar extends StatelessWidget {
   final ValueChanged<String> onTint;
   final VoidCallback onHighlight;
   final VoidCallback onNote;
+  final VoidCallback onSend;
   final VoidCallback onClear;
 
   @override
@@ -581,6 +694,15 @@ class _SelectionActionBar extends StatelessWidget {
                   icon: const Icon(Icons.close),
                 ),
               ],
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: onSend,
+                icon: const Icon(Icons.send_outlined, size: 18),
+                label: const Text('Send to friend'),
+              ),
             ),
           ],
         ),

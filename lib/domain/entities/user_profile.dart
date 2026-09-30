@@ -10,6 +10,8 @@ class UserProfile {
     this.hasAvatar = false,
     this.streakDays = 0,
     this.notificationsEnabled = false,
+    this.hidePresence = false,
+    this.hideReadingActivity = false,
   });
 
   final String fullName;
@@ -19,6 +21,8 @@ class UserProfile {
   final bool hasAvatar;
   final int streakDays;
   final bool notificationsEnabled;
+  final bool hidePresence;
+  final bool hideReadingActivity;
 
   String get firstName {
     if (fullName.trim().isEmpty) return 'Student';
@@ -44,6 +48,8 @@ class UserProfile {
     bool? hasAvatar,
     int? streakDays,
     bool? notificationsEnabled,
+    bool? hidePresence,
+    bool? hideReadingActivity,
     bool clearYear = false,
     bool clearCollege = false,
   }) {
@@ -55,6 +61,8 @@ class UserProfile {
       hasAvatar: hasAvatar ?? this.hasAvatar,
       streakDays: streakDays ?? this.streakDays,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      hidePresence: hidePresence ?? this.hidePresence,
+      hideReadingActivity: hideReadingActivity ?? this.hideReadingActivity,
     );
   }
 }

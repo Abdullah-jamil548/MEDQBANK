@@ -132,9 +132,13 @@ class AuthProvider extends ChangeNotifier {
           subscriptionExpires: me['subscription_expires_at']?.toString(),
         );
         final streak = me['streak_days'] as int?;
-        if (streak != null) {
-          _session.updateProfile(_session.profile.copyWith(streakDays: streak));
-        }
+        _session.updateProfile(
+          _session.profile.copyWith(
+            streakDays: streak ?? _session.profile.streakDays,
+            hidePresence: me['hide_presence'] as bool? ?? false,
+            hideReadingActivity: me['hide_reading_activity'] as bool? ?? false,
+          ),
+        );
       } catch (_) {
         // token already applied
       }
