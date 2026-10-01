@@ -17,4 +17,6 @@ abstract class ChatRepository {
   });
 
   Future<void> markRead(String friendUserId);
+
+  Future<bool> setMuted(String friendUserId, bool muted);
 }

@@ -133,9 +133,45 @@ class _ChatThreadPageState extends State<ChatThreadPage> {
     final chat = context.watch<ChatProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.friendName)),
+      appBar: AppBar(
+        title: Text(widget.friendName),
+        actions: [
+          IconButton(
+            tooltip: chat.activeThreadMuted ? 'Unmute chat' : 'Mute chat',
+            onPressed: () => chat.toggleMute(),
+            icon: Icon(
+              chat.activeThreadMuted
+                  ? Icons.notifications_off_rounded
+                  : Icons.notifications_none_rounded,
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
+          if (chat.activeThreadMuted)
+            Material(
+              color: AppColors.surfaceMuted,
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    Icon(Icons.notifications_off_outlined, size: 16, color: AppColors.textMuted),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Notifications muted for this chat',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           if (chat.error != null)
             Material(
               color: AppColors.errorSoft,
@@ -223,6 +259,76 @@ class _MessageBubble extends StatelessWidget {
     final align = mine ? Alignment.centerRight : Alignment.centerLeft;
     final bg = mine ? AppColors.primary : AppColors.surfaceMuted;
     final fg = mine ? Colors.white : AppColors.textPrimary;
+    final timeLabel = ChatProvider.formatMessageTime(message.createdAt);
+    final timeColor = mine ? Colors.white.withValues(alpha: 0.8) : AppColors.textMuted;
+
+    Widget content = message.isBookShare
+        ? InkWell(
+            onTap: onOpenShare,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.menu_book_rounded, size: 18, color: fg),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        message.bookTitle ?? 'Shared passage',
+                        style: TextStyle(
+                          color: fg,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Page ${message.pageNo ?? '?'} · Tap to open',
+                  style: TextStyle(
+                    color: fg.withValues(alpha: 0.85),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+                if ((message.selectedText ?? '').trim().isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: mine
+                          ? Colors.white.withValues(alpha: 0.15)
+                          : AppColors.surface,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '“${message.selectedText!.trim()}”',
+                      style: TextStyle(
+                        color: fg,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ],
+                if ((message.body ?? '').trim().isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    message.body!,
+                    style: TextStyle(color: fg, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ],
+            ),
+          )
+        : Text(
+            message.body ?? '',
+            style: TextStyle(color: fg, fontWeight: FontWeight.w600, height: 1.35),
+          );
 
     return Align(
       alignment: align,
@@ -241,73 +347,37 @@ class _MessageBubble extends StatelessWidget {
             ),
             border: mine ? null : Border.all(color: AppColors.border),
           ),
-          child: message.isBookShare
-              ? InkWell(
-                  onTap: onOpenShare,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.menu_book_rounded, size: 18, color: fg),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              message.bookTitle ?? 'Shared passage',
-                              style: TextStyle(
-                                color: fg,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              content,
+              const SizedBox(height: 6),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (message.pending) ...[
+                    Text(
+                      'Sending…',
+                      style: TextStyle(
+                        color: timeColor,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Page ${message.pageNo ?? '?'} · Tap to open',
-                        style: TextStyle(
-                          color: fg.withValues(alpha: 0.85),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
-                      if ((message.selectedText ?? '').trim().isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: mine
-                                ? Colors.white.withValues(alpha: 0.15)
-                                : AppColors.surface,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '“${message.selectedText!.trim()}”',
-                            style: TextStyle(
-                              color: fg,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                              height: 1.35,
-                            ),
-                          ),
-                        ),
-                      ],
-                      if ((message.body ?? '').trim().isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          message.body!,
-                          style: TextStyle(color: fg, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ],
+                    ),
+                    const SizedBox(width: 6),
+                  ],
+                  Text(
+                    timeLabel,
+                    style: TextStyle(
+                      color: timeColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                )
-              : Text(
-                  message.body ?? '',
-                  style: TextStyle(color: fg, fontWeight: FontWeight.w600, height: 1.35),
-                ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

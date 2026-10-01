@@ -74,4 +74,14 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<void> markRead(String friendUserId) async {
     await _api.post('/chat/$friendUserId/read');
   }
+
+  @override
+  Future<bool> setMuted(String friendUserId, bool muted) async {
+    if (muted) {
+      final res = await _api.post<Map<String, dynamic>>('/chat/$friendUserId/mute');
+      return res.data?['muted'] as bool? ?? true;
+    }
+    final res = await _api.delete<Map<String, dynamic>>('/chat/$friendUserId/mute');
+    return res.data?['muted'] as bool? ?? false;
+  }
 }

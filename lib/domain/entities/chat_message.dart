@@ -12,6 +12,7 @@ class ChatMessage {
     this.pageNo,
     this.selectedText,
     this.readAt,
+    this.pending = false,
   });
 
   final String messageId;
@@ -26,6 +27,7 @@ class ChatMessage {
   final String? selectedText;
   final DateTime createdAt;
   final DateTime? readAt;
+  final bool pending;
 
   bool get isBookShare => messageType == 'book_share';
 
@@ -70,6 +72,7 @@ class ChatThread {
     required this.email,
     this.lastMessage,
     this.unreadCount = 0,
+    this.muted = false,
   });
 
   final String friendUserId;
@@ -77,6 +80,7 @@ class ChatThread {
   final String email;
   final ChatMessage? lastMessage;
   final int unreadCount;
+  final bool muted;
 
   String get initials {
     final parts = fullName
@@ -89,6 +93,21 @@ class ChatThread {
     return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 
+  ChatThread copyWith({
+    ChatMessage? lastMessage,
+    int? unreadCount,
+    bool? muted,
+  }) {
+    return ChatThread(
+      friendUserId: friendUserId,
+      fullName: fullName,
+      email: email,
+      lastMessage: lastMessage ?? this.lastMessage,
+      unreadCount: unreadCount ?? this.unreadCount,
+      muted: muted ?? this.muted,
+    );
+  }
+
   factory ChatThread.fromJson(Map<String, dynamic> json) {
     final last = json['last_message'];
     return ChatThread(
@@ -99,6 +118,7 @@ class ChatThread {
           ? ChatMessage.fromJson(Map<String, dynamic>.from(last))
           : null,
       unreadCount: json['unread_count'] as int? ?? 0,
+      muted: json['muted'] as bool? ?? false,
     );
   }
 }

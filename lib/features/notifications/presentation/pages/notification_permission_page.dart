@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/notifications/notification_service.dart';
 import '../../../../core/responsive/app_responsive.dart';
 import '../../../../core/responsive/responsive_body.dart';
 import '../../../../core/widgets/illustrations.dart';
@@ -14,9 +15,14 @@ import '../../../session/presentation/providers/session_provider.dart';
 class NotificationPermissionPage extends StatelessWidget {
   const NotificationPermissionPage({super.key});
 
-  void _continue(BuildContext context, {required bool allowed}) {
+  Future<void> _continue(BuildContext context, {required bool allowed}) async {
     final session = context.read<SessionProvider>();
-    session.updateProfile(session.profile.copyWith(notificationsEnabled: allowed));
+    var enabled = allowed;
+    if (allowed) {
+      enabled = await NotificationService.instance.requestPermission();
+    }
+    session.updateProfile(session.profile.copyWith(notificationsEnabled: enabled));
+    if (!context.mounted) return;
     Navigator.of(context).pushReplacementNamed(AppRoutes.welcome);
   }
 

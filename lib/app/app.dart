@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../core/constants/app_strings.dart';
 import '../core/network/api_client.dart';
+import '../core/network/realtime_client.dart';
 import '../core/storage/book_cache.dart';
 import '../core/theme/app_theme.dart';
 import '../data/datasources/auth_remote.dart';
@@ -47,6 +48,12 @@ class MedQBankApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => SessionProvider()),
+        ChangeNotifierProvider(
+          create: (context) {
+            final session = context.read<SessionProvider>();
+            return RealtimeClient(getToken: () => session.accessToken);
+          },
+        ),
         ProxyProvider<SessionProvider, ApiClient>(
           update: (_, session, previous) {
             return ApiClient(
@@ -119,9 +126,21 @@ class MedQBankApp extends StatelessWidget {
             return provider;
           },
         ),
-        ChangeNotifierProxyProvider<ChatRepository, ChatProvider>(
-          create: (context) => ChatProvider(context.read<ChatRepository>()),
-          update: (_, repo, previous) => previous ?? ChatProvider(repo),
+        ChangeNotifierProxyProvider3<ChatRepository, SessionProvider, RealtimeClient, ChatProvider>(
+          create: (context) => ChatProvider(
+            context.read<ChatRepository>(),
+            context.read<SessionProvider>(),
+            context.read<RealtimeClient>(),
+          ),
+          update: (_, repo, session, realtime, previous) {
+            final provider = previous ?? ChatProvider(repo, session, realtime);
+            if (session.isLoggedIn) {
+              realtime.start();
+            } else {
+              realtime.stop();
+            }
+            return provider;
+          },
         ),
       ],
       child: MaterialApp(
