@@ -118,15 +118,7 @@ class _ChatThreadPageState extends State<ChatThreadPage> {
     if (text.isEmpty) return;
     _controller.clear();
 
-    // Scroll immediately so the optimistic bubble is visible.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scroll.hasClients) return;
-      _scroll.animateTo(
-        _scroll.position.maxScrollExtent + 120,
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOut,
-      );
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToLatest());
 
     final ok = await context.read<ChatProvider>().sendText(text);
     if (!mounted) return;
@@ -134,27 +126,27 @@ class _ChatThreadPageState extends State<ChatThreadPage> {
       _controller.text = text;
       return;
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scroll.hasClients) return;
-      _scroll.animateTo(
-        _scroll.position.maxScrollExtent + 120,
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOut,
-      );
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToLatest());
+  }
+
+  void _jumpToLatest({bool animate = true}) {
+    if (!_scroll.hasClients) return;
+    // reverse: true — offset 0 is the newest message.
+    if (animate) {
+      _scroll.animateTo(0, duration: const Duration(milliseconds: 180), curve: Curves.easeOut);
+    } else {
+      _scroll.jumpTo(0);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final chat = context.watch<ChatProvider>();
 
-    // Keep view pinned to newest messages when the list grows.
-    final messageCount = chat.messages.length;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_scroll.hasClients || messageCount == 0) return;
-      final max = _scroll.position.maxScrollExtent;
-      if (max - _scroll.position.pixels < 180) {
-        _scroll.jumpTo(max);
+      if (!mounted || !_scroll.hasClients || chat.messages.isEmpty) return;
+      if (_scroll.position.pixels < 140) {
+        _scroll.jumpTo(0);
       }
     });
 
@@ -231,10 +223,11 @@ class _ChatThreadPageState extends State<ChatThreadPage> {
                 ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
                 : ListView.builder(
                     controller: _scroll,
+                    reverse: true,
                     padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
                     itemCount: chat.messages.length,
                     itemBuilder: (context, index) {
-                      final message = chat.messages[index];
+                      final message = chat.messages[chat.messages.length - 1 - index];
                       return _MessageBubble(
                         message: message,
                         onOpenShare: message.isBookShare

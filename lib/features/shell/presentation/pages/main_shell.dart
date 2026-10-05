@@ -5,7 +5,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../home/presentation/pages/dashboard_page.dart';
 import '../../../library/presentation/pages/library_page.dart';
-import '../../../mcq_bank/presentation/pages/mcq_bank_page.dart';
+import '../../../notes/presentation/pages/notes_hub_page.dart';
 import '../../../profile/presentation/pages/profile_page.dart';
 import '../../../progress/presentation/pages/progress_page.dart';
 import '../providers/main_nav_provider.dart';
@@ -16,7 +16,7 @@ class MainShell extends StatelessWidget {
   static const _pages = [
     DashboardPage(),
     LibraryPage(),
-    McqBankPage(),
+    NotesHubPage(),
     ProgressPage(),
     ProfilePage(),
   ];
@@ -24,7 +24,7 @@ class MainShell extends StatelessWidget {
   static const _items = [
     (Icons.home_outlined, Icons.home_rounded, AppStrings.home),
     (Icons.local_library_outlined, Icons.local_library_rounded, AppStrings.library),
-    (Icons.quiz_outlined, Icons.quiz_rounded, AppStrings.mcqBank),
+    (Icons.sticky_note_2_outlined, Icons.sticky_note_2_rounded, AppStrings.notes),
     (Icons.insights_outlined, Icons.insights_rounded, AppStrings.progress),
     (Icons.person_outline_rounded, Icons.person_rounded, AppStrings.profile),
   ];

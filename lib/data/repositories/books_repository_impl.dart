@@ -1,5 +1,6 @@
 import '../../core/network/api_client.dart';
 import '../../domain/entities/catalog_book.dart';
+import '../../domain/entities/weekly_progress.dart';
 import '../../domain/repositories/books_repository.dart';
 
 class BooksRepositoryImpl implements BooksRepository {
@@ -113,5 +114,14 @@ class BooksRepositoryImpl implements BooksRepository {
         if (progressPct != null) 'progress_pct': progressPct,
       },
     );
+  }
+
+  @override
+  Future<List<BookReadingProgress>> listProgress() async {
+    final res = await _api.get<List<dynamic>>('/progress');
+    return (res.data ?? [])
+        .whereType<Map>()
+        .map((e) => BookReadingProgress.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
   }
 }

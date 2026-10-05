@@ -9,6 +9,7 @@ import '../../../../domain/entities/catalog_book.dart';
 import '../../../../domain/entities/friend.dart';
 import '../../../chat/presentation/providers/chat_provider.dart';
 import '../../../friends/presentation/providers/friends_provider.dart';
+import '../../../home/presentation/providers/dashboard_provider.dart';
 import '../providers/library_provider.dart';
 
 class BookReaderPage extends StatefulWidget {
@@ -23,6 +24,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
   PdfViewerController? _controller;
   List<PdfTextRanges> _selections = const [];
   String _tint = 'amber';
+  DashboardProvider? _dashboard;
 
   /// When true, pan/zoom drag is disabled so text selection can capture gestures.
   bool _selectMode = false;
@@ -41,7 +43,16 @@ class _BookReaderPageState extends State<BookReaderPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToPendingPage());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _jumpToPendingPage();
+      context.read<DashboardProvider>().beginReading();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _dashboard ??= context.read<DashboardProvider>();
   }
 
   void _jumpToPendingPage() {
@@ -59,6 +70,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
 
   @override
   void dispose() {
+    _dashboard?.endReading();
     _noteController.dispose();
     super.dispose();
   }
@@ -96,7 +108,16 @@ class _BookReaderPageState extends State<BookReaderPage> {
       panEnabled: !_selectMode,
       onPageChanged: (pageNumber) {
         if (pageNumber != null) {
-          context.read<LibraryProvider>().setPage(pageNumber);
+          final library = context.read<LibraryProvider>();
+          library.setPage(pageNumber);
+          final book = library.selectedBook;
+          if (book != null) {
+            context.read<DashboardProvider>().rememberReading(
+                  bookId: book.id,
+                  bookTitle: book.title,
+                  pageNo: pageNumber,
+                );
+          }
         }
       },
       onTextSelectionChange: (selections) {

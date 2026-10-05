@@ -5,6 +5,7 @@ import '../core/constants/app_strings.dart';
 import '../core/network/api_client.dart';
 import '../core/network/realtime_client.dart';
 import '../core/storage/book_cache.dart';
+import '../core/storage/study_stats_store.dart';
 import '../core/theme/app_theme.dart';
 import '../data/datasources/auth_remote.dart';
 import '../data/repositories/books_repository_impl.dart';
@@ -28,6 +29,8 @@ import '../features/friends/presentation/providers/friends_provider.dart';
 import '../features/home/presentation/providers/dashboard_provider.dart';
 import '../features/library/presentation/pages/book_reader_page.dart';
 import '../features/library/presentation/providers/library_provider.dart';
+import '../features/notes/presentation/pages/book_notes_page.dart';
+import '../features/notes/presentation/providers/notes_hub_provider.dart';
 import '../features/notifications/presentation/pages/notification_permission_page.dart';
 import '../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../features/onboarding/presentation/providers/onboarding_provider.dart';
@@ -80,7 +83,10 @@ class MedQBankApp extends StatelessWidget {
         ),
         Provider<BookCache>(create: (_) => BookCache()),
         Provider<CollegeRepository>(create: (_) => CollegeRepositoryImpl()),
-        Provider<DashboardRepository>(create: (_) => DashboardRepositoryImpl()),
+        Provider(create: (_) => StudyStatsStore()),
+        ProxyProvider2<BooksRepository, StudyStatsStore, DashboardRepository>(
+          update: (_, books, stats, __) => DashboardRepositoryImpl(books, stats),
+        ),
         ChangeNotifierProvider(create: (_) => OnboardingProvider()),
         ChangeNotifierProvider(create: (_) => MainNavProvider()),
         ChangeNotifierProxyProvider2<SessionProvider, AuthRemote, AuthProvider>(
@@ -99,8 +105,13 @@ class MedQBankApp extends StatelessWidget {
           update: (_, repository, session, previous) =>
               previous ?? ProfileSetupProvider(repository, session),
         ),
-        ChangeNotifierProvider(
-          create: (context) => DashboardProvider(context.read<DashboardRepository>()),
+        ChangeNotifierProxyProvider2<DashboardRepository, SessionProvider, DashboardProvider>(
+          create: (context) => DashboardProvider(
+            context.read<DashboardRepository>(),
+            context.read<SessionProvider>(),
+          ),
+          update: (_, repo, session, previous) =>
+              previous ?? DashboardProvider(repo, session),
         ),
         ChangeNotifierProxyProvider3<BooksRepository, ApiClient, BookCache, LibraryProvider>(
           create: (context) => LibraryProvider(
@@ -110,6 +121,10 @@ class MedQBankApp extends StatelessWidget {
           ),
           update: (_, books, api, cache, previous) =>
               previous ?? LibraryProvider(books, api, cache),
+        ),
+        ChangeNotifierProxyProvider<BooksRepository, NotesHubProvider>(
+          create: (context) => NotesHubProvider(context.read<BooksRepository>()),
+          update: (_, books, previous) => previous ?? NotesHubProvider(books),
         ),
         ChangeNotifierProxyProvider2<FriendsRepository, SessionProvider, FriendsProvider>(
           create: (context) => FriendsProvider(
@@ -179,6 +194,14 @@ class MedQBankApp extends StatelessWidget {
             return ChatThreadPage(
               friendUserId: map['friendUserId']?.toString() ?? '',
               friendName: map['friendName']?.toString() ?? 'Friend',
+            );
+          },
+          AppRoutes.bookNotes: (context) {
+            final args = ModalRoute.of(context)?.settings.arguments;
+            final map = args is Map ? Map<String, dynamic>.from(args) : <String, dynamic>{};
+            return BookNotesPage(
+              bookId: map['bookId']?.toString() ?? '',
+              bookTitle: map['bookTitle']?.toString() ?? 'Notes',
             );
           },
         },

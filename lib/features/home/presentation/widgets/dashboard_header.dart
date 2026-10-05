@@ -20,7 +20,7 @@ class DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final year = profile.year?.label ?? 'MBBS';
-    final streak = profile.streakDays == 0 ? 12 : profile.streakDays;
+    final streak = profile.streakDays;
     final rs = context.rs;
 
     return Container(

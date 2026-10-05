@@ -10,15 +10,17 @@ class QuickAccessCards extends StatelessWidget {
   const QuickAccessCards({
     super.key,
     required this.reading,
-    required this.dailyMcq,
+    required this.notesCount,
+    required this.highlightsCount,
     required this.onContinueReading,
-    required this.onStartPractice,
+    required this.onOpenNotes,
   });
 
   final ContinueReading reading;
-  final DailyMcqTarget dailyMcq;
+  final int notesCount;
+  final int highlightsCount;
   final VoidCallback onContinueReading;
-  final VoidCallback onStartPractice;
+  final VoidCallback onOpenNotes;
 
   @override
   Widget build(BuildContext context) {
@@ -28,22 +30,24 @@ class QuickAccessCards extends StatelessWidget {
         iconColor: AppColors.primary,
         icon: Icons.menu_book_rounded,
         title: AppStrings.continueReading,
-        subtitle: reading.bookTitle,
-        detail: reading.chapterTitle,
-        actionLabel: AppStrings.continueAction,
+        subtitle: reading.hasBook ? reading.bookTitle : 'No book in progress',
+        detail: reading.hasBook ? reading.chapterTitle : 'Browse the library to start',
+        actionLabel: reading.hasBook ? AppStrings.continueAction : 'Open library',
         progress: reading.progress,
         onTap: onContinueReading,
       ),
       _AccessCard(
         tint: AppColors.secondarySoft,
         iconColor: AppColors.secondary,
-        icon: Icons.quiz_rounded,
-        title: AppStrings.dailyMcqs,
-        subtitle: '${dailyMcq.completed} of ${dailyMcq.target} done today',
-        detail: 'Keep your streak going',
-        actionLabel: AppStrings.startPractice,
-        progress: dailyMcq.progress,
-        onTap: onStartPractice,
+        icon: Icons.sticky_note_2_rounded,
+        title: 'Notes & highlights',
+        subtitle: '$notesCount notes · $highlightsCount highlights',
+        detail: 'Your annotations across all books',
+        actionLabel: 'Open library',
+        progress: notesCount + highlightsCount == 0
+            ? 0
+            : ((notesCount + highlightsCount) / 20).clamp(0.08, 1),
+        onTap: onOpenNotes,
       ),
     ];
 
@@ -118,6 +122,8 @@ class _AccessCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 13,

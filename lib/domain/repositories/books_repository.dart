@@ -1,4 +1,5 @@
 import '../entities/catalog_book.dart';
+import '../entities/weekly_progress.dart';
 
 abstract class BooksRepository {
   Future<List<CatalogBook>> listBooks();
@@ -19,4 +20,5 @@ abstract class BooksRepository {
   Future<void> deleteBookmark(String bookmarkId);
 
   Future<void> upsertProgress(String bookId, int pageNo, {double? progressPct});
+  Future<List<BookReadingProgress>> listProgress();
 }

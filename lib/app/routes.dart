@@ -12,4 +12,5 @@ abstract final class AppRoutes {
   static const friends = '/friends';
   static const chats = '/chats';
   static const chatThread = '/chat-thread';
+  static const bookNotes = '/book-notes';
 }

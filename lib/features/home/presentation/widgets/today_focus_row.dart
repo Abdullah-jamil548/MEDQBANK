@@ -6,14 +6,20 @@ import '../../../../core/widgets/app_card.dart';
 class TodayFocusRow extends StatelessWidget {
   const TodayFocusRow({
     super.key,
-    required this.mcqsLeft,
+    required this.streakDays,
     required this.minutes,
-    required this.onPractice,
+    required this.notesCount,
+    this.onStreak,
+    this.onStudy,
+    this.onNotes,
   });
 
-  final int mcqsLeft;
+  final int streakDays;
   final int minutes;
-  final VoidCallback onPractice;
+  final int notesCount;
+  final VoidCallback? onStreak;
+  final VoidCallback? onStudy;
+  final VoidCallback? onNotes;
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +27,12 @@ class TodayFocusRow extends StatelessWidget {
       children: [
         Expanded(
           child: _FocusTile(
-            icon: Icons.quiz_outlined,
-            tint: AppColors.primarySoft,
-            color: AppColors.primary,
-            label: 'MCQs left',
-            value: '$mcqsLeft',
-            onTap: onPractice,
+            icon: Icons.local_fire_department_rounded,
+            tint: AppColors.streakSoft,
+            color: AppColors.streak,
+            label: 'Day streak',
+            value: '$streakDays',
+            onTap: onStreak,
           ),
         ),
         const SizedBox(width: 10),
@@ -37,16 +43,18 @@ class TodayFocusRow extends StatelessWidget {
             color: AppColors.secondary,
             label: 'Study min',
             value: '${minutes}m',
+            onTap: onStudy,
           ),
         ),
         const SizedBox(width: 10),
         Expanded(
           child: _FocusTile(
             icon: Icons.sticky_note_2_outlined,
-            tint: AppColors.streakSoft,
-            color: AppColors.streak,
+            tint: AppColors.primarySoft,
+            color: AppColors.primary,
             label: 'Notes',
-            value: '6',
+            value: '$notesCount',
+            onTap: onNotes,
           ),
         ),
       ],
