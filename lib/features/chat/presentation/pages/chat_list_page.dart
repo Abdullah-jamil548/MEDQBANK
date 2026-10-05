@@ -74,14 +74,16 @@ class _ChatListPageState extends State<ChatListPage> {
                   return Padding(
                     padding: EdgeInsets.only(bottom: rs.scale(10)),
                     child: AppCard(
-                      onTap: () {
-                        Navigator.of(context).pushNamed(
+                      onTap: () async {
+                        await Navigator.of(context).pushNamed(
                           AppRoutes.chatThread,
                           arguments: {
                             'friendUserId': thread.friendUserId,
                             'friendName': thread.fullName,
                           },
                         );
+                        if (!mounted) return;
+                        await context.read<ChatProvider>().loadThreads(silent: true);
                       },
                       child: Row(
                         children: [
@@ -172,14 +174,16 @@ class _ChatListPageState extends State<ChatListPage> {
                 return Padding(
                   padding: EdgeInsets.only(bottom: rs.scale(10)),
                   child: AppCard(
-                    onTap: () {
-                      Navigator.of(context).pushNamed(
+                    onTap: () async {
+                      await Navigator.of(context).pushNamed(
                         AppRoutes.chatThread,
                         arguments: {
                           'friendUserId': friend.userId,
                           'friendName': friend.fullName,
                         },
                       );
+                      if (!mounted) return;
+                      await context.read<ChatProvider>().loadThreads(silent: true);
                     },
                     child: Row(
                       children: [

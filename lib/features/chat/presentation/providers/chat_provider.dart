@@ -69,12 +69,30 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
+  void _clearUnread(String friendId) {
+    var changed = false;
+    final next = <ChatThread>[];
+    for (final t in threads) {
+      if (t.friendUserId == friendId && t.unreadCount != 0) {
+        changed = true;
+        next.add(t.copyWith(unreadCount: 0));
+      } else {
+        next.add(t);
+      }
+    }
+    if (changed) {
+      threads = next;
+      notifyListeners();
+    }
+  }
+
   void openThread({required String friendUserId, required String friendName}) {
     activeFriendId = friendUserId;
     activeFriendName = friendName;
     messages = [];
     peerTyping = false;
     error = null;
+    _clearUnread(friendUserId);
     _realtime.start();
     notifyListeners();
     unawaited(loadMessages());
@@ -171,6 +189,7 @@ class ChatProvider extends ChangeNotifier {
       });
       messages = [...loaded, ...stillPending];
       await _repo.markRead(friendId);
+      _clearUnread(friendId);
       error = null;
     } catch (e) {
       if (!silent && gen == _loadGeneration) error = apiErrorMessage(e);
@@ -374,6 +393,7 @@ class ChatProvider extends ChangeNotifier {
         _appendOrReplaceMessage(msg);
         if (!msg.mine) {
           peerTyping = false;
+          _clearUnread(peerId);
           unawaited(_repo.markRead(peerId));
         }
         notifyListeners();
