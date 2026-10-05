@@ -13,6 +13,7 @@ import '../../../session/presentation/providers/session_provider.dart';
 class ChatProvider extends ChangeNotifier {
   ChatProvider(this._repo, this._session, this._realtime) {
     _eventSub = _realtime.events.listen(_onRealtimeEvent);
+    _realtime.addListener(_onRealtimeConnectionChanged);
   }
 
   final ChatRepository _repo;
@@ -30,6 +31,10 @@ class ChatProvider extends ChangeNotifier {
   String? error;
 
   StreamSubscription? _eventSub;
+  Timer? _fallbackPoll;
+  int _loadGeneration = 0;
+
+  bool get socketConnected => _realtime.connected;
 
   bool get activeThreadMuted {
     final id = activeFriendId;
@@ -40,19 +45,42 @@ class ChatProvider extends ChangeNotifier {
     return false;
   }
 
+  void _onRealtimeConnectionChanged() {
+    notifyListeners();
+    _syncFallbackPoll();
+  }
+
+  void _syncFallbackPoll() {
+    final inThread = activeFriendId != null;
+    final needPoll = inThread && !_realtime.connected;
+    if (needPoll) {
+      _fallbackPoll ??= Timer.periodic(const Duration(seconds: 3), (_) {
+        if (activeFriendId != null && !_realtime.connected) {
+          unawaited(loadMessages(silent: true));
+        }
+      });
+    } else {
+      _fallbackPoll?.cancel();
+      _fallbackPoll = null;
+    }
+  }
+
   void openThread({required String friendUserId, required String friendName}) {
     activeFriendId = friendUserId;
     activeFriendName = friendName;
     messages = [];
     error = null;
+    _realtime.start();
     notifyListeners();
     unawaited(loadMessages());
+    _syncFallbackPoll();
   }
 
   void closeThread() {
     activeFriendId = null;
     activeFriendName = null;
     messages = [];
+    _syncFallbackPoll();
   }
 
   Future<void> loadThreads({bool silent = false}) async {
@@ -64,6 +92,7 @@ class ChatProvider extends ChangeNotifier {
     if (_session.profile.notificationsEnabled) {
       unawaited(NotificationService.instance.requestPermission());
     }
+    _realtime.start();
     try {
       threads = await _repo.listThreads();
       error = null;
@@ -78,20 +107,32 @@ class ChatProvider extends ChangeNotifier {
   Future<void> loadMessages({bool silent = false}) async {
     final friendId = activeFriendId;
     if (friendId == null) return;
+    final gen = ++_loadGeneration;
     if (!silent) {
       loadingMessages = true;
       error = null;
       notifyListeners();
     }
     try {
-      messages = await _repo.listMessages(friendId);
+      final pending = messages.where((m) => m.pending).toList();
+      final loaded = await _repo.listMessages(friendId);
+      if (gen != _loadGeneration || activeFriendId != friendId) return;
+
+      final stillPending = pending.where((p) {
+        return !loaded.any(
+          (m) => m.mine && m.body == p.body && m.messageType == p.messageType,
+        );
+      });
+      messages = [...loaded, ...stillPending];
       await _repo.markRead(friendId);
       error = null;
     } catch (e) {
-      if (!silent) error = apiErrorMessage(e);
+      if (!silent && gen == _loadGeneration) error = apiErrorMessage(e);
     } finally {
-      loadingMessages = false;
-      notifyListeners();
+      if (gen == _loadGeneration) {
+        loadingMessages = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -119,14 +160,22 @@ class ChatProvider extends ChangeNotifier {
 
     try {
       final msg = await _repo.sendText(friendId, text);
+      if (activeFriendId != friendId) return true;
       messages = [
         for (final m in messages)
           if (m.messageId == tempId) msg else m,
       ];
+      final seen = <String>{};
+      messages = [
+        for (final m in messages)
+          if (seen.add(m.messageId)) m,
+      ];
       _upsertThreadPreview(friendId, msg);
       return true;
     } catch (e) {
-      messages = messages.where((m) => m.messageId != tempId).toList();
+      if (activeFriendId == friendId) {
+        messages = messages.where((m) => m.messageId != tempId).toList();
+      }
       error = apiErrorMessage(e);
       return false;
     } finally {
@@ -156,7 +205,9 @@ class ChatProvider extends ChangeNotifier {
         caption: caption,
       );
       if (activeFriendId == friendUserId) {
-        messages = [...messages.where((m) => m.messageId != msg.messageId), msg];
+        if (!messages.any((m) => m.messageId == msg.messageId)) {
+          messages = [...messages, msg];
+        }
       }
       _upsertThreadPreview(friendUserId, msg);
       return true;
@@ -196,6 +247,28 @@ class ChatProvider extends ChangeNotifier {
     ];
   }
 
+  void _appendOrReplaceMessage(ChatMessage msg) {
+    final idx = messages.indexWhere((m) => m.messageId == msg.messageId);
+    if (idx >= 0) {
+      messages = [
+        for (var i = 0; i < messages.length; i++)
+          if (i == idx) msg else messages[i],
+      ];
+      return;
+    }
+    final pendingIdx = messages.indexWhere(
+      (m) => m.pending && m.mine && m.body == msg.body && msg.mine,
+    );
+    if (pendingIdx >= 0) {
+      messages = [
+        for (var i = 0; i < messages.length; i++)
+          if (i == pendingIdx) msg else messages[i],
+      ];
+      return;
+    }
+    messages = [...messages, msg];
+  }
+
   void _onRealtimeEvent(Map<String, dynamic> event) {
     final type = event['type'] as String?;
     if (type == 'chat.message') {
@@ -205,32 +278,23 @@ class ChatProvider extends ChangeNotifier {
       final peerId = msg.mine ? msg.recipientId : msg.senderId;
 
       if (activeFriendId == peerId) {
-        if (!messages.any((m) => m.messageId == msg.messageId)) {
-          // Drop matching optimistic pending text
-          messages = [
-            ...messages.where(
-              (m) => !(m.pending && m.mine && m.body == msg.body && msg.mine),
-            ),
-            msg,
-          ];
-        }
+        _appendOrReplaceMessage(msg);
         if (!msg.mine) {
           unawaited(_repo.markRead(peerId));
         }
         notifyListeners();
       } else if (!msg.mine) {
-        threads = [
-          for (final t in threads)
-            if (t.friendUserId == peerId)
-              t.copyWith(
-                lastMessage: msg,
-                unreadCount: t.unreadCount + 1,
-              )
-            else
-              t,
-        ];
+        var found = false;
+        threads = threads.map((t) {
+          if (t.friendUserId != peerId) return t;
+          found = true;
+          return t.copyWith(
+            lastMessage: msg,
+            unreadCount: t.unreadCount + 1,
+          );
+        }).toList();
         notifyListeners();
-        unawaited(loadThreads(silent: true));
+        if (!found) unawaited(loadThreads(silent: true));
       }
 
       final show = event['show_notification'] as bool? ?? false;
@@ -273,6 +337,8 @@ class ChatProvider extends ChangeNotifier {
   @override
   void dispose() {
     _eventSub?.cancel();
+    _realtime.removeListener(_onRealtimeConnectionChanged);
+    _fallbackPoll?.cancel();
     super.dispose();
   }
 }

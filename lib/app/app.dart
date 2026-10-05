@@ -134,9 +134,10 @@ class MedQBankApp extends StatelessWidget {
           ),
           update: (_, repo, session, realtime, previous) {
             final provider = previous ?? ChatProvider(repo, session, realtime);
+            // Idempotent — RealtimeClient.start() will not reconnect if already up.
             if (session.isLoggedIn) {
               realtime.start();
-            } else {
+            } else if (realtime.isStarted) {
               realtime.stop();
             }
             return provider;

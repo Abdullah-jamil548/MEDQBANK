@@ -114,27 +114,66 @@ class _ChatThreadPageState extends State<ChatThreadPage> {
   }
 
   Future<void> _send() async {
-    final text = _controller.text;
-    final ok = await context.read<ChatProvider>().sendText(text);
-    if (!ok) return;
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
     _controller.clear();
-    await Future<void>.delayed(const Duration(milliseconds: 50));
-    if (_scroll.hasClients) {
+
+    // Scroll immediately so the optimistic bubble is visible.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scroll.hasClients) return;
       _scroll.animateTo(
-        _scroll.position.maxScrollExtent + 80,
-        duration: const Duration(milliseconds: 200),
+        _scroll.position.maxScrollExtent + 120,
+        duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
       );
+    });
+
+    final ok = await context.read<ChatProvider>().sendText(text);
+    if (!mounted) return;
+    if (!ok) {
+      _controller.text = text;
+      return;
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scroll.hasClients) return;
+      _scroll.animateTo(
+        _scroll.position.maxScrollExtent + 120,
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final chat = context.watch<ChatProvider>();
 
+    // Keep view pinned to newest messages when the list grows.
+    final messageCount = chat.messages.length;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scroll.hasClients || messageCount == 0) return;
+      final max = _scroll.position.maxScrollExtent;
+      if (max - _scroll.position.pixels < 180) {
+        _scroll.jumpTo(max);
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.friendName),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.friendName),
+            Text(
+              chat.socketConnected ? 'Live' : 'Connecting…',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: chat.socketConnected ? AppColors.success : AppColors.warning,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             tooltip: chat.activeThreadMuted ? 'Unmute chat' : 'Mute chat',
