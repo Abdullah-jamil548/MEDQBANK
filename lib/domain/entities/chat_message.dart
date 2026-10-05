@@ -1,3 +1,5 @@
+enum MessageDeliveryStatus { pending, sent, delivered, seen }
+
 class ChatMessage {
   const ChatMessage({
     required this.messageId,
@@ -11,7 +13,9 @@ class ChatMessage {
     this.bookTitle,
     this.pageNo,
     this.selectedText,
+    this.deliveredAt,
     this.readAt,
+    this.status = MessageDeliveryStatus.sent,
     this.pending = false,
   });
 
@@ -26,10 +30,23 @@ class ChatMessage {
   final int? pageNo;
   final String? selectedText;
   final DateTime createdAt;
+  final DateTime? deliveredAt;
   final DateTime? readAt;
+  final MessageDeliveryStatus status;
   final bool pending;
 
   bool get isBookShare => messageType == 'book_share';
+
+  MessageDeliveryStatus get displayStatus {
+    if (pending) return MessageDeliveryStatus.pending;
+    if (readAt != null || status == MessageDeliveryStatus.seen) {
+      return MessageDeliveryStatus.seen;
+    }
+    if (deliveredAt != null || status == MessageDeliveryStatus.delivered) {
+      return MessageDeliveryStatus.delivered;
+    }
+    return MessageDeliveryStatus.sent;
+  }
 
   String get preview {
     if (isBookShare) {
@@ -45,7 +62,54 @@ class ChatMessage {
     return body ?? '';
   }
 
+  ChatMessage copyWith({
+    String? messageId,
+    DateTime? deliveredAt,
+    DateTime? readAt,
+    MessageDeliveryStatus? status,
+    bool? pending,
+    bool clearDeliveredAt = false,
+    bool clearReadAt = false,
+  }) {
+    return ChatMessage(
+      messageId: messageId ?? this.messageId,
+      senderId: senderId,
+      recipientId: recipientId,
+      messageType: messageType,
+      mine: mine,
+      body: body,
+      bookId: bookId,
+      bookTitle: bookTitle,
+      pageNo: pageNo,
+      selectedText: selectedText,
+      createdAt: createdAt,
+      deliveredAt: clearDeliveredAt ? null : (deliveredAt ?? this.deliveredAt),
+      readAt: clearReadAt ? null : (readAt ?? this.readAt),
+      status: status ?? this.status,
+      pending: pending ?? this.pending,
+    );
+  }
+
+  static MessageDeliveryStatus _parseStatus(
+    String? raw, {
+    DateTime? deliveredAt,
+    DateTime? readAt,
+  }) {
+    if (readAt != null || raw == 'seen') return MessageDeliveryStatus.seen;
+    if (deliveredAt != null || raw == 'delivered') {
+      return MessageDeliveryStatus.delivered;
+    }
+    if (raw == 'pending') return MessageDeliveryStatus.pending;
+    return MessageDeliveryStatus.sent;
+  }
+
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
+    final deliveredAt = json['delivered_at'] != null
+        ? DateTime.tryParse(json['delivered_at'] as String)
+        : null;
+    final readAt = json['read_at'] != null
+        ? DateTime.tryParse(json['read_at'] as String)
+        : null;
     return ChatMessage(
       messageId: json['message_id']?.toString() ?? '',
       senderId: json['sender_id']?.toString() ?? '',
@@ -58,9 +122,13 @@ class ChatMessage {
       pageNo: json['page_no'] as int?,
       selectedText: json['selected_text'] as String?,
       createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
-      readAt: json['read_at'] != null
-          ? DateTime.tryParse(json['read_at'] as String)
-          : null,
+      deliveredAt: deliveredAt,
+      readAt: readAt,
+      status: _parseStatus(
+        json['status'] as String?,
+        deliveredAt: deliveredAt,
+        readAt: readAt,
+      ),
     );
   }
 }

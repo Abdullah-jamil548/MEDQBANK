@@ -165,11 +165,15 @@ class _ChatThreadPageState extends State<ChatThreadPage> {
           children: [
             Text(widget.friendName),
             Text(
-              chat.socketConnected ? 'Live' : 'Connecting…',
+              chat.peerTyping
+                  ? 'typing…'
+                  : (chat.socketConnected ? 'Live' : 'Connecting…'),
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: chat.socketConnected ? AppColors.success : AppColors.warning,
+                color: chat.peerTyping
+                    ? AppColors.secondary
+                    : (chat.socketConnected ? AppColors.success : AppColors.warning),
               ),
             ),
           ],
@@ -252,6 +256,7 @@ class _ChatThreadPageState extends State<ChatThreadPage> {
                       minLines: 1,
                       maxLines: 4,
                       textInputAction: TextInputAction.send,
+                      onChanged: (v) => chat.onComposerChanged(v),
                       onSubmitted: (_) => _send(),
                       decoration: InputDecoration(
                         hintText: 'Message ${widget.friendName.split(' ').first}…',
@@ -283,6 +288,42 @@ class _ChatThreadPageState extends State<ChatThreadPage> {
         ],
       ),
     );
+  }
+}
+
+class _DeliveryTicks extends StatelessWidget {
+  const _DeliveryTicks({
+    required this.status,
+    this.lightOnPrimary = false,
+  });
+
+  final MessageDeliveryStatus status;
+  final bool lightOnPrimary;
+
+  @override
+  Widget build(BuildContext context) {
+    if (status == MessageDeliveryStatus.pending) {
+      return Icon(
+        Icons.access_time_rounded,
+        size: 14,
+        color: lightOnPrimary
+            ? Colors.white.withValues(alpha: 0.75)
+            : AppColors.textMuted,
+      );
+    }
+
+    final seen = status == MessageDeliveryStatus.seen;
+    final doubleTick = status == MessageDeliveryStatus.delivered || seen;
+    final color = seen
+        ? const Color(0xFF53BDEB) // WhatsApp-style blue ticks
+        : (lightOnPrimary
+            ? Colors.white.withValues(alpha: 0.85)
+            : AppColors.textMuted);
+
+    if (!doubleTick) {
+      return Icon(Icons.done_rounded, size: 15, color: color);
+    }
+    return Icon(Icons.done_all_rounded, size: 15, color: color);
   }
 }
 
@@ -394,17 +435,6 @@ class _MessageBubble extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (message.pending) ...[
-                    Text(
-                      'Sending…',
-                      style: TextStyle(
-                        color: timeColor,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                  ],
                   Text(
                     timeLabel,
                     style: TextStyle(
@@ -413,6 +443,13 @@ class _MessageBubble extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                  if (mine) ...[
+                    const SizedBox(width: 4),
+                    _DeliveryTicks(
+                      status: message.displayStatus,
+                      lightOnPrimary: true,
+                    ),
+                  ],
                 ],
               ),
             ],

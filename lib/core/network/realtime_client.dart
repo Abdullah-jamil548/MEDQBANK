@@ -27,6 +27,16 @@ class RealtimeClient extends ChangeNotifier {
   Stream<Map<String, dynamic>> get events => _events.stream;
   bool get isStarted => _wanted;
 
+  /// Send a JSON frame to the server (typing, delivery ack, etc.).
+  void sendJson(Map<String, dynamic> payload) {
+    if (!connected || _channel == null) return;
+    try {
+      _channel!.sink.add(jsonEncode(payload));
+    } catch (_) {
+      _handleDrop();
+    }
+  }
+
   /// Idempotent: safe to call on every Provider rebuild.
   void start() {
     _wanted = true;

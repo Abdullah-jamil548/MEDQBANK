@@ -28,10 +28,14 @@ class ChatProvider extends ChangeNotifier {
   bool loadingThreads = false;
   bool loadingMessages = false;
   bool sending = false;
+  bool peerTyping = false;
   String? error;
 
   StreamSubscription? _eventSub;
   Timer? _fallbackPoll;
+  Timer? _typingStopTimer;
+  Timer? _peerTypingClear;
+  bool _iAmTyping = false;
   int _loadGeneration = 0;
 
   bool get socketConnected => _realtime.connected;
@@ -69,6 +73,7 @@ class ChatProvider extends ChangeNotifier {
     activeFriendId = friendUserId;
     activeFriendName = friendName;
     messages = [];
+    peerTyping = false;
     error = null;
     _realtime.start();
     notifyListeners();
@@ -77,10 +82,51 @@ class ChatProvider extends ChangeNotifier {
   }
 
   void closeThread() {
+    _stopTyping(force: true);
     activeFriendId = null;
     activeFriendName = null;
     messages = [];
+    peerTyping = false;
+    _peerTypingClear?.cancel();
     _syncFallbackPoll();
+  }
+
+  /// Call while the composer text changes.
+  void onComposerChanged(String text) {
+    final friendId = activeFriendId;
+    if (friendId == null || !_realtime.connected) return;
+    final hasText = text.trim().isNotEmpty;
+    if (hasText) {
+      if (!_iAmTyping) {
+        _iAmTyping = true;
+        _realtime.sendJson({
+          'type': 'typing',
+          'to_user_id': friendId,
+          'is_typing': true,
+        });
+      }
+      _typingStopTimer?.cancel();
+      _typingStopTimer = Timer(const Duration(seconds: 2), () {
+        _stopTyping();
+      });
+    } else {
+      _stopTyping(force: true);
+    }
+  }
+
+  void _stopTyping({bool force = false}) {
+    _typingStopTimer?.cancel();
+    _typingStopTimer = null;
+    if (!_iAmTyping && !force) return;
+    final friendId = activeFriendId;
+    if (_iAmTyping && friendId != null && _realtime.connected) {
+      _realtime.sendJson({
+        'type': 'typing',
+        'to_user_id': friendId,
+        'is_typing': false,
+      });
+    }
+    _iAmTyping = false;
   }
 
   Future<void> loadThreads({bool silent = false}) async {
@@ -142,6 +188,8 @@ class ChatProvider extends ChangeNotifier {
     final text = body.trim();
     if (friendId == null || me == null || text.isEmpty) return false;
 
+    _stopTyping(force: true);
+
     final tempId = 'local-${DateTime.now().microsecondsSinceEpoch}';
     final optimistic = ChatMessage(
       messageId: tempId,
@@ -151,6 +199,7 @@ class ChatProvider extends ChangeNotifier {
       mine: true,
       body: text,
       createdAt: DateTime.now().toUtc(),
+      status: MessageDeliveryStatus.pending,
       pending: true,
     );
     messages = [...messages, optimistic];
@@ -269,6 +318,43 @@ class ChatProvider extends ChangeNotifier {
     messages = [...messages, msg];
   }
 
+  void _applyDelivery({
+    required List<String> messageIds,
+    required MessageDeliveryStatus status,
+    DateTime? deliveredAt,
+    DateTime? readAt,
+  }) {
+    if (messageIds.isEmpty) return;
+    final idSet = messageIds.toSet();
+    var changed = false;
+    final next = <ChatMessage>[];
+    for (final m in messages) {
+      if (!m.mine || !idSet.contains(m.messageId)) {
+        next.add(m);
+        continue;
+      }
+      // Never downgrade seen → delivered.
+      final nextStatus = m.displayStatus == MessageDeliveryStatus.seen
+          ? MessageDeliveryStatus.seen
+          : status;
+      changed = true;
+      next.add(
+        m.copyWith(
+          deliveredAt: deliveredAt ?? m.deliveredAt ?? DateTime.now().toUtc(),
+          readAt: nextStatus == MessageDeliveryStatus.seen
+              ? (readAt ?? m.readAt ?? DateTime.now().toUtc())
+              : m.readAt,
+          status: nextStatus,
+          pending: false,
+        ),
+      );
+    }
+    if (changed) {
+      messages = next;
+      notifyListeners();
+    }
+  }
+
   void _onRealtimeEvent(Map<String, dynamic> event) {
     final type = event['type'] as String?;
     if (type == 'chat.message') {
@@ -277,9 +363,17 @@ class ChatProvider extends ChangeNotifier {
       final msg = ChatMessage.fromJson(Map<String, dynamic>.from(raw));
       final peerId = msg.mine ? msg.recipientId : msg.senderId;
 
+      if (!msg.mine) {
+        _realtime.sendJson({
+          'type': 'chat.ack',
+          'message_ids': [msg.messageId],
+        });
+      }
+
       if (activeFriendId == peerId) {
         _appendOrReplaceMessage(msg);
         if (!msg.mine) {
+          peerTyping = false;
           unawaited(_repo.markRead(peerId));
         }
         notifyListeners();
@@ -309,6 +403,61 @@ class ChatProvider extends ChangeNotifier {
           ),
         );
       }
+    } else if (type == 'chat.delivered') {
+      final ids = (event['message_ids'] as List?)?.map((e) => e.toString()).toList() ?? [];
+      final at = event['delivered_at'] != null
+          ? DateTime.tryParse(event['delivered_at'] as String)
+          : null;
+      _applyDelivery(
+        messageIds: ids,
+        status: MessageDeliveryStatus.delivered,
+        deliveredAt: at,
+      );
+    } else if (type == 'chat.seen' || type == 'chat.read') {
+      final ids = (event['message_ids'] as List?)?.map((e) => e.toString()).toList() ?? [];
+      final at = event['read_at'] != null
+          ? DateTime.tryParse(event['read_at'] as String)
+          : DateTime.now().toUtc();
+      if (ids.isNotEmpty) {
+        _applyDelivery(
+          messageIds: ids,
+          status: MessageDeliveryStatus.seen,
+          readAt: at,
+        );
+      } else {
+        // Legacy: mark all mine messages in active thread as seen.
+        final by = event['by_user_id']?.toString();
+        if (by != null && activeFriendId == by) {
+          messages = [
+            for (final m in messages)
+              if (m.mine)
+                m.copyWith(
+                  status: MessageDeliveryStatus.seen,
+                  readAt: at,
+                  deliveredAt: m.deliveredAt ?? at,
+                  pending: false,
+                )
+              else
+                m,
+          ];
+          notifyListeners();
+        }
+      }
+    } else if (type == 'chat.typing') {
+      final from = event['from_user_id']?.toString();
+      if (from == null || from != activeFriendId) return;
+      final typing = event['is_typing'] as bool? ?? true;
+      peerTyping = typing;
+      _peerTypingClear?.cancel();
+      if (typing) {
+        _peerTypingClear = Timer(const Duration(seconds: 4), () {
+          if (peerTyping) {
+            peerTyping = false;
+            notifyListeners();
+          }
+        });
+      }
+      notifyListeners();
     } else if (type == 'friend.request') {
       final show = event['show_notification'] as bool? ?? true;
       if (show) {
@@ -339,6 +488,8 @@ class ChatProvider extends ChangeNotifier {
     _eventSub?.cancel();
     _realtime.removeListener(_onRealtimeConnectionChanged);
     _fallbackPoll?.cancel();
+    _typingStopTimer?.cancel();
+    _peerTypingClear?.cancel();
     super.dispose();
   }
 }
