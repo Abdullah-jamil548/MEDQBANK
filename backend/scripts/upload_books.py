@@ -23,9 +23,9 @@ from app.db import SessionLocal, init_schemas_and_tables
 from app.models import Book
 from app.r2 import R2Service
 
-BACKEND = ROOT
-BOOKS_1_2 = BACKEND / "Books-20260922T101946Z-1-001" / "Books"
-BOOKS_3 = BACKEND / "3rd year-20260922T101946Z-1-001" / "3rd year"
+DOWNLOADS = Path(r"C:\Users\Office\Downloads")
+BOOKS_1_2 = DOWNLOADS / "Books-20260922T101946Z-1-001" / "Books"
+BOOKS_3 = DOWNLOADS / "3rd year-20260922T101946Z-1-001" / "3rd year"
 BOOKS_4 = BOOKS_3 / "4th year"
 
 # Skip duplicate copies (same content / "Copy of ...")
@@ -70,6 +70,66 @@ META: dict[str, dict] = {
         "title": "Jaypee Physiology",
         "author": "Jaypee",
         "subject": "Physiology",
+        "year_label": "1st / 2nd Year",
+    },
+    "klm clinically oriented anatomy 7th edit-1": {
+        "title": "KLM Clinically Oriented Anatomy (7th Edition)",
+        "author": "Keith L. Moore",
+        "subject": "Anatomy",
+        "year_label": "1st / 2nd Year",
+    },
+    "klm embryology mbbs cafeteria": {
+        "title": "KLM Embryology",
+        "author": "Keith L. Moore",
+        "subject": "Embryology",
+        "year_label": "1st / 2nd Year",
+    },
+    "langman_s embryology 12th-ed": {
+        "title": "Langman's Embryology (12th Edition)",
+        "author": "Langman",
+        "subject": "Embryology",
+        "year_label": "1st / 2nd Year",
+    },
+    "lippincott 8th edition-1": {
+        "title": "Lippincott Biochemistry (8th Edition)",
+        "author": "Lippincott",
+        "subject": "Biochemistry",
+        "year_label": "1st / 2nd Year",
+    },
+    "medical histology by laiq hussain": {
+        "title": "Medical Histology by Laiq Hussain",
+        "author": "Laiq Hussain",
+        "subject": "Histology",
+        "year_label": "1st / 2nd Year",
+    },
+    "mushtaq vol.1 biochem pdf": {
+        "title": "Mushtaq Biochemistry Vol. 1",
+        "author": "Mushtaq",
+        "subject": "Biochemistry",
+        "year_label": "1st / 2nd Year",
+    },
+    "nims physiology": {
+        "title": "NIMS Physiology",
+        "author": "NIMS",
+        "subject": "Physiology",
+        "year_label": "1st / 2nd Year",
+    },
+    "satyanarayan biochemistry (4th edition)": {
+        "title": "Satyanarayan Biochemistry (4th Edition)",
+        "author": "Satyanarayan",
+        "subject": "Biochemistry",
+        "year_label": "1st / 2nd Year",
+    },
+    "shahbaz_s medical histology 1st year pdf": {
+        "title": "Shahbaz's Medical Histology",
+        "author": "Shahbaz",
+        "subject": "Histology",
+        "year_label": "1st / 2nd Year",
+    },
+    "snell's clinical anatomy by regions": {
+        "title": "Snell's Clinical Anatomy by Regions",
+        "author": "Snell",
+        "subject": "Anatomy",
         "year_label": "1st / 2nd Year",
     },
     "big katzung 14e-1-1": {
@@ -127,7 +187,7 @@ def slugify(name: str) -> str:
 
 
 def stem_key(path: Path) -> str:
-    return path.stem.lower().strip()
+    return path.stem.lower().strip().replace("’", "'").replace("‘", "'")
 
 
 def collect_jobs() -> list[dict]:
@@ -236,6 +296,7 @@ def upload_and_register(jobs: list[dict]) -> None:
             row.format = "pdf"
             row.r2_key = r2_key
             row.content_type = "application/pdf"
+            row.content_kind = "book"
             row.is_active = True
             db.commit()
             print(f"  DB ok: {book_id} [{job['year_label']}] — {job['author']}", flush=True)

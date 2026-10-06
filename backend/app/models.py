@@ -132,6 +132,8 @@ class Book(Base):
     content_type: Mapped[str | None] = mapped_column(Text, nullable=True)
     # book | past_paper — keeps past papers out of the main library feed
     content_kind: Mapped[str] = mapped_column(Text, nullable=False, server_default="book")
+    # Chapter map for scanned PDFs that have no embedded outline.
+    outline: Mapped[list | None] = mapped_column(JSONB, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="true")
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()

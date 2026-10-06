@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from typing import Any
 from uuid import UUID
@@ -181,6 +183,13 @@ class MuteOut(BaseModel):
 # ----- books / R2 -----
 
 
+class OutlineItem(BaseModel):
+    title: str
+    page: int
+    printed: int | None = None
+    children: list[OutlineItem] = Field(default_factory=list)
+
+
 class BookSummary(BaseModel):
     book_id: str
     title: str | None = None
@@ -193,6 +202,7 @@ class BookSummary(BaseModel):
     format: str | None = None
     r2_key: str | None = None
     content_kind: str | None = "book"  # book | past_paper
+    outline: list[OutlineItem] = []
     is_active: bool | None = None
     prefix: str | None = None
     key: str | None = None

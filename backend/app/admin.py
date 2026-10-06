@@ -14,6 +14,7 @@ from app.auth import (
     require_admin,
     verify_admin_credentials,
 )
+from app.book_outlines import outline_for_book
 from app.config import Settings, get_settings
 from app.db import get_db
 from app.models import ActivityHourUser, Book, ChatMessage, User
@@ -75,6 +76,7 @@ def _book_summary(row: Book) -> BookSummary:
         format=row.format,
         r2_key=row.r2_key,
         content_kind=getattr(row, "content_kind", None) or "book",
+        outline=outline_for_book(row.book_id, getattr(row, "outline", None)),
         is_active=row.is_active,
         source="db",
     )

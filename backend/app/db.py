@@ -51,6 +51,7 @@ def init_schemas_and_tables() -> None:
             "ALTER TABLE users.\"user\" ADD COLUMN IF NOT EXISTS hide_reading_activity BOOLEAN NOT NULL DEFAULT false",
             "ALTER TABLE users.chat_message ADD COLUMN IF NOT EXISTS delivered_at TIMESTAMPTZ",
             "ALTER TABLE books.book ADD COLUMN IF NOT EXISTS content_kind TEXT NOT NULL DEFAULT 'book'",
+            "ALTER TABLE books.book ADD COLUMN IF NOT EXISTS outline JSONB",
         ):
             conn.execute(text(stmt))
 
@@ -58,6 +59,10 @@ def init_schemas_and_tables() -> None:
     import app.models  # noqa: F401
 
     Base.metadata.create_all(bind=engine)
+
+    from app.book_outlines import seed_book_outlines
+
+    seed_book_outlines()
 
 
 def check_db() -> bool:

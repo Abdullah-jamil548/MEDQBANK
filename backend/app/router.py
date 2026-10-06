@@ -27,6 +27,7 @@ from app.models import (
     Progress,
     User,
 )
+from app.book_outlines import outline_for_book
 from app.r2 import R2Service
 from app.realtime import manager as ws_manager
 from app.schemas import (
@@ -315,6 +316,7 @@ def list_books(
                 format=row.format,
                 r2_key=row.r2_key,
                 content_kind=getattr(row, "content_kind", None) or "book",
+                outline=outline_for_book(row.book_id, getattr(row, "outline", None)),
                 is_active=row.is_active,
                 source="db",
             )
@@ -374,6 +376,7 @@ def sync_books_from_r2(
                 size_bytes=row.size_bytes,
                 format=row.format,
                 r2_key=row.r2_key,
+                outline=outline_for_book(row.book_id, getattr(row, "outline", None)),
                 is_active=row.is_active,
                 source="db",
             )
@@ -413,6 +416,7 @@ def upsert_book(body: BookUpsertRequest, db: Session = Depends(get_db)) -> BookS
         format=row.format,
         r2_key=row.r2_key,
         content_kind=row.content_kind,
+        outline=outline_for_book(row.book_id, getattr(row, "outline", None)),
         is_active=row.is_active,
         source="db",
     )
