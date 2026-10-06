@@ -6,8 +6,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../home/presentation/pages/dashboard_page.dart';
 import '../../../library/presentation/pages/library_page.dart';
 import '../../../notes/presentation/pages/notes_hub_page.dart';
+import '../../../past_papers/presentation/pages/past_papers_page.dart';
 import '../../../profile/presentation/pages/profile_page.dart';
-import '../../../progress/presentation/pages/progress_page.dart';
 import '../providers/main_nav_provider.dart';
 
 class MainShell extends StatelessWidget {
@@ -17,7 +17,7 @@ class MainShell extends StatelessWidget {
     DashboardPage(),
     LibraryPage(),
     NotesHubPage(),
-    ProgressPage(),
+    PastPapersPage(),
     ProfilePage(),
   ];
 
@@ -25,7 +25,7 @@ class MainShell extends StatelessWidget {
     (Icons.home_outlined, Icons.home_rounded, AppStrings.home),
     (Icons.local_library_outlined, Icons.local_library_rounded, AppStrings.library),
     (Icons.sticky_note_2_outlined, Icons.sticky_note_2_rounded, AppStrings.notes),
-    (Icons.insights_outlined, Icons.insights_rounded, AppStrings.progress),
+    (Icons.description_outlined, Icons.description_rounded, AppStrings.pastPapers),
     (Icons.person_outline_rounded, Icons.person_rounded, AppStrings.profile),
   ];
 

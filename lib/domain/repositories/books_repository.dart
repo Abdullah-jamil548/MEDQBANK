@@ -2,7 +2,7 @@ import '../entities/catalog_book.dart';
 import '../entities/weekly_progress.dart';
 
 abstract class BooksRepository {
-  Future<List<CatalogBook>> listBooks();
+  Future<List<CatalogBook>> listBooks({String kind = 'book'});
 
   Future<({String url, String filename, int size, int expiresIn})> getAccess(
     String bookId, {

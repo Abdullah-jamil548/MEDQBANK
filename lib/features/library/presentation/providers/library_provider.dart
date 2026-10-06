@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -18,6 +16,7 @@ class LibraryProvider extends ChangeNotifier {
   final _uuid = const Uuid();
 
   List<CatalogBook> books = const [];
+  List<CatalogBook> pastPapers = const [];
   final Map<String, bool> downloaded = {};
   final Map<String, double> downloadProgress = {};
   final Map<String, CancelToken> _cancelTokens = {};
@@ -33,6 +32,7 @@ class LibraryProvider extends ChangeNotifier {
   List<PageBookmark> bookmarks = [];
 
   bool loading = false;
+  bool loadingPastPapers = false;
   String? error;
   String? downloadError;
 
@@ -41,7 +41,8 @@ class LibraryProvider extends ChangeNotifier {
     error = null;
     notifyListeners();
     try {
-      books = await _repository.listBooks();
+      final loaded = await _repository.listBooks(kind: 'book');
+      books = loaded.where((b) => !b.isPastPaper).toList();
       for (final book in books) {
         downloaded[book.id] = await _cache.isDownloaded(book.id);
       }
@@ -50,6 +51,26 @@ class LibraryProvider extends ChangeNotifier {
       books = const [];
     } finally {
       loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadPastPapers() async {
+    loadingPastPapers = true;
+    error = null;
+    notifyListeners();
+    try {
+      final loaded = await _repository.listBooks(kind: 'past_paper');
+      // Client filter: deployed API filters by kind; older deploys return all books.
+      pastPapers = loaded.where((b) => b.isPastPaper).toList();
+      for (final paper in pastPapers) {
+        downloaded[paper.id] = await _cache.isDownloaded(paper.id);
+      }
+    } catch (e) {
+      error = apiErrorMessage(e);
+      pastPapers = const [];
+    } finally {
+      loadingPastPapers = false;
       notifyListeners();
     }
   }

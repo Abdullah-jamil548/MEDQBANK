@@ -9,6 +9,7 @@ class CatalogBook {
     this.sizeBytes,
     this.format = 'pdf',
     this.r2Key,
+    this.contentKind = 'book',
   });
 
   final String id;
@@ -20,20 +21,42 @@ class CatalogBook {
   final int? sizeBytes;
   final String format;
   final String? r2Key;
+  final String contentKind; // book | past_paper
+
+  bool get isPastPaper {
+    if (contentKind == 'past_paper') return true;
+    // Fallback when API has not redeployed content_kind yet
+    if (id.startsWith('pp-')) return true;
+    if (yearLabel.toLowerCase() == 'past papers') return true;
+    if (author.toLowerCase().contains('past papers')) return true;
+    return false;
+  }
 
   factory CatalogBook.fromJson(Map<String, dynamic> json) {
+    final id = json['book_id'] as String? ?? '';
+    final author = json['author'] as String? ?? 'Unknown';
+    final yearLabel = json['year_label'] as String? ?? '';
+    final rawKind = (json['content_kind'] as String?)?.trim();
+    final inferredPastPaper = id.startsWith('pp-') ||
+        yearLabel.toLowerCase() == 'past papers' ||
+        author.toLowerCase().contains('past papers');
+    final contentKind = (rawKind == null || rawKind.isEmpty)
+        ? (inferredPastPaper ? 'past_paper' : 'book')
+        : rawKind;
+
     return CatalogBook(
-      id: json['book_id'] as String? ?? '',
+      id: id,
       title: (json['title'] as String?)?.trim().isNotEmpty == true
           ? json['title'] as String
-          : (json['book_id'] as String? ?? 'Untitled'),
-      author: json['author'] as String? ?? 'Unknown',
+          : (id.isNotEmpty ? id : 'Untitled'),
+      author: author,
       subject: json['subject'] as String? ?? '',
-      yearLabel: json['year_label'] as String? ?? '',
+      yearLabel: yearLabel,
       blurb: json['blurb'] as String? ?? '',
       sizeBytes: json['size_bytes'] as int? ?? json['size'] as int?,
       format: json['format'] as String? ?? 'pdf',
       r2Key: json['r2_key'] as String?,
+      contentKind: contentKind,
     );
   }
 

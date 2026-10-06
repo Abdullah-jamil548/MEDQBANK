@@ -67,5 +67,6 @@ abstract final class AppStrings {
   static const String mcqBank = 'Notes';
   static const String notes = 'Notes';
   static const String progress = 'Progress';
+  static const String pastPapers = 'Papers';
   static const String profile = 'Profile';
 }

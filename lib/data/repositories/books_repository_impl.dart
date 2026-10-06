@@ -9,8 +9,11 @@ class BooksRepositoryImpl implements BooksRepository {
   final ApiClient _api;
 
   @override
-  Future<List<CatalogBook>> listBooks() async {
-    final res = await _api.get<List<dynamic>>('/books', queryParameters: {'source': 'db'});
+  Future<List<CatalogBook>> listBooks({String kind = 'book'}) async {
+    final res = await _api.get<List<dynamic>>(
+      '/books',
+      queryParameters: {'source': 'db', 'kind': kind},
+    );
     final data = res.data ?? const [];
     return data
         .whereType<Map>()
