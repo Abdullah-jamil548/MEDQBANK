@@ -237,6 +237,19 @@ class _BookCard extends StatelessWidget {
                   child: Text(isDownloaded ? 'Open' : 'Download first'),
                 ),
               ),
+              if (isDownloaded) ...[
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      final ok = await library.openBook(book, openContents: true);
+                      if (!context.mounted || !ok) return;
+                      Navigator.of(context).pushNamed(AppRoutes.bookReader);
+                    },
+                    child: const Text('Contents'),
+                  ),
+                ),
+              ],
             ],
           ),
         ],

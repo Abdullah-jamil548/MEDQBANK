@@ -28,7 +28,13 @@ class _BookReaderPageState extends State<BookReaderPage> {
 
   /// When true, pan/zoom drag is disabled so text selection can capture gestures.
   bool _selectMode = false;
+  bool _areaMode = false;
   bool _didJumpInitialPage = false;
+  List<BookTocEntry> _outline = const [];
+  bool _outlineReady = false;
+  List<Map<String, dynamic>> _areaRects = const [];
+  Offset? _areaStartLocal;
+  Offset? _areaEndLocal;
 
   String get _selectedText {
     final parts = _selections
@@ -38,7 +44,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
     return parts.join(' ').trim();
   }
 
-  bool get _hasSelection => _selectedText.isNotEmpty;
+  bool get _hasSelection => _selectedText.isNotEmpty || _areaRects.isNotEmpty;
 
   @override
   void initState() {
@@ -75,13 +81,205 @@ class _BookReaderPageState extends State<BookReaderPage> {
     super.dispose();
   }
 
+  PdfPageHitTestResult? _hitAtGlobal(Offset global) {
+    final controller = _controller;
+    if (controller == null) return null;
+    final local = controller.globalToLocal(global);
+    if (local == null) return null;
+    return controller.getPdfPageHitTestResult(
+      local,
+      useDocumentLayoutCoordinates: false,
+    );
+  }
+
+  void _onAreaPointerDown(PointerDownEvent event) {
+    final hit = _hitAtGlobal(event.position);
+    if (hit == null) return;
+    final pt = hit.offset;
+    setState(() {
+      _areaStartLocal = event.localPosition;
+      _areaEndLocal = event.localPosition;
+      _areaRects = [
+        {
+          'left': pt.x,
+          'top': pt.y,
+          'right': pt.x,
+          'bottom': pt.y,
+          'page': hit.page.pageNumber,
+        },
+      ];
+    });
+  }
+
+  void _onAreaPointerMove(PointerMoveEvent event) {
+    if (_areaRects.isEmpty) return;
+    final hit = _hitAtGlobal(event.position);
+    if (hit == null) return;
+    final start = _areaRects.first;
+    final page = start['page'] as int?;
+    if (page != hit.page.pageNumber) return;
+    final x0 = (start['left'] as num).toDouble();
+    final y0 = (start['top'] as num).toDouble();
+    final x1 = hit.offset.x;
+    final y1 = hit.offset.y;
+    setState(() {
+      _areaEndLocal = event.localPosition;
+      _areaRects = [
+        {
+          'left': x0 < x1 ? x0 : x1,
+          'top': y0 > y1 ? y0 : y1,
+          'right': x0 > x1 ? x0 : x1,
+          'bottom': y0 < y1 ? y0 : y1,
+          'page': page,
+        },
+      ];
+    });
+  }
+
+  void _onAreaPointerUp(PointerUpEvent event) {
+    if (_areaRects.isEmpty) return;
+    final r = _areaRects.first;
+    final w = ((r['right'] as num) - (r['left'] as num)).abs();
+    final h = ((r['top'] as num) - (r['bottom'] as num)).abs();
+    if (w < 8 || h < 8) {
+      setState(() {
+        _areaRects = const [];
+        _areaStartLocal = null;
+        _areaEndLocal = null;
+      });
+    }
+  }
+
   void _toggleSelectMode() {
     setState(() {
       _selectMode = !_selectMode;
       if (!_selectMode) {
         _selections = const [];
+        _areaRects = const [];
+        _areaStartLocal = null;
+        _areaEndLocal = null;
+        _areaMode = false;
       }
     });
+  }
+
+  Future<void> _jumpToOutline(BookTocEntry node) async {
+    final page = node.pageNumber;
+    if (page == null) return;
+    final controller = _controller;
+    if (controller == null) return;
+    await controller.goToPage(pageNumber: page);
+    if (!mounted) return;
+    context.read<LibraryProvider>().setPage(page);
+  }
+
+  void _openContents() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.72,
+          minChildSize: 0.4,
+          maxChildSize: 0.94,
+          builder: (_, scrollController) {
+            return Column(
+              children: [
+                const SizedBox(height: 10),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(99),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Contents',
+                          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+                        ),
+                      ),
+                      Text(
+                        _outlineReady ? '${_countOutline(_outline)} chapters' : 'Loading…',
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: !_outlineReady
+                      ? const Center(child: CircularProgressIndicator())
+                      : _outline.isEmpty
+                          ? const Padding(
+                              padding: EdgeInsets.all(24),
+                              child: Text(
+                                'This PDF has no table of contents.',
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            )
+                          : ListView(
+                              controller: scrollController,
+                              padding: const EdgeInsets.fromLTRB(8, 8, 8, 24),
+                              children: _outline
+                                  .map(
+                                    (node) => _OutlineTile(
+                                      node: node,
+                                      depth: 0,
+                                      onTap: (n) {
+                                        Navigator.pop(ctx);
+                                        _jumpToOutline(n);
+                                      },
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  int _countOutline(List<BookTocEntry> nodes) {
+    var n = 0;
+    for (final node in nodes) {
+      n += 1 + _countOutline(node.children);
+    }
+    return n;
+  }
+
+  List<BookTocEntry> _fromPdfOutline(List<PdfOutlineNode> nodes) {
+    return nodes
+        .map(
+          (n) => BookTocEntry(
+            title: n.title,
+            pageNumber: n.dest?.pageNumber,
+            children: _fromPdfOutline(n.children),
+          ),
+        )
+        .toList();
+  }
+
+  List<BookTocEntry> _fallbackOutlineFor(CatalogBook? book) {
+    if (book == null) return const [];
+    if (book.outline.isNotEmpty) return book.outline;
+    return bundledOutlineFor(id: book.id, title: book.title);
   }
 
   @override
@@ -102,10 +300,39 @@ class _BookReaderPageState extends State<BookReaderPage> {
       );
     }
 
-    // Key forces viewer rebuild when select/pan mode flips (panEnabled alone is sticky).
     final viewerParams = PdfViewerParams(
-      enableTextSelection: true,
+      enableTextSelection: !_areaMode,
       panEnabled: !_selectMode,
+      onViewerReady: (document, controller) async {
+        final library = context.read<LibraryProvider>();
+        final fallback = _fallbackOutlineFor(library.selectedBook);
+        try {
+          final nodes = await document.loadOutline();
+          if (!mounted) return;
+          final fromPdf = _fromPdfOutline(nodes);
+          setState(() {
+            _outline = fromPdf.isNotEmpty ? fromPdf : fallback;
+            _outlineReady = true;
+          });
+          if (!mounted) return;
+          final stayOn = library.currentPage;
+          if (stayOn > 1) {
+            await controller.goToPage(pageNumber: stayOn);
+          }
+          if (!mounted) return;
+          if (library.consumePendingOpenContents()) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) _openContents();
+            });
+          }
+        } catch (_) {
+          if (!mounted) return;
+          setState(() {
+            _outline = fallback;
+            _outlineReady = true;
+          });
+        }
+      },
       onPageChanged: (pageNumber) {
         if (pageNumber != null) {
           final library = context.read<LibraryProvider>();
@@ -134,7 +361,7 @@ class _BookReaderPageState extends State<BookReaderPage> {
           }
         });
       },
-      pagePaintCallbacks: [_paintSavedHighlights],
+      pagePaintCallbacks: [_paintSavedHighlights, _paintPendingArea],
     );
 
     return Scaffold(
@@ -159,8 +386,10 @@ class _BookReaderPageState extends State<BookReaderPage> {
                         ),
                         Text(
                           _selectMode
-                              ? 'Select mode: drag over text, then Highlight'
-                              : 'Page ${library.currentPage} • Tap highlighter to select text',
+                              ? (_areaMode
+                                  ? 'Area mode: drag a box, then Highlight'
+                                  : 'Text mode: drag over words, then Highlight')
+                              : 'Page ${library.currentPage} • Tap highlighter to select',
                           style: TextStyle(
                             color: _selectMode ? AppColors.primary : AppColors.textSecondary,
                             fontSize: 12,
@@ -169,6 +398,11 @@ class _BookReaderPageState extends State<BookReaderPage> {
                         ),
                       ],
                     ),
+                  ),
+                  IconButton(
+                    tooltip: 'Contents',
+                    onPressed: _openContents,
+                    icon: const Icon(Icons.toc_rounded),
                   ),
                   IconButton(
                     tooltip: _selectMode ? 'Exit select mode' : 'Select text to highlight',
@@ -226,6 +460,34 @@ class _BookReaderPageState extends State<BookReaderPage> {
                         ),
                       ),
                       TextButton(
+                        onPressed: () => setState(() {
+                          _areaMode = false;
+                          _areaRects = const [];
+                          _areaStartLocal = null;
+                          _areaEndLocal = null;
+                        }),
+                        child: Text(
+                          'Text',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            color: !_areaMode ? AppColors.primary : AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => setState(() {
+                          _areaMode = true;
+                          _selections = const [];
+                        }),
+                        child: Text(
+                          'Area',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            color: _areaMode ? AppColors.primary : AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                      TextButton(
                         onPressed: _toggleSelectMode,
                         child: const Text('Done'),
                       ),
@@ -241,31 +503,65 @@ class _BookReaderPageState extends State<BookReaderPage> {
                     child: bytes != null
                         ? PdfViewer.data(
                             bytes,
-                            key: ValueKey('pdf-data-${book.id}-$_selectMode'),
+                            key: ValueKey('pdf-data-${book.id}'),
                             sourceName: book.id,
                             controller: _controller ??= PdfViewerController(),
+                            initialPageNumber: library.currentPage < 1 ? 1 : library.currentPage,
                             params: viewerParams,
                           )
                         : PdfViewer.file(
                             path!,
-                            key: ValueKey('pdf-file-${book.id}-$_selectMode'),
+                            key: ValueKey('pdf-file-${book.id}'),
                             controller: _controller ??= PdfViewerController(),
+                            initialPageNumber: library.currentPage < 1 ? 1 : library.currentPage,
                             params: viewerParams,
                           ),
                   ),
+                  if (_selectMode && _areaMode)
+                    Positioned.fill(
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Listener(
+                              behavior: HitTestBehavior.opaque,
+                              onPointerDown: _onAreaPointerDown,
+                              onPointerMove: _onAreaPointerMove,
+                              onPointerUp: _onAreaPointerUp,
+                            ),
+                          ),
+                          if (_areaStartLocal != null && _areaEndLocal != null)
+                            Positioned.fromRect(
+                              rect: Rect.fromPoints(_areaStartLocal!, _areaEndLocal!),
+                              child: IgnorePointer(
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: _tintColor(_tint).withValues(alpha: 0.32),
+                                    border: Border.all(color: _tintColor(_tint), width: 1.5),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   if (_hasSelection)
                     Positioned(
                       left: 12,
                       right: 12,
                       bottom: 16,
                       child: _SelectionActionBar(
-                        preview: _selectedText,
+                        preview: _selectedText.isNotEmpty ? _selectedText : 'Marked area on this page',
                         tint: _tint,
                         onTint: (c) => setState(() => _tint = c),
                         onHighlight: () => _saveHighlight(library),
                         onNote: () => _noteFromSelection(library),
                         onSend: () => _sendSelectionToFriend(library),
-                        onClear: () => setState(() => _selections = const []),
+                        onClear: () => setState(() {
+                          _selections = const [];
+                          _areaRects = const [];
+                          _areaStartLocal = null;
+                          _areaEndLocal = null;
+                        }),
                       ),
                     ),
                 ],
@@ -281,25 +577,40 @@ class _BookReaderPageState extends State<BookReaderPage> {
     final library = context.read<LibraryProvider>();
     for (final h in library.highlights) {
       if (h.pageNo != page.pageNumber) continue;
-      final paint = Paint()
-        ..color = _tintColor(h.textColor).withValues(alpha: 0.38)
-        ..style = PaintingStyle.fill;
-
+      final color = _tintColor(h.textColor).withValues(alpha: 0.38);
       final rectMaps = _rectsFromHighlight(h);
       if (rectMaps.isEmpty) continue;
       for (final map in rectMaps) {
-        final left = (map['left'] as num?)?.toDouble();
-        final top = (map['top'] as num?)?.toDouble();
-        final right = (map['right'] as num?)?.toDouble();
-        final bottom = (map['bottom'] as num?)?.toDouble();
-        if (left == null || top == null || right == null || bottom == null) continue;
-        final pdfRect = PdfRect(left, top, right, bottom);
-        canvas.drawRect(
-          pdfRect.toRectInPageRect(page: page, pageRect: pageRect),
-          paint,
-        );
+        _drawPdfMapRect(canvas, pageRect, page, map, color);
       }
     }
+  }
+
+  void _paintPendingArea(Canvas canvas, Rect pageRect, PdfPage page) {
+    for (final map in _areaRects) {
+      if (map['page'] != page.pageNumber) continue;
+      _drawPdfMapRect(canvas, pageRect, page, map, _tintColor(_tint).withValues(alpha: 0.28));
+    }
+  }
+
+  void _drawPdfMapRect(
+    Canvas canvas,
+    Rect pageRect,
+    PdfPage page,
+    Map<String, dynamic> map,
+    Color color,
+  ) {
+    final left = (map['left'] as num?)?.toDouble();
+    final top = (map['top'] as num?)?.toDouble();
+    final right = (map['right'] as num?)?.toDouble();
+    final bottom = (map['bottom'] as num?)?.toDouble();
+    if (left == null || top == null || right == null || bottom == null) return;
+    canvas.drawRect(
+      PdfRect(left, top, right, bottom).toRectInPageRect(page: page, pageRect: pageRect),
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.fill,
+    );
   }
 
   List<Map<String, dynamic>> _rectsFromHighlight(PageHighlight h) {
@@ -326,25 +637,32 @@ class _BookReaderPageState extends State<BookReaderPage> {
   }
 
   List<Map<String, dynamic>> _selectionRects() {
+    if (_areaRects.isNotEmpty) return List<Map<String, dynamic>>.from(_areaRects);
     final out = <Map<String, dynamic>>[];
     for (final selection in _selections) {
       if (selection.isEmpty) continue;
       for (final range in selection.ranges) {
         final frag = range.toTextRangeWithFragments(selection.pageText);
         if (frag == null) continue;
-        out.add({
-          'left': frag.bounds.left,
-          'top': frag.bounds.top,
-          'right': frag.bounds.right,
-          'bottom': frag.bounds.bottom,
-          'page': selection.pageNumber,
-        });
+        for (final rect in frag.enumerateRectsForRange()) {
+          out.add({
+            'left': rect.left,
+            'top': rect.top,
+            'right': rect.right,
+            'bottom': rect.bottom,
+            'page': selection.pageNumber,
+          });
+        }
       }
     }
     return out;
   }
 
   int _selectionPage() {
+    if (_areaRects.isNotEmpty) {
+      final page = _areaRects.first['page'];
+      if (page is int) return page;
+    }
     for (final s in _selections) {
       if (s.isNotEmpty) return s.pageNumber;
     }
@@ -352,17 +670,21 @@ class _BookReaderPageState extends State<BookReaderPage> {
   }
 
   Future<void> _saveHighlight(LibraryProvider library) async {
-    final text = _selectedText;
-    if (text.isEmpty) return;
+    final text = _selectedText.isNotEmpty ? _selectedText : 'Marked area';
+    final rects = _selectionRects();
+    if (text.isEmpty && rects.isEmpty) return;
     await library.addHighlight(
       selectedText: text,
       pageNo: _selectionPage(),
-      rects: _selectionRects(),
+      rects: rects,
       color: _tint,
     );
     if (!mounted) return;
     setState(() {
       _selections = const [];
+      _areaRects = const [];
+      _areaStartLocal = null;
+      _areaEndLocal = null;
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Highlight saved'), duration: Duration(seconds: 1)),
@@ -595,13 +917,17 @@ class _BookReaderPageState extends State<BookReaderPage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       subtitle: Text(
-                        h.note.isEmpty
-                            ? 'Page ${h.pageNo} • ${h.textColor}'
-                            : 'Page ${h.pageNo} • ${h.note}',
+                        h.note.isEmpty ? 'Page ${h.pageNo}' : 'Page ${h.pageNo} • ${h.note}',
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline),
-                        onPressed: () => library.deleteHighlight(h),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _ColorDot(color: _tintColor(h.textColor), selected: true, size: 14),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline),
+                            onPressed: () => library.deleteHighlight(h),
+                          ),
+                        ],
                       ),
                       onTap: () {
                         _controller?.goToPage(pageNumber: h.pageNo);
@@ -679,14 +1005,17 @@ class _SelectionActionBar extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                for (final c in const ['amber', 'mint', 'rose'])
+                for (final c in const [
+                  ('amber', Color(0xFFFBBF24)),
+                  ('mint', Color(0xFF34D399)),
+                  ('rose', Color(0xFFFB7185)),
+                ])
                   Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(c),
-                      selected: tint == c,
-                      onSelected: (_) => onTint(c),
-                      visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.only(right: 10),
+                    child: _ColorDot(
+                      color: c.$2,
+                      selected: tint == c.$1,
+                      onTap: () => onTint(c.$1),
                     ),
                   ),
               ],
@@ -729,5 +1058,123 @@ class _SelectionActionBar extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _OutlineTile extends StatelessWidget {
+  const _OutlineTile({
+    required this.node,
+    required this.depth,
+    required this.onTap,
+  });
+
+  final BookTocEntry node;
+  final int depth;
+  final void Function(BookTocEntry node) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final title = node.title.trim().isEmpty ? 'Untitled' : node.title.trim();
+    final page = node.displayPage;
+    final pageLabel = page == null
+        ? null
+        : Text(
+            '$page',
+            style: const TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+            ),
+          );
+
+    if (node.children.isEmpty) {
+      return ListTile(
+        dense: true,
+        contentPadding: EdgeInsets.only(left: 16 + depth * 14, right: 12),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: depth == 0 ? FontWeight.w800 : FontWeight.w600,
+            fontSize: 14,
+          ),
+        ),
+        trailing: pageLabel,
+        onTap: node.pageNumber == null ? null : () => onTap(node),
+      );
+    }
+
+    return Theme(
+      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        initiallyExpanded: depth == 0,
+        tilePadding: EdgeInsets.only(left: 8 + depth * 12, right: 8),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: depth == 0 ? FontWeight.w800 : FontWeight.w700,
+            fontSize: 14,
+          ),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (page != null && node.pageNumber != null)
+              TextButton(
+                onPressed: () => onTap(node),
+                child: pageLabel!,
+              ),
+            const Icon(Icons.expand_more_rounded, size: 20),
+          ],
+        ),
+        children: node.children
+            .map(
+              (child) => _OutlineTile(
+                node: child,
+                depth: depth + 1,
+                onTap: onTap,
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
+class _ColorDot extends StatelessWidget {
+  const _ColorDot({
+    required this.color,
+    required this.selected,
+    this.onTap,
+    this.size = 28,
+  });
+
+  final Color color;
+  final bool selected;
+  final VoidCallback? onTap;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final dot = Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: selected ? AppColors.textPrimary : Colors.white,
+          width: selected ? 2.5 : 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.45),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+    );
+    if (onTap == null) return dot;
+    return GestureDetector(onTap: onTap, child: dot);
   }
 }

@@ -1,3 +1,77 @@
+import 'bundled_book_outlines.dart';
+
+class BookTocEntry {
+  const BookTocEntry({
+    required this.title,
+    this.pageNumber,
+    this.printedPage,
+    this.children = const [],
+  });
+
+  final String title;
+  final int? pageNumber;
+  final int? printedPage;
+  final List<BookTocEntry> children;
+
+  int? get displayPage => printedPage ?? pageNumber;
+
+  factory BookTocEntry.fromJson(Map<String, dynamic> json) {
+    final page = json['page'] ?? json['pageNumber'] ?? json['page_no'];
+    final printed = json['printed'] ?? json['printedPage'];
+    final kids = json['children'];
+    return BookTocEntry(
+      title: (json['title'] as String?)?.trim() ?? 'Untitled',
+      pageNumber: page is int ? page : int.tryParse('$page'),
+      printedPage: printed is int ? printed : int.tryParse('$printed'),
+      children: kids is List
+          ? kids
+              .whereType<Map>()
+              .map((e) => BookTocEntry.fromJson(Map<String, dynamic>.from(e)))
+              .toList()
+          : const [],
+    );
+  }
+
+  static List<BookTocEntry> parseList(dynamic raw) {
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map>()
+        .map((e) => BookTocEntry.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
+  }
+}
+
+List<BookTocEntry> _entriesFromRaw(List<List<Object?>> rows) {
+  return rows
+      .map(
+        (row) => BookTocEntry(
+          title: row[0] as String,
+          pageNumber: row[1] as int?,
+          printedPage: row[2] as int?,
+        ),
+      )
+      .toList();
+}
+
+/// Printed TOC for CamScanner PDFs that have no embedded outline.
+List<BookTocEntry> bundledOutlineFor({required String id, String? title}) {
+  final key = id.toLowerCase();
+  final exact = kBundledOutlineRaw[key];
+  if (exact != null) return _entriesFromRaw(exact);
+  for (final entry in kBundledOutlineRaw.entries) {
+    if (key.contains(entry.key) || entry.key.contains(key)) {
+      return _entriesFromRaw(entry.value);
+    }
+  }
+  final t = (title ?? '').toLowerCase();
+  if (t.contains('excel community medicine')) {
+    return _entriesFromRaw(
+      kBundledOutlineRaw['excel-community-medicine-13th-edition'] ?? const [],
+    );
+  }
+  return const [];
+}
+
 class CatalogBook {
   const CatalogBook({
     required this.id,
@@ -10,6 +84,7 @@ class CatalogBook {
     this.format = 'pdf',
     this.r2Key,
     this.contentKind = 'book',
+    this.outline = const [],
   });
 
   final String id;
@@ -22,6 +97,7 @@ class CatalogBook {
   final String format;
   final String? r2Key;
   final String contentKind; // book | past_paper
+  final List<BookTocEntry> outline;
 
   bool get isPastPaper {
     if (contentKind == 'past_paper') return true;
@@ -44,6 +120,7 @@ class CatalogBook {
         ? (inferredPastPaper ? 'past_paper' : 'book')
         : rawKind;
 
+    final parsed = BookTocEntry.parseList(json['outline']);
     return CatalogBook(
       id: id,
       title: (json['title'] as String?)?.trim().isNotEmpty == true
@@ -57,6 +134,9 @@ class CatalogBook {
       format: json['format'] as String? ?? 'pdf',
       r2Key: json['r2_key'] as String?,
       contentKind: contentKind,
+      outline: parsed.isNotEmpty
+          ? parsed
+          : bundledOutlineFor(id: id, title: json['title'] as String?),
     );
   }
 
