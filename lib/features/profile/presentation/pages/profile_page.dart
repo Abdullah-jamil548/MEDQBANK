@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../app/routes.dart';
@@ -11,6 +12,14 @@ import '../../../session/presentation/providers/session_provider.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+  /// Formats a UTC ISO timestamp as Pakistan Standard Time (UTC+5).
+  static String formatAccessUntilPkt(String raw) {
+    final parsed = DateTime.tryParse(raw);
+    if (parsed == null) return raw;
+    final pkt = parsed.toUtc().add(const Duration(hours: 5));
+    return '${DateFormat('d MMM yyyy, h:mm a').format(pkt)} PKT';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -212,7 +221,7 @@ class ProfilePage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(bottom: rs.scale(12)),
               child: Text(
-                'Access until ${session.subscriptionExpiresAt}',
+                'Access until ${formatAccessUntilPkt(session.subscriptionExpiresAt!)}',
                 style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontWeight: FontWeight.w600,

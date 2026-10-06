@@ -5,6 +5,8 @@ import '../../../../app/routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../domain/entities/catalog_book.dart';
 import '../../../../domain/entities/chat_message.dart';
+import '../../../../domain/entities/friend.dart';
+import '../../../friends/presentation/providers/friends_provider.dart';
 import '../../../library/presentation/providers/library_provider.dart';
 import '../providers/chat_provider.dart';
 
@@ -139,9 +141,45 @@ class _ChatThreadPageState extends State<ChatThreadPage> {
     }
   }
 
+  String _formatLastSeen(DateTime? at) {
+    if (at == null) return 'Last seen unknown';
+    final local = at.toLocal();
+    final diff = DateTime.now().difference(local);
+    if (diff.inMinutes < 1) return 'Last seen just now';
+    if (diff.inMinutes < 60) return 'Last seen ${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return 'Last seen ${diff.inHours}h ago';
+    if (diff.inDays < 7) return 'Last seen ${diff.inDays}d ago';
+    return 'Last seen ${local.day}/${local.month}/${local.year}';
+  }
+
+  ({String text, Color color}) _presenceSubtitle(Friend? friend, ChatProvider chat) {
+    if (chat.peerTyping) {
+      return (text: 'typing…', color: AppColors.secondary);
+    }
+    if (friend == null) {
+      return (text: 'Last seen unknown', color: AppColors.textMuted);
+    }
+    if (friend.presenceHidden) {
+      return (text: 'Status hidden', color: AppColors.textMuted);
+    }
+    if (friend.isOnline == true) {
+      return (text: 'Online', color: AppColors.success);
+    }
+    return (text: _formatLastSeen(friend.lastSeenAt), color: AppColors.textMuted);
+  }
+
   @override
   Widget build(BuildContext context) {
     final chat = context.watch<ChatProvider>();
+    final friends = context.watch<FriendsProvider>();
+    Friend? friend;
+    for (final f in friends.friends) {
+      if (f.userId == widget.friendUserId) {
+        friend = f;
+        break;
+      }
+    }
+    final presence = _presenceSubtitle(friend, chat);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_scroll.hasClients || chat.messages.isEmpty) return;
@@ -157,15 +195,11 @@ class _ChatThreadPageState extends State<ChatThreadPage> {
           children: [
             Text(widget.friendName),
             Text(
-              chat.peerTyping
-                  ? 'typing…'
-                  : (chat.socketConnected ? 'Live' : 'Connecting…'),
+              presence.text,
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
-                color: chat.peerTyping
-                    ? AppColors.secondary
-                    : (chat.socketConnected ? AppColors.success : AppColors.warning),
+                color: presence.color,
               ),
             ),
           ],
