@@ -72,6 +72,52 @@ List<BookTocEntry> bundledOutlineFor({required String id, String? title}) {
   return const [];
 }
 
+/// Past-paper shape: option MCQs vs Q&A (SEQ/UQ).
+enum PaperFormat {
+  mcqOptions,
+  qa,
+  mixed,
+}
+
+PaperFormat inferPaperFormat({
+  required String id,
+  required String title,
+  String blurb = '',
+  String? apiValue,
+}) {
+  final raw = (apiValue ?? '').trim().toLowerCase();
+  if (raw == 'mcq_options' || raw == 'mcq') return PaperFormat.mcqOptions;
+  if (raw == 'qa' || raw == 'seq') return PaperFormat.qa;
+  if (raw == 'mixed') return PaperFormat.mixed;
+
+  final blob = '$id $title $blurb'.toLowerCase();
+  const mcqOverrides = [
+    'embryology past papers mcqs',
+    'anatomy topic wise',
+    'general anatomy (key to uhs)',
+    'histology (key to uhs)',
+    'lower limb past papers',
+  ];
+  for (final key in mcqOverrides) {
+    if (blob.contains(key)) return PaperFormat.mcqOptions;
+  }
+  if (RegExp(r'\bmcqs?\b|\bbcqs?\b|topic\s*wise|past\s*solved\s*mcqs?')
+      .hasMatch(blob)) {
+    return PaperFormat.mcqOptions;
+  }
+  if (RegExp(
+    r'\btopical\b|\bseq\b|short\s*essay|university\s*questions|\buqs?\b',
+  ).hasMatch(blob)) {
+    return PaperFormat.qa;
+  }
+  if (RegExp(
+    r'key\s*to\s*uhs|compiled\s*by|amna\s*iqbal|block-?\d|chapter-?\d\s*book',
+  ).hasMatch(blob)) {
+    return PaperFormat.mixed;
+  }
+  return PaperFormat.qa;
+}
+
 class CatalogBook {
   const CatalogBook({
     required this.id,
@@ -84,6 +130,7 @@ class CatalogBook {
     this.format = 'pdf',
     this.r2Key,
     this.contentKind = 'book',
+    this.paperFormat = PaperFormat.qa,
     this.outline = const [],
   });
 
@@ -97,6 +144,7 @@ class CatalogBook {
   final String format;
   final String? r2Key;
   final String contentKind; // book | past_paper
+  final PaperFormat paperFormat;
   final List<BookTocEntry> outline;
 
   bool get isPastPaper {
@@ -108,10 +156,20 @@ class CatalogBook {
     return false;
   }
 
+  bool get isMcqOptionsPaper =>
+      paperFormat == PaperFormat.mcqOptions || paperFormat == PaperFormat.mixed;
+
+  bool get isQaPaper =>
+      paperFormat == PaperFormat.qa || paperFormat == PaperFormat.mixed;
+
   factory CatalogBook.fromJson(Map<String, dynamic> json) {
     final id = json['book_id'] as String? ?? '';
     final author = json['author'] as String? ?? 'Unknown';
     final yearLabel = json['year_label'] as String? ?? '';
+    final title = (json['title'] as String?)?.trim().isNotEmpty == true
+        ? json['title'] as String
+        : (id.isNotEmpty ? id : 'Untitled');
+    final blurb = json['blurb'] as String? ?? '';
     final rawKind = (json['content_kind'] as String?)?.trim();
     final inferredPastPaper = id.startsWith('pp-') ||
         yearLabel.toLowerCase() == 'past papers' ||
@@ -123,20 +181,24 @@ class CatalogBook {
     final parsed = BookTocEntry.parseList(json['outline']);
     return CatalogBook(
       id: id,
-      title: (json['title'] as String?)?.trim().isNotEmpty == true
-          ? json['title'] as String
-          : (id.isNotEmpty ? id : 'Untitled'),
+      title: title,
       author: author,
       subject: json['subject'] as String? ?? '',
       yearLabel: yearLabel,
-      blurb: json['blurb'] as String? ?? '',
+      blurb: blurb,
       sizeBytes: json['size_bytes'] as int? ?? json['size'] as int?,
       format: json['format'] as String? ?? 'pdf',
       r2Key: json['r2_key'] as String?,
       contentKind: contentKind,
+      paperFormat: inferPaperFormat(
+        id: id,
+        title: title,
+        blurb: blurb,
+        apiValue: json['paper_format'] as String?,
+      ),
       outline: parsed.isNotEmpty
           ? parsed
-          : bundledOutlineFor(id: id, title: json['title'] as String?),
+          : bundledOutlineFor(id: id, title: title),
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/network/api_client.dart';
 import '../../../../core/storage/book_cache.dart';
+import '../../../../core/utils/async_tap_guard.dart';
 import '../../../../domain/entities/catalog_book.dart';
 import '../../../../domain/repositories/books_repository.dart';
 
@@ -27,6 +28,10 @@ class LibraryProvider extends ChangeNotifier {
   int currentPage = 1;
   int? pendingInitialPage;
   bool pendingOpenContents = false;
+
+  /// Book id currently being opened (guards multi-tap navigate).
+  String? openingBookId;
+  bool get isOpeningBook => openingBookId != null;
 
   List<PageHighlight> highlights = [];
   List<PageNote> notes = [];
@@ -77,7 +82,11 @@ class LibraryProvider extends ChangeNotifier {
   }
 
   Future<void> downloadBook(CatalogBook book) async {
-    if (downloadProgress.containsKey(book.id)) return;
+    // Retap while downloading cancels immediately.
+    if (downloadProgress.containsKey(book.id)) {
+      cancelDownload(book.id);
+      return;
+    }
     downloadError = null;
     downloadProgress[book.id] = 0.01;
     notifyListeners();
@@ -147,34 +156,65 @@ class LibraryProvider extends ChangeNotifier {
     _cancelTokens[bookId]?.cancel('cancelled');
   }
 
-  Future<bool> openBook(CatalogBook book, {int? initialPage, bool openContents = false}) async {
-    selectedBook = book;
-    localPdfPath = null;
-    pdfBytes = null;
-    pendingInitialPage = initialPage != null && initialPage > 0 ? initialPage : null;
-    pendingOpenContents = openContents;
-
-    if (kIsWeb) {
-      final bytes = await _cache.memoryBytes(book.id);
-      if (bytes == null || bytes.isEmpty) {
-        downloadError = 'Download the book first';
-        notifyListeners();
-        return false;
-      }
-      pdfBytes = bytes;
-    } else {
-      final file = await _cache.localFile(book.id);
-      if (file == null) {
-        downloadError = 'Download the book first';
-        notifyListeners();
-        return false;
-      }
-      localPdfPath = file.path;
-    }
-    currentPage = pendingInitialPage ?? 1;
-    await _loadAnnotations(book.id);
+  void cancelOpenBook() {
+    if (openingBookId == null) return;
+    AsyncTapGuard.instance.cancel(reason: 'user-cancel');
+    openingBookId = null;
     notifyListeners();
-    return true;
+  }
+
+  Future<bool> openBook(CatalogBook book, {int? initialPage, bool openContents = false}) async {
+    var opened = false;
+    final key = 'open-book:${book.id}';
+
+    final outcome = await AsyncTapGuard.instance.run(key, (token) async {
+      openingBookId = book.id;
+      notifyListeners();
+      try {
+        selectedBook = book;
+        localPdfPath = null;
+        pdfBytes = null;
+        pendingInitialPage = initialPage != null && initialPage > 0 ? initialPage : null;
+        pendingOpenContents = openContents;
+
+        if (kIsWeb) {
+          final bytes = await _cache.memoryBytes(book.id);
+          if (token.isCancelled) return;
+          if (bytes == null || bytes.isEmpty) {
+            downloadError = 'Download the book first';
+            notifyListeners();
+            return;
+          }
+          pdfBytes = bytes;
+        } else {
+          final file = await _cache.localFile(book.id);
+          if (token.isCancelled) return;
+          if (file == null) {
+            downloadError = 'Download the book first';
+            notifyListeners();
+            return;
+          }
+          localPdfPath = file.path;
+        }
+        currentPage = pendingInitialPage ?? 1;
+        await _loadAnnotations(book.id);
+        if (token.isCancelled) return;
+        opened = true;
+        notifyListeners();
+      } finally {
+        if (openingBookId == book.id) {
+          openingBookId = null;
+          notifyListeners();
+        }
+      }
+    });
+
+    if (outcome == AsyncTapOutcome.cancelled || outcome == AsyncTapOutcome.ignored) {
+      openingBookId = null;
+      notifyListeners();
+      return false;
+    }
+    return opened;
   }
 
   int? consumePendingInitialPage() {

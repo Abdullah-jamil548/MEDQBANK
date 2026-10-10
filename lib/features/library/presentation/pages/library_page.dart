@@ -227,25 +227,40 @@ class _BookCard extends StatelessWidget {
             children: [
               Expanded(
                 child: FilledButton(
-                  onPressed: isDownloaded
-                      ? () async {
-                          final ok = await library.openBook(book);
-                          if (!context.mounted || !ok) return;
-                          Navigator.of(context).pushNamed(AppRoutes.bookReader);
-                        }
-                      : null,
-                  child: Text(isDownloaded ? 'Open' : 'Download first'),
+                  onPressed: !isDownloaded
+                      ? null
+                      : downloading
+                          ? () => library.cancelDownload(book.id)
+                          : () async {
+                              if (library.openingBookId == book.id) {
+                                library.cancelOpenBook();
+                                return;
+                              }
+                              if (library.isOpeningBook) return;
+                              final ok = await library.openBook(book);
+                              if (!context.mounted || !ok) return;
+                              await Navigator.of(context).pushNamed(AppRoutes.bookReader);
+                            },
+                  child: Text(
+                    !isDownloaded
+                        ? 'Download first'
+                        : library.openingBookId == book.id
+                            ? 'Opening… tap to cancel'
+                            : 'Open',
+                  ),
                 ),
               ),
               if (isDownloaded) ...[
                 const SizedBox(width: 8),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () async {
-                      final ok = await library.openBook(book, openContents: true);
-                      if (!context.mounted || !ok) return;
-                      Navigator.of(context).pushNamed(AppRoutes.bookReader);
-                    },
+                    onPressed: library.isOpeningBook
+                        ? null
+                        : () async {
+                            final ok = await library.openBook(book, openContents: true);
+                            if (!context.mounted || !ok) return;
+                            await Navigator.of(context).pushNamed(AppRoutes.bookReader);
+                          },
                     child: const Text('Contents'),
                   ),
                 ),

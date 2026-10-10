@@ -1,0 +1,271 @@
+{
+  "set_id": "anatomy-lower-limb-scan-mcqs",
+  "subject": "Anatomy",
+  "title": "Lower Limb Past Papers MCQs",
+  "source_pdf": "Lower Limb Past Papers_084723.pdf",
+  "topic": "Gross: Lower Limb",
+  "presentation": "image",
+  "question_count": 8,
+  "answered_count": 0,
+  "text_count": 0,
+  "image_count": 8,
+  "questions": [
+    {
+      "sort_order": 1,
+      "topic": "Gross: Lower Limb",
+      "stem": "Q2 — see image (page 8)",
+      "explanation": "Image-backed; OCR text was too weak for a full stem.",
+      "answer_key": null,
+      "source_page": 8,
+      "stem_image": "assets/mcqs/images/lower-limb/p08_R.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 2,
+      "topic": "Gross: Lower Limb",
+      "stem": "Q8 — see image (page 8)",
+      "explanation": "Image-backed; OCR text was too weak for a full stem.",
+      "answer_key": null,
+      "source_page": 8,
+      "stem_image": "assets/mcqs/images/lower-limb/p08_L.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 3,
+      "topic": "Gross: Lower Limb",
+      "stem": "Page 14 (L) — answer from the image",
+      "explanation": "Image-backed scan item. Review answer_key before trusting score.",
+      "answer_key": null,
+      "source_page": 14,
+      "stem_image": "assets/mcqs/images/lower-limb/p14_L.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 4,
+      "topic": "Gross: Lower Limb",
+      "stem": "Page 14 (R) — answer from the image",
+      "explanation": "Image-backed scan item. Review answer_key before trusting score.",
+      "answer_key": null,
+      "source_page": 14,
+      "stem_image": "assets/mcqs/images/lower-limb/p14_R.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 5,
+      "topic": "Gross: Lower Limb",
+      "stem": "Page 20 (L) — answer from the image",
+      "explanation": "Image-backed scan item. Review answer_key before trusting score.",
+      "answer_key": null,
+      "source_page": 20,
+      "stem_image": "assets/mcqs/images/lower-limb/p20_L.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 6,
+      "topic": "Gross: Lower Limb",
+      "stem": "Page 23 (L) — answer from the image",
+      "explanation": "Image-backed scan item. Review answer_key before trusting score.",
+      "answer_key": null,
+      "source_page": 23,
+      "stem_image": "assets/mcqs/images/lower-limb/p23_L.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 7,
+      "topic": "Gross: Lower Limb",
+      "stem": "Page 24 (L) — answer from the image",
+      "explanation": "Image-backed scan item. Review answer_key before trusting score.",
+      "answer_key": null,
+      "source_page": 24,
+      "stem_image": "assets/mcqs/images/lower-limb/p24_L.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 8,
+      "topic": "Gross: Lower Limb",
+      "stem": "Page 25 (L) — answer from the image",
+      "explanation": "Image-backed scan item. Review answer_key before trusting score.",
+      "answer_key": null,
+      "source_page": 25,
+      "stem_image": "assets/mcqs/images/lower-limb/p25_L.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    }
+  ],
+  "notes": "OpenCV deskew + Tesseract. Text MCQs extracted when readable; image mode only for unreadable pages or figure-style options."
+}

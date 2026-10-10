@@ -1,0 +1,1104 @@
+{
+  "set_id": "embryology-past-papers-mcqs",
+  "subject": "Embryology",
+  "title": "Embryology Past Papers MCQs",
+  "source_pdf": "Embryology past papers MCQs(0)_102030.pdf",
+  "topic": null,
+  "question_count": 40,
+  "answered_count": 37,
+  "questions": [
+    {
+      "sort_order": 2,
+      "topic": null,
+      "stem": "Alla itois is derived from:",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Foregut"
+        },
+        {
+          "key": "B",
+          "text": "Midgut"
+        },
+        {
+          "key": "C",
+          "text": "Hindgut"
+        },
+        {
+          "key": "D",
+          "text": "Mesoderm of connecting stalk"
+        },
+        {
+          "key": "E",
+          "text": "None of the above"
+        }
+      ]
+    },
+    {
+      "sort_order": 3,
+      "topic": null,
+      "stem": "The exchange of genetic material via crossover occurs: I",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Foetal blood"
+        },
+        {
+          "key": "B",
+          "text": "Maternal blood"
+        },
+        {
+          "key": "C",
+          "text": "Mixture of maternal and foetal"
+        },
+        {
+          "key": "D",
+          "text": "Blood with high CO; content ~ e) Blood with low O, content"
+        },
+        {
+          "key": "E",
+          "text": "Outer cell mass 7"
+        }
+      ]
+    },
+    {
+      "sort_order": 4,
+      "topic": null,
+      "stem": "Sacrococcygeal teratoma is formed due to persistence of:",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 6,
+      "options": [
+        {
+          "key": "A",
+          "text": "Caudal neuropore"
+        },
+        {
+          "key": "B",
+          "text": "Notochord"
+        },
+        {
+          "key": "C",
+          "text": "Allantoise"
+        },
+        {
+          "key": "D",
+          "text": "Primitive streak"
+        },
+        {
+          "key": "E",
+          "text": "Prochordal plate"
+        }
+      ]
+    },
+    {
+      "sort_order": 5,
+      "topic": null,
+      "stem": "When does the formation of primary spermatocyte begin?",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "during 4th week of intrauterine life"
+        },
+        {
+          "key": "B",
+          "text": "during 5th month of intrauterine life"
+        },
+        {
+          "key": "C",
+          "text": "at birth"
+        },
+        {
+          "key": "D",
+          "text": "at 5th month of infancy"
+        },
+        {
+          "key": "E",
+          "text": "at puberty 2"
+        }
+      ]
+    },
+    {
+      "sort_order": 7,
+      "topic": null,
+      "stem": "After = embryonic folding _ the \"I communication between the midgut and the yolk sac is known as the:",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Between the maternal and paternal I - chromosomes After fertilization 1 -b) During the second meiotic division. ¢) During mitosis"
+        },
+        {
+          "key": "B",
+          "text": "Sclerotome & Myotome as ¢) Dermatome & Scleromyotome"
+        },
+        {
+          "key": "C",
+          "text": "Occurs about 6 days after ovulation"
+        },
+        {
+          "key": "D",
+          "text": "During pairing of homologous chromosomes"
+        },
+        {
+          "key": "E",
+          "text": "After the first meiotic division. a The fetal period extends from the:"
+        }
+      ]
+    },
+    {
+      "sort_order": 8,
+      "topic": null,
+      "stem": "1st week to 2nd week",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 12,
+      "options": [
+        {
+          "key": "B",
+          "text": "3rd week to end of 8 week"
+        },
+        {
+          "key": "C",
+          "text": "9th week to birth growth"
+        },
+        {
+          "key": "D",
+          "text": "After birth €) 4th to 10th week SS ee"
+        }
+      ]
+    },
+    {
+      "sort_order": 9,
+      "topic": null,
+      "stem": "Ectoderm, -_-_-_- EN ee eae 14, A secondary villus is: _ +a) Cytotrophoblast covered with syncytiotrophoblast",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "B",
+          "text": "Extra embryonic mesoderm covered by cytotrophoblast and eyncytiotrophoblast"
+        },
+        {
+          "key": "C",
+          "text": "Blood vessels migrating into the core of.the villus"
+        },
+        {
+          "key": "D",
+          "text": "Extra embryonic mesoderm covered by syncytiotrophoblast"
+        },
+        {
+          "key": "E",
+          "text": "None of the above"
+        }
+      ]
+    },
+    {
+      "sort_order": 17,
+      "topic": null,
+      "stem": "What is the most common condition associated with spontaneous abortions?",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Maternal imprinting"
+        },
+        {
+          "key": "B",
+          "text": "Paternal imprinting"
+        },
+        {
+          "key": "C",
+          "text": "Ectopic pregnancy"
+        },
+        {
+          "key": "D",
+          "text": "Chromosomal anomaliés"
+        },
+        {
+          "key": "E",
+          "text": "Intrauterine growth retardetion"
+        }
+      ]
+    },
+    {
+      "sort_order": 20,
+      "topic": null,
+      "stem": "The intervilloys spaces of. placenta contain: ‘ :",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 9,
+      "options": [
+        {
+          "key": "A",
+          "text": "Foetalblood"
+        },
+        {
+          "key": "B",
+          "text": "12th day of menstrual cycle ; aR ¢) 14th day of menstrual cycle I ie d) 16th day of menstrual cycle - e) 20th day of menstrual cycle"
+        },
+        {
+          "key": "C",
+          "text": "Mixture of maternal and foetal :"
+        },
+        {
+          "key": "D",
+          "text": "Bldod with high CO, content ° LL tal I"
+        }
+      ]
+    },
+    {
+      "sort_order": 25,
+      "topic": null,
+      "stem": "The epiblast give rise to development of: : ‘a) Hypoblast",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Pouch of Douglas"
+        },
+        {
+          "key": "B",
+          "text": "Cytotrophoblast . i c) Syncytiotrophoblast f d) Prechordal plate 06Y : esis is development .: trom “1 ; *) glood islands ») existing vessels"
+        },
+        {
+          "key": "E",
+          "text": "Extraembryonic mesoderm (26, Commonest site for - ectopic pregnancy is:"
+        }
+      ]
+    },
+    {
+      "sort_order": 33,
+      "topic": null,
+      "stem": "troqectyfmaanancies occur most",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "Abdomen"
+        },
+        {
+          "key": "B",
+          "text": "Uterine tube"
+        },
+        {
+          "key": "C",
+          "text": "Ovary"
+        },
+        {
+          "key": "D",
+          "text": "Mesentery of the intestines ) Internal os of the uterus"
+        }
+      ]
+    },
+    {
+      "sort_order": 35,
+      "topic": null,
+      "stem": "The usual amount of amniotic fluid at - full term is:",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "100c"
+        },
+        {
+          "key": "B",
+          "text": "500-600cc"
+        },
+        {
+          "key": "C",
+          "text": "1000cc"
+        },
+        {
+          "key": "D",
+          "text": "2000cc __Ans.(C)"
+        }
+      ]
+    },
+    {
+      "sort_order": 38,
+      "topic": null,
+      "stem": "The primary oocyte undergoes ~.. maturation arrest in:",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Prophase '_b) Metaphase"
+        },
+        {
+          "key": "C",
+          "text": "Anaphase"
+        },
+        {
+          "key": "D",
+          "text": "Telophase"
+        },
+        {
+          "key": "E",
+          "text": "Prometaphase Pa OTe S SS eens: (A)"
+        }
+      ]
+    },
+    {
+      "sort_order": 39,
+      "topic": null,
+      "stem": "All of the following regarding fertilization are true EXCEPT:",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Fertilization results in start of new life"
+        },
+        {
+          "key": "B",
+          "text": "Itinitiates cleavage"
+        },
+        {
+          "key": "C",
+          "text": "Itdetermines the chromosomal sex"
+        },
+        {
+          "key": "D",
+          "text": "Ithas place in the ampulla of uterus"
+        },
+        {
+          "key": "E",
+          "text": "It results in. haploid number of : chromosomes"
+        }
+      ]
+    },
+    {
+      "sort_order": 40,
+      "topic": null,
+      "stem": "The most common site of ectopic pregnancy is:",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Abdomen"
+        },
+        {
+          "key": "B",
+          "text": "Fallopian tubes"
+        },
+        {
+          "key": "C",
+          "text": "Ovary"
+        },
+        {
+          "key": "D",
+          "text": "Mesentery of intestines ; e) internal os of uterus"
+        }
+      ]
+    },
+    {
+      "sort_order": 42,
+      "topic": null,
+      "stem": "During implantation, the blastocyst:",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Amniotic cavity 56"
+        },
+        {
+          "key": "B",
+          "text": "Meiosis ¢) Capacitation qd) Zona reaction -_&) Spermiogenesis a ein of lateral plate mesoderm I __ , lo the formation of: hs 9)"
+        },
+        {
+          "key": "C",
+          "text": "Cytotrophoblast"
+        },
+        {
+          "key": "D",
+          "text": "Syncytiotrophoblast"
+        },
+        {
+          "key": "E",
+          "text": "Zona pellucid . The process by which final I _- Maturation of sperm occurs is called: had"
+        }
+      ]
+    },
+    {
+      "sort_order": 46,
+      "topic": null,
+      "stem": "The intermediate mesoderm gives rise to:",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Urogenital system"
+        },
+        {
+          "key": "B",
+          "text": "Heart , c) Somites"
+        },
+        {
+          "key": "D",
+          "text": "Anterolateral body wall"
+        },
+        {
+          "key": "E",
+          "text": "Vertebral bodies"
+        }
+      ]
+    },
+    {
+      "sort_order": 48,
+      "topic": null,
+      "stem": "All of the following are the derivatives of the neural crest cells except:",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Melanocytes"
+        },
+        {
+          "key": "B",
+          "text": "The peripheral nervous system. ¢) Sensory epithelium of the ear, nose and eye. 3d) Epidermis"
+        },
+        {
+          "key": "E",
+          "text": "Dermis"
+        }
+      ]
+    },
+    {
+      "sort_order": 52,
+      "topic": null,
+      "stem": "Which: t ‘ :",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 6,
+      "options": [
+        {
+          "key": "A",
+          "text": "Cartilage and bone"
+        },
+        {
+          "key": "B",
+          "text": "Striated and smooth muscles _ ©) Segmented ganglia of spinal nerves"
+        },
+        {
+          "key": "D",
+          "text": "Blood and lymph cells"
+        },
+        {
+          "key": "E",
+          "text": "Wall of heart and blood and lymph"
+        }
+      ]
+    },
+    {
+      "sort_order": 53,
+      "topic": null,
+      "stem": "Choose the correct statement regarding the zona pellucida:",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 6,
+      "options": [
+        {
+          "key": "A",
+          "text": "Prevents polyspermy"
+        },
+        {
+          "key": "B",
+          "text": "Prevents interspecies fertilization"
+        },
+        {
+          "key": "C",
+          "text": "Prevents ectopic pregnancy"
+        },
+        {
+          "key": "D",
+          "text": "It surrounds the corona radiate"
+        },
+        {
+          "key": "E",
+          "text": "‘Itis acellular. :"
+        }
+      ]
+    },
+    {
+      "sort_order": 56,
+      "topic": null,
+      "stem": "The intervillous space of the placenta contains:",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "Maternal blood"
+        },
+        {
+          "key": "B",
+          "text": "Fetal blood"
+        },
+        {
+          "key": "C",
+          "text": "Maternal and fetal blood"
+        },
+        {
+          "key": "D",
+          "text": "Amniotic fluid"
+        }
+      ]
+    },
+    {
+      "sort_order": 58,
+      "topic": null,
+      "stem": "Intraembryonic © coelom appear: within:",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "Intermediate mesoderm"
+        },
+        {
+          "key": "B",
+          "text": "Lateral plate mesoderm"
+        },
+        {
+          "key": "C",
+          "text": "Paraxial mesoderm"
+        },
+        {
+          "key": "D",
+          "text": "Neural crest cells"
+        },
+        {
+          "key": "E",
+          "text": "Extraembryonic mesoderm"
+        }
+      ]
+    },
+    {
+      "sort_order": 59,
+      "topic": null,
+      "stem": "Cells from the primitive pit:",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "Adult hood"
+        },
+        {
+          "key": "B",
+          "text": "Birth"
+        },
+        {
+          "key": "C",
+          "text": "First Year of life"
+        },
+        {
+          "key": "D",
+          "text": "Intra uterine life"
+        },
+        {
+          "key": "E",
+          "text": "Puberty"
+        }
+      ]
+    },
+    {
+      "sort_order": 61,
+      "topic": null,
+      "stem": "After fertilization ectopic implantations most commonly occur in the: , I",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "Abdomen"
+        },
+        {
+          "key": "B",
+          "text": "Cervix :"
+        },
+        {
+          "key": "C",
+          "text": "Cranial to primitive heart ies d) Cranial to the prericardial Coelom pi e) Cranial fo-septum transversum"
+        },
+        {
+          "key": "D",
+          "text": "Peritoneal cavity"
+        },
+        {
+          "key": "E",
+          "text": "Uterine tube iveo wcas FoR US ANATOM, ives (62) Before cephalo-caudal foldin ~ ‘embryo, the fore brain lies; 9 of thy Caudal to i . membrane \" ropharynges Cranial to t 8 membrane ‘1 Orophanyngey"
+        }
+      ]
+    },
+    {
+      "sort_order": 63,
+      "topic": null,
+      "stem": "Which of these is NOT one the Phases : in mitosis ?",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "Anaphase"
+        },
+        {
+          "key": "B",
+          "text": "Telophase"
+        },
+        {
+          "key": "C",
+          "text": "Interphase"
+        },
+        {
+          "key": "D",
+          "text": "Prophase Y - e) Metaphase"
+        }
+      ]
+    },
+    {
+      "sort_order": 64,
+      "topic": null,
+      "stem": "Which of the following is the origin of the DNA of all human adult cells? i a) Paternal only dal b) Maternal only",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "Follicular phase of the ovarian oy’"
+        },
+        {
+          "key": "B",
+          "text": "Luteal phase of ovarian cycle"
+        },
+        {
+          "key": "C",
+          "text": "High levels of estrogen in the blood Tay, d) High levels of FSH in the blood aie: e) Maturation of the ovarian follicles:"
+        },
+        {
+          "key": "E",
+          "text": "d) Either paternal or maternal tt e) Unknown origin (65, The secretory phase of the menstrual ; cycle corresponds to the:"
+        }
+      ]
+    },
+    {
+      "sort_order": 66,
+      "topic": null,
+      "stem": "Normal mature sperm:",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "Alcohol"
+        },
+        {
+          "key": "B",
+          "text": "Cigarette smoking ¢) Thalidomide"
+        },
+        {
+          "key": "C",
+          "text": "Consist of 44 chromosomes I"
+        },
+        {
+          "key": "D",
+          "text": "In syncytiotrophoblast"
+        },
+        {
+          "key": "E",
+          "text": "From hypoblast Sy Which toxic agent is least responsible I - for terratogenicity” 74"
+        }
+      ]
+    },
+    {
+      "sort_order": 72,
+      "topic": null,
+      "stem": "Secondary oocytes complete its second meiotic division:",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 8,
+      "options": [
+        {
+          "key": "A",
+          "text": "Foregut"
+        },
+        {
+          "key": "B",
+          "text": "Midgut"
+        },
+        {
+          "key": "C",
+          "text": "Hindgut"
+        },
+        {
+          "key": "D",
+          "text": "Mesoderm of connecting stalk"
+        },
+        {
+          "key": "E",
+          "text": "Urinary bladder Ans. (Cc) :"
+        }
+      ]
+    },
+    {
+      "sort_order": 74,
+      "topic": null,
+      "stem": "Intraembryonic coelom appears within: =~ a) Intermediate mesoderm",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 8,
+      "options": [
+        {
+          "key": "B",
+          "text": "Lateral plate mesoderm"
+        },
+        {
+          "key": "C",
+          "text": "Paraxial mesoderm"
+        },
+        {
+          "key": "D",
+          "text": "Extraembryonic mesoderm"
+        },
+        {
+          "key": "E",
+          "text": "Endoderm a"
+        }
+      ]
+    },
+    {
+      "sort_order": 75,
+      "topic": null,
+      "stem": "What is the structural basis of the blood testis barrier? :",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 8,
+      "options": [
+        {
+          "key": "A",
+          "text": "Basement membrane"
+        },
+        {
+          "key": "B",
+          "text": "Epiblast to yolk sac to dorsal mesentery to genital ridge ‘"
+        },
+        {
+          "key": "C",
+          "text": "Epiblast to hypoblast to genital ridge"
+        },
+        {
+          "key": "D",
+          "text": "Epiblast to mesoderm to genital ridge"
+        },
+        {
+          "key": "E",
+          "text": "Epiblast to yolk sac to mesoderm to genital ridge Rye"
+        }
+      ]
+    },
+    {
+      "sort_order": 77,
+      "topic": null,
+      "stem": "Maximum number of oogonia re reached by: ~ :",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 9,
+      "options": [
+        {
+          "key": "A",
+          "text": "5th month.of development - )"
+        },
+        {
+          "key": "B",
+          "text": "7th month of development"
+        },
+        {
+          "key": "C",
+          "text": "8th month of development ©"
+        },
+        {
+          "key": "D",
+          "text": "Atthe time of birth :"
+        },
+        {
+          "key": "E",
+          "text": "At the. time of puberty"
+        }
+      ]
+    },
+    {
+      "sort_order": 78,
+      "topic": null,
+      "stem": "After embryonic folding. the communication between the midgut and the yolk sac is known as the: °",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 9,
+      "options": [
+        {
+          "key": "A",
+          "text": "Allantois :"
+        },
+        {
+          "key": "B",
+          "text": "Is thé last step in the process of gastrulation a"
+        },
+        {
+          "key": "C",
+          "text": "Appears in the cranial part of the embryonic disc ; -d) Extends: from the primitive node to the prechordal plate :"
+        },
+        {
+          "key": "D",
+          "text": "Vitellointestinal duct or vitelline duct"
+        },
+        {
+          "key": "E",
+          "text": "Is the site of migration of epiblastic cells"
+        }
+      ]
+    },
+    {
+      "sort_order": 83,
+      "topic": null,
+      "stem": "Gastrulation begins with the formation of the: 4 a) Definitive notochord",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 9,
+      "options": [
+        {
+          "key": "A",
+          "text": "Disappears, completely"
+        },
+        {
+          "key": "B",
+          "text": "Forms the whole of vertebral column ¢) Persists as vertebral bodies"
+        },
+        {
+          "key": "D",
+          "text": "Forms a part of spinal cord"
+        },
+        {
+          "key": "E",
+          "text": "Persists as nucleus pulposus of intervertebral discs ERE W) The correct order for origin and I ~~ migration of germ cells is: _"
+        }
+      ]
+    },
+    {
+      "sort_order": 90,
+      "topic": null,
+      "stem": "Regarding ovulation: !",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 10,
+      "options": [
+        {
+          "key": "A",
+          "text": "Occurs on day 16 in a classical 28 days cycle"
+        },
+        {
+          "key": "B",
+          "text": ": Surrounds the oogonia"
+        },
+        {
+          "key": "C",
+          "text": "Disintegrates in 2nd week. of development, :"
+        },
+        {
+          "key": "D",
+          "text": "Is ° essential for: interaction. with endometrium prior to implantation"
+        },
+        {
+          "key": "E",
+          "text": "Is essential for recognition and"
+        }
+      ]
+    },
+    {
+      "sort_order": 92,
+      "topic": null,
+      "stem": "Regarding extraembryonic mesoderm: :",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 10,
+      "options": [
+        {
+          "key": "A",
+          "text": "Is formed before the inner cell mass splits into epiblast and hypoblast"
+        },
+        {
+          "key": "B",
+          "text": "° Lies in between the yolk sac and amniotic cavity"
+        },
+        {
+          "key": "C",
+          "text": "Contributes to formation of organs of the embryo siinat I"
+        },
+        {
+          "key": "D",
+          "text": "Persists as connecting Stall ees ! suspends the embryo I\" chorionyc cavity ad es I ‘ I 166 } PAST SOLVE €) Appearance and merging of spaces : form definitive yolk sac inside it"
+        }
+      ]
+    },
+    {
+      "sort_order": 93,
+      "topic": null,
+      "stem": "The exchange of genetic material via crossover occurs:",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 11,
+      "options": [
+        {
+          "key": "A",
+          "text": "4th to the 8th week"
+        },
+        {
+          "key": "B",
+          "text": "9th week to term"
+        },
+        {
+          "key": "C",
+          "text": "12th week to term"
+        },
+        {
+          "key": "D",
+          "text": "6th week to term"
+        },
+        {
+          "key": "E",
+          "text": "Fertilization to term"
+        }
+      ]
+    },
+    {
+      "sort_order": 96,
+      "topic": null,
+      "stem": "Number of chromosomes in spermatids are:",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 11,
+      "options": [
+        {
+          "key": "A",
+          "text": "46 double structured + 4n"
+        },
+        {
+          "key": "B",
+          "text": "46 single structured +2n. © ¢) 23 double structured + 2n"
+        },
+        {
+          "key": "D",
+          "text": "23 double structured + 1n. ‘ e€) 23 single + n. 2"
+        }
+      ]
+    },
+    {
+      "sort_order": 99,
+      "topic": null,
+      "stem": "Neural crest derivatives include:",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 11,
+      "options": [
+        {
+          "key": "A",
+          "text": "Posterior pituitary gland"
+        },
+        {
+          "key": "B",
+          "text": "Retina"
+        },
+        {
+          "key": "C",
+          "text": "Adrenal medulla. as d) Epidermis of skin. a e) Spinal cord"
+        }
+      ]
+    },
+    {
+      "sort_order": 100,
+      "topic": null,
+      "stem": "Mature ova is immediately surrounded by:",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 11,
+      "options": [
+        {
+          "key": "A",
+          "text": "Zona pellucida"
+        },
+        {
+          "key": "B",
+          "text": "Corona radiate = ¢) Theca interna in d) Corpus luteum"
+        },
+        {
+          "key": "E",
+          "text": "Theca externa se"
+        }
+      ]
+    },
+    {
+      "sort_order": 102,
+      "topic": null,
+      "stem": "Gastrulation: ; af a) Is the most characteristic event \" st characteris! the 3rd week of development 'Y",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 11,
+      "options": [
+        {
+          "key": "A",
+          "text": "Zona pellucida"
+        },
+        {
+          "key": "B",
+          "text": "In the isthmus of the uterine tube ¢) In the anterior or posterior wall of the body of the uterus"
+        },
+        {
+          "key": "D",
+          "text": "Cytotnbphbiast"
+        },
+        {
+          "key": "E",
+          "text": "Yolk sac ‘06, ipiantation of the blastocyst occurs normally: @) Inthe ampulla of the uterine tube"
+        }
+      ]
+    }
+  ],
+  "notes": "Pilot OCR extract from two-column scan. Review stems/options/answer_key before --import-db. Some OCR noise is expected."
+}

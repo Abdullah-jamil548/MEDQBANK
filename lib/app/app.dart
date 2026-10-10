@@ -13,11 +13,15 @@ import '../data/repositories/chat_repository_impl.dart';
 import '../data/repositories/college_repository_impl.dart';
 import '../data/repositories/dashboard_repository_impl.dart';
 import '../data/repositories/friends_repository_impl.dart';
+import '../data/repositories/mcq_repository_impl.dart';
 import '../domain/repositories/books_repository.dart';
 import '../domain/repositories/chat_repository.dart';
 import '../domain/repositories/college_repository.dart';
 import '../domain/repositories/dashboard_repository.dart';
 import '../domain/repositories/friends_repository.dart';
+import '../domain/repositories/mcq_repository.dart';
+import '../features/past_papers/presentation/pages/mcq_quiz_page.dart';
+import '../features/past_papers/presentation/providers/mcq_provider.dart';
 import '../features/auth/presentation/pages/forgot_password_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
@@ -74,6 +78,13 @@ class MedQBankApp extends StatelessWidget {
         ),
         ProxyProvider<ApiClient, BooksRepository>(
           update: (_, api, __) => BooksRepositoryImpl(api),
+        ),
+        ProxyProvider<ApiClient, McqRepository>(
+          update: (_, api, __) => McqRepositoryImpl(api),
+        ),
+        ChangeNotifierProxyProvider<McqRepository, McqProvider>(
+          create: (context) => McqProvider(context.read<McqRepository>()),
+          update: (_, repo, previous) => previous ?? McqProvider(repo),
         ),
         ProxyProvider<ApiClient, FriendsRepository>(
           update: (_, api, __) => FriendsRepositoryImpl(api),
@@ -204,6 +215,7 @@ class MedQBankApp extends StatelessWidget {
               bookTitle: map['bookTitle']?.toString() ?? 'Notes',
             );
           },
+          AppRoutes.mcqQuiz: (_) => const McqQuizPage(),
         },
       ),
     );
