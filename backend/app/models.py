@@ -132,6 +132,8 @@ class Book(Base):
     content_type: Mapped[str | None] = mapped_column(Text, nullable=True)
     # book | past_paper — keeps past papers out of the main library feed
     content_kind: Mapped[str] = mapped_column(Text, nullable=False, server_default="book")
+    # past_paper only: mcq_options | qa | mixed (null for normal library books)
+    paper_format: Mapped[str | None] = mapped_column(Text, nullable=True)
     # Chapter map for scanned PDFs that have no embedded outline.
     outline: Mapped[list | None] = mapped_column(JSONB, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="true")
@@ -331,3 +333,78 @@ class ActivityHourUser(Base):
         nullable=False,
         index=True,
     )
+
+
+class McqSet(Base):
+    __tablename__ = "mcq_set"
+    __table_args__ = {"schema": "books"}
+
+    set_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    subject: Mapped[str] = mapped_column(Text, nullable=False, index=True)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    source_pdf: Mapped[str | None] = mapped_column(Text, nullable=True)
+    topic: Mapped[str | None] = mapped_column(Text, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="true")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    questions: Mapped[list["McqQuestion"]] = relationship(
+        back_populates="mcq_set", cascade="all, delete-orphan"
+    )
+
+
+class McqQuestion(Base):
+    __tablename__ = "mcq_question"
+    __table_args__ = {"schema": "books"}
+
+    question_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    set_id: Mapped[str] = mapped_column(
+        Text, ForeignKey("books.mcq_set.set_id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    topic: Mapped[str | None] = mapped_column(Text, nullable=True)
+    stem: Mapped[str] = mapped_column(Text, nullable=False)
+    explanation: Mapped[str] = mapped_column(Text, nullable=False, server_default="")
+    answer_key: Mapped[str | None] = mapped_column(Text, nullable=True)
+    sort_order: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    source_page: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    # Optional scan crop / page image (asset path or /mcq-images/... URL path)
+    stem_image: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+
+    mcq_set: Mapped[McqSet] = relationship(back_populates="questions")
+    options: Mapped[list["McqOption"]] = relationship(
+        back_populates="question", cascade="all, delete-orphan", order_by="McqOption.key"
+    )
+
+
+class McqOption(Base):
+    __tablename__ = "mcq_option"
+    __table_args__ = (
+        UniqueConstraint("question_id", "key", name="uq_mcq_option_question_key"),
+        {"schema": "books"},
+    )
+
+    option_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    question_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("books.mcq_question.question_id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    key: Mapped[str] = mapped_column(Text, nullable=False)
+    text: Mapped[str] = mapped_column(Text, nullable=False)
+
+    question: Mapped[McqQuestion] = relationship(back_populates="options")

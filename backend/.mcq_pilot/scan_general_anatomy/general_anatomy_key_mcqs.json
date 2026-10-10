@@ -1,0 +1,863 @@
+{
+  "set_id": "anatomy-general-key-scan-mcqs",
+  "subject": "Anatomy",
+  "title": "General Anatomy Key (image MCQs)",
+  "source_pdf": "General anatomy (key to uhs)-1_034706.pdf",
+  "topic": "General Anatomy",
+  "presentation": "image",
+  "question_count": 26,
+  "answered_count": 25,
+  "questions": [
+    {
+      "sort_order": 1,
+      "topic": null,
+      "stem": "Regarding joints all of the following statements are true except:",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p01_L.png",
+      "mode": "image",
+      "ocr_confidence": 75.4
+    },
+    {
+      "sort_order": 2,
+      "topic": "General Anatomy",
+      "stem": "Q5 — see image (page 1)",
+      "explanation": "Image-backed; OCR text was too weak for a full stem.",
+      "answer_key": "E",
+      "source_page": 1,
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p01_R.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 3,
+      "topic": "General Anatomy",
+      "stem": "Q6 — see image (page 1)",
+      "explanation": "Image-backed; OCR text was too weak for a full stem.",
+      "answer_key": "E",
+      "source_page": 1,
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p01_R.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 4,
+      "topic": "General Anatomy",
+      "stem": "Q7 — see image (page 1)",
+      "explanation": "Image-backed; OCR text was too weak for a full stem.",
+      "answer_key": "E",
+      "source_page": 1,
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p01_R.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 5,
+      "topic": null,
+      "stem": "sora s an elastic artery y ¢) Capillaries nave semicermeatie waits s an ne _ -$-$- 3 . The four principal types of tissues r are: . it",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p02_R.png",
+      "mode": "image",
+      "ocr_confidence": 72.3
+    },
+    {
+      "sort_order": 6,
+      "topic": null,
+      "stem": "Which of the following bones is a a) long bone: b) a IS a) Carpal . . c)",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p02_L.png",
+      "mode": "image",
+      "ocr_confidence": 75.6
+    },
+    {
+      "sort_order": 7,
+      "topic": null,
+      "stem": "Following are the types of synovial joints except:",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p03_L.png",
+      "mode": "image",
+      "ocr_confidence": 74.9
+    },
+    {
+      "sort_order": 8,
+      "topic": null,
+      "stem": "Following are the end arteries except: - a) Central artery of retina",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p03_L.png",
+      "mode": "image",
+      "ocr_confidence": 74.9
+    },
+    {
+      "sort_order": 9,
+      "topic": null,
+      "stem": "Fat of superficial fascia is absent in: ‘ a) Face : \\ . b) Nose :",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p03_L.png",
+      "mode": "image",
+      "ocr_confidence": 74.9
+    },
+    {
+      "sort_order": 10,
+      "topic": null,
+      "stem": ".Regarding muscles all are try, EXCEPT: _",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p03_R.png",
+      "mode": "image",
+      "ocr_confidence": 74.3
+    },
+    {
+      "sort_order": 11,
+      "topic": null,
+      "stem": "Hip joint is of sadcie variety las",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p04_R.png",
+      "mode": "image",
+      "ocr_confidence": 71.8
+    },
+    {
+      "sort_order": 12,
+      "topic": null,
+      "stem": "tvcorrect statement: 1 °)",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p04_L.png",
+      "mode": "image",
+      "ocr_confidence": 74.7
+    },
+    {
+      "sort_order": 13,
+      "topic": null,
+      "stem": "Anymphysis: 4)",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p04_L.png",
+      "mode": "image",
+      "ocr_confidence": 74.7
+    },
+    {
+      "sort_order": 14,
+      "topic": null,
+      "stem": "Patella is a type of: .",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p04_L.png",
+      "mode": "image",
+      "ocr_confidence": 74.7
+    },
+    {
+      "sort_order": 15,
+      "topic": null,
+      "stem": "Circumduction is a movement that involves:",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Right and left halves"
+        },
+        {
+          "key": "B",
+          "text": "Equal right and left halves"
+        },
+        {
+          "key": "C",
+          "text": "Anterior and posterior halves"
+        },
+        {
+          "key": "D",
+          "text": "Upper and lower halves * :"
+        },
+        {
+          "key": "E",
+          "text": "Equal anterior and posterior halves"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p05_L.png",
+      "mode": "text",
+      "ocr_confidence": 79.2
+    },
+    {
+      "sort_order": 16,
+      "topic": null,
+      "stem": "Primary ossification centers: .",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Arteries : ‘ b) Veins"
+        },
+        {
+          "key": "B",
+          "text": "Form diaphysis (shaft) of long bones"
+        },
+        {
+          "key": "C",
+          "text": "Lymphatic"
+        },
+        {
+          "key": "D",
+          "text": "Dorsal interossei ’ : : . e) Quadriceps femoris"
+        },
+        {
+          "key": "E",
+          "text": "Are always single _ 37. Portal system is composed of blooc vessels between two sets of:"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p05_L.png",
+      "mode": "text",
+      "ocr_confidence": 79.2
+    },
+    {
+      "sort_order": 17,
+      "topic": null,
+      "stem": "Which of the following joint is: ellipsoid joint: _ ‘a) Ankle joint ; : b) Wrist joint” . ¢) Hip joint",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p05_R.png",
+      "mode": "image",
+      "ocr_confidence": 71.3
+    },
+    {
+      "sort_order": 18,
+      "topic": "General Anatomy",
+      "stem": "Q2 — see image (page 6)",
+      "explanation": "Image-backed; OCR text was too weak for a full stem.",
+      "answer_key": "E",
+      "source_page": 6,
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p06_R.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 19,
+      "topic": "General Anatomy",
+      "stem": "Q3 — see image (page 6)",
+      "explanation": "Image-backed; OCR text was too weak for a full stem.",
+      "answer_key": "E",
+      "source_page": 6,
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p06_R.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 20,
+      "topic": "General Anatomy",
+      "stem": "Q5 — see image (page 6)",
+      "explanation": "Image-backed; OCR text was too weak for a full stem.",
+      "answer_key": "E",
+      "source_page": 6,
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p06_R.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 21,
+      "topic": "General Anatomy",
+      "stem": "Q48 — see image (page 6)",
+      "explanation": "Image-backed; OCR text was too weak for a full stem.",
+      "answer_key": "C",
+      "source_page": 6,
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p06_L.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    },
+    {
+      "sort_order": 22,
+      "topic": null,
+      "stem": "Regarding muscle all of the following statements are true except:",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "Skeletal muscle comprises of long, cylindrical multinucleated cells"
+        },
+        {
+          "key": "B",
+          "text": "Smooth muscle cells are spindle shaped"
+        },
+        {
+          "key": "C",
+          "text": "Cardiac muscle cells are striated"
+        },
+        {
+          "key": "D",
+          "text": "All skeletal muscles are under voluntary control"
+        },
+        {
+          "key": "E",
+          "text": "Smooth muscle of the ciliary body is . avoluntary muscle"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p07_L.png",
+      "mode": "text",
+      "ocr_confidence": 80.8
+    },
+    {
+      "sort_order": 23,
+      "topic": null,
+      "stem": "All of the following are true regarding the synovial joints except: . : : ~ a) Hip joints is of saddle variety",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "’ Symphysis tee i"
+        },
+        {
+          "key": "B",
+          "text": "Sutures"
+        },
+        {
+          "key": "C",
+          "text": "Syndesmosis ‘"
+        },
+        {
+          "key": "D",
+          "text": "Gomphosis = :"
+        },
+        {
+          "key": "E",
+          "text": "Interosseous F"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p07_L.png",
+      "mode": "text",
+      "ocr_confidence": 80.8
+    },
+    {
+      "sort_order": 24,
+      "topic": null,
+      "stem": "The spinal nerves: i",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p07_R.png",
+      "mode": "image",
+      "ocr_confidence": 73.8
+    },
+    {
+      "sort_order": 25,
+      "topic": null,
+      "stem": "Regarding muscles ll are - except:",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 8,
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ],
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p08_L.png",
+      "mode": "image",
+      "ocr_confidence": 75.2
+    },
+    {
+      "sort_order": 26,
+      "topic": "General Anatomy",
+      "stem": "Q15 — see image (page 8)",
+      "explanation": "Image-backed; OCR text was too weak for a full stem.",
+      "answer_key": null,
+      "source_page": 8,
+      "stem_image": "assets/mcqs/images/general-anatomy-key/p08_R.png",
+      "mode": "image",
+      "options": [
+        {
+          "key": "A",
+          "text": "A"
+        },
+        {
+          "key": "B",
+          "text": "B"
+        },
+        {
+          "key": "C",
+          "text": "C"
+        },
+        {
+          "key": "D",
+          "text": "D"
+        },
+        {
+          "key": "E",
+          "text": "E"
+        }
+      ]
+    }
+  ],
+  "notes": "Free scan pipeline: OpenCV deskew + Tesseract. Questions include stem_image for image-backed practice. Review answer_key before relying on scores. No paid vision API used."
+}

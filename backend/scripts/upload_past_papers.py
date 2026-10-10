@@ -30,6 +30,7 @@ sys.path.insert(0, str(ROOT))
 from app.config import get_settings
 from app.db import SessionLocal, init_schemas_and_tables
 from app.models import Book
+from app.paper_format import infer_paper_format
 from app.r2 import R2Service
 
 DEFAULT_INPUT = Path(r"D:\Past papers-20261005T064648Z-1-001\Past papers")
@@ -120,6 +121,7 @@ def collect_jobs(input_dir: Path) -> list[dict]:
         title = clean_title(path.stem)
         subject = infer_subject(path.name)
         book_id = slugify(title)
+        paper_format = infer_paper_format(path.name, title, subject)
         jobs.append(
             {
                 "path": path,
@@ -128,7 +130,14 @@ def collect_jobs(input_dir: Path) -> list[dict]:
                 "author": "UHS Past Papers",
                 "subject": subject,
                 "year_label": "Past Papers",
-                "blurb": f"{subject} past papers / key-to-UHS compilation",
+                "blurb": (
+                    f"{subject} option MCQs (A–E)"
+                    if paper_format == "mcq_options"
+                    else f"{subject} question & answer / SEQ past papers"
+                    if paper_format == "qa"
+                    else f"{subject} past papers (mixed UQ + MCQ)"
+                ),
+                "paper_format": paper_format,
                 "filename": f"{book_id}.pdf",
             }
         )
@@ -190,9 +199,15 @@ def upload_and_register(jobs: list[dict]) -> None:
             row.r2_key = r2_key
             row.content_type = "application/pdf"
             row.content_kind = "past_paper"
+            row.paper_format = job.get("paper_format") or infer_paper_format(
+                job["title"], book_id
+            )
             row.is_active = True
             db.commit()
-            print(f"  DB ok: {book_id} [{job['subject']}]", flush=True)
+            print(
+                f"  DB ok: {book_id} [{job['subject']}] format={row.paper_format}",
+                flush=True,
+            )
     finally:
         db.close()
 
@@ -206,7 +221,11 @@ def upload_and_register(jobs: list[dict]) -> None:
         print("\n=== past papers catalog ===", flush=True)
         for row in rows:
             mb = (row.size_bytes or 0) / 1_000_000
-            print(f"  [{row.subject}] {row.title} ({mb:.1f} MB)", flush=True)
+            fmt = getattr(row, "paper_format", None) or "?"
+            print(
+                f"  [{row.subject}|{fmt}] {row.title} ({mb:.1f} MB)",
+                flush=True,
+            )
         print(f"Total: {len(rows)} past papers", flush=True)
     finally:
         db.close()

@@ -9,3 +9,10 @@ __pycache__/
 dist/
 build/
 admin/node_modules/
+admin/dist/
+admin/.vite/
+.mcq_pilot/ocr_text/
+.mcq_pilot/**/images/
+.toc_scan/
+.toc_preview/
+static/mcq_images/

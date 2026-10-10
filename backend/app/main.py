@@ -222,7 +222,10 @@ def root():
 
 
 ADMIN_DIST = Path(__file__).resolve().parents[1] / "admin" / "dist"
+MCQ_IMAGES_DIR = Path(__file__).resolve().parents[1] / "static" / "mcq_images"
 
+if MCQ_IMAGES_DIR.is_dir():
+    app.mount("/mcq-images", StaticFiles(directory=MCQ_IMAGES_DIR), name="mcq-images")
 
 if ADMIN_DIST.is_dir():
     assets_dir = ADMIN_DIST / "assets"

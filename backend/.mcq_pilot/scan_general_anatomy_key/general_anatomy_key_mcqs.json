@@ -1,0 +1,831 @@
+{
+  "set_id": "anatomy-general-key-scan-mcqs",
+  "subject": "Anatomy",
+  "title": "General Anatomy Key MCQs",
+  "source_pdf": "General anatomy (key to uhs)-1_034706.pdf",
+  "topic": "General Anatomy",
+  "presentation": "text",
+  "question_count": 27,
+  "answered_count": 26,
+  "text_count": 27,
+  "image_count": 0,
+  "questions": [
+    {
+      "sort_order": 1,
+      "topic": "General Anatomy",
+      "stem": "Regarding joints all of the following statements are true except:",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Knee and ankle. P"
+        },
+        {
+          "key": "B",
+          "text": "Shoulder and hip. I :"
+        },
+        {
+          "key": "C",
+          "text": "Wrist and elbow. 4"
+        },
+        {
+          "key": "D",
+          "text": "Metacarpohalengeal and __inter- phalengeal joint. . 1"
+        },
+        {
+          "key": "E",
+          "text": "Temporo mandibular joint"
+        }
+      ],
+      "ocr_confidence": 75.4,
+      "mode": "text"
+    },
+    {
+      "sort_order": 2,
+      "topic": "General Anatomy",
+      "stem": "Regarding joints all of the following ral statements are true except:",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "The .study of ‘joints is called re arthrology"
+        },
+        {
+          "key": "B",
+          "text": "Sutures are immovable joints. - I"
+        },
+        {
+          "key": "C",
+          "text": "Gomphosis is a type of fibrous joint"
+        },
+        {
+          "key": "D",
+          "text": "Synchondrosis is a type of primary cartilaginous joint. ,"
+        },
+        {
+          "key": "E",
+          "text": "Suture is a type of secondary cartilaginous joint"
+        }
+      ],
+      "ocr_confidence": 82.2,
+      "mode": "text"
+    },
+    {
+      "sort_order": 3,
+      "topic": "General Anatomy",
+      "stem": "sora s an elastic artery y ¢) Capillaries nave semicermeatie waits s an ne _ -$-$- 3 The four principal types of tissues r are: . it",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "It does not ordinarily undergo calcified or ossification"
+        },
+        {
+          "key": "B",
+          "text": "It matrix contain abundant elastic . fibers"
+        },
+        {
+          "key": "C",
+          "text": "Itis highly vascular"
+        },
+        {
+          "key": "D",
+          "text": "It can easily be distorted and it regain its original shape"
+        },
+        {
+          "key": "E",
+          "text": "Itis found in the pinna, the epiglottis . and parts of pharyngo-tympanic F tube ray eran Tren $n,"
+        }
+      ],
+      "ocr_confidence": 72.3,
+      "mode": "text"
+    },
+    {
+      "sort_order": 4,
+      "topic": "General Anatomy",
+      "stem": "Which of the following bones is a",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Para sagittal plane. )"
+        },
+        {
+          "key": "B",
+          "text": "Transpyioric plane"
+        },
+        {
+          "key": "C",
+          "text": "Transverse plane. ‘ _ gd) Coronal plane"
+        },
+        {
+          "key": "D",
+          "text": "Metatarsal 15. Th"
+        },
+        {
+          "key": "E",
+          "text": "Vertebra . inc -_- tee a ] 11. The plane of"
+        }
+      ],
+      "ocr_confidence": 75.6,
+      "mode": "text"
+    },
+    {
+      "sort_order": 5,
+      "topic": "General Anatomy",
+      "stem": "Following are the types of synovial joints except:",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Ellipsoid ‘"
+        },
+        {
+          "key": "B",
+          "text": "Hinge"
+        },
+        {
+          "key": "C",
+          "text": "Joint between vertebral bodies"
+        },
+        {
+          "key": "D",
+          "text": "Pivot"
+        },
+        {
+          "key": "E",
+          "text": "Saddle De®"
+        }
+      ],
+      "ocr_confidence": 74.9,
+      "mode": "text"
+    },
+    {
+      "sort_order": 6,
+      "topic": "General Anatomy",
+      "stem": "Following are the end arteries except: -",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "B",
+          "text": "Coronary arteries"
+        },
+        {
+          "key": "C",
+          "text": "Renal arteries"
+        },
+        {
+          "key": "D",
+          "text": "Splenic artery"
+        },
+        {
+          "key": "E",
+          "text": "Vasa recta of mesenteric arteries"
+        }
+      ],
+      "ocr_confidence": 74.9,
+      "mode": "text"
+    },
+    {
+      "sort_order": 7,
+      "topic": "General Anatomy",
+      "stem": "Following is the bipolar neuron:",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Neurons in spiral ganglia"
+        },
+        {
+          "key": "B",
+          "text": "Neurons in cerebrum"
+        },
+        {
+          "key": "C",
+          "text": "Neurons in cerebellum"
+        },
+        {
+          "key": "D",
+          "text": "Neurons in dorsal root ganglia ,"
+        },
+        {
+          "key": "E",
+          "text": "None of the above"
+        }
+      ],
+      "ocr_confidence": 74.9,
+      "mode": "text"
+    },
+    {
+      "sort_order": 8,
+      "topic": "General Anatomy",
+      "stem": "Outermost covering of nerve ig called: .",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Endoneurium"
+        },
+        {
+          "key": "B",
+          "text": "Perineurium"
+        },
+        {
+          "key": "C",
+          "text": "Epineurium ,"
+        },
+        {
+          "key": "D",
+          "text": "Endomysium , __e) Epimysium y"
+        }
+      ],
+      "ocr_confidence": 74.9,
+      "mode": "text"
+    },
+    {
+      "sort_order": 9,
+      "topic": "General Anatomy",
+      "stem": "Fat of superficial fascia is absent in: ‘",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Kidneys as"
+        },
+        {
+          "key": "B",
+          "text": "Liver ,"
+        },
+        {
+          "key": "C",
+          "text": "Muscle"
+        },
+        {
+          "key": "D",
+          "text": "Dorsom of hand"
+        },
+        {
+          "key": "E",
+          "text": "Scapular region"
+        }
+      ],
+      "ocr_confidence": 74.9,
+      "mode": "text"
+    },
+    {
+      "sort_order": 10,
+      "topic": "General Anatomy",
+      "stem": ".Regarding muscles all are try, EXCEPT: _",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "A",
+          "text": "Delotoid is a multipinnate muscle i"
+        },
+        {
+          "key": "B",
+          "text": "Are formed in the intervertebral foramina ,"
+        },
+        {
+          "key": "C",
+          "text": "’ Comprise of 25 pairs . oy . 4) Distribution to the lower limbs '° through dorsal rami he €) Supply the dorsal body wall bY : te"
+        },
+        {
+          "key": "D",
+          "text": "Sinusoids are large, - irregular - vascular space"
+        },
+        {
+          "key": "E",
+          "text": "End artejes have _ precapillary ‘ anastomosis ‘ n: I 25. The spinal nerves: @) Have dorsal and ventral rami with Jf Peripheral ganglion on the dorsal yo famus"
+        }
+      ],
+      "ocr_confidence": 74.3,
+      "mode": "text"
+    },
+    {
+      "sort_order": 11,
+      "topic": "General Anatomy",
+      "stem": "Hip joint is of sadcie variety las",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "Large arteries are elastic having al valves"
+        },
+        {
+          "key": "B",
+          "text": "Veins of the lower limbs have to = valves"
+        },
+        {
+          "key": "C",
+          "text": "Capillaries have thick muscular coat _"
+        },
+        {
+          "key": "D",
+          "text": "Membranous bones ~ ossify in a Cartilage i"
+        },
+        {
+          "key": "E",
+          "text": "Intracartiflagenous ossification is te also called mesenchymal ossification je hin e ee ; Regarding blood vessels choose the = correct statement:"
+        }
+      ],
+      "ocr_confidence": 71.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 12,
+      "topic": "General Anatomy",
+      "stem": "tvcorrect statement: 1 °)",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "It is a inixture of adipose & loose im areolar tissue °)"
+        },
+        {
+          "key": "B",
+          "text": "long bones"
+        },
+        {
+          "key": "C",
+          "text": "$__$ GCF"
+        },
+        {
+          "key": "D",
+          "text": "It forms ligaments over the joints 2)"
+        },
+        {
+          "key": "E",
+          "text": "It also, covers the outer surface of"
+        }
+      ],
+      "ocr_confidence": 74.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 13,
+      "topic": "General Anatomy",
+      "stem": "Anymphysis: 4)",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "long bone _-- eee"
+        },
+        {
+          "key": "B",
+          "text": "Allows a wide range of movements ®) ¢) Has bony surf tees covered with I --- _ fibrocartilage --An"
+        },
+        {
+          "key": "D",
+          "text": "Is always present in median plane of 32. Re body ‘sta"
+        },
+        {
+          "key": "E",
+          "text": "Joins metaphysis with epiphysis of a"
+        }
+      ],
+      "ocr_confidence": 74.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 14,
+      "topic": "General Anatomy",
+      "stem": "‘Regarding the spinal nerves choose the incorrect statement: ~ °)",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "Have dorsal and. ventral rami with peripheral ganglion on the dorsal 4) g"
+        },
+        {
+          "key": "B",
+          "text": "Are formed in. the intervertebral foramina"
+        },
+        {
+          "key": "C",
+          "text": "Comprise of 25 pairs. “d) Distribution to the lower Ii is I ar through ventral rami. my --An"
+        },
+        {
+          "key": "E",
+          "text": "Supply the muscles and skin of 33. Re posterior trunk through rami , co FT SS"
+        }
+      ],
+      "ocr_confidence": 74.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 15,
+      "topic": "General Anatomy",
+      "stem": "Patella is a type of: .",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "Short bone b} 2"
+        },
+        {
+          "key": "B",
+          "text": "Sesamoid bone"
+        },
+        {
+          "key": "C",
+          "text": "Flat bone ’"
+        },
+        {
+          "key": "D",
+          "text": "Irregular bone ©"
+        },
+        {
+          "key": "E",
+          "text": "> aTSToOv SOY"
+        }
+      ],
+      "ocr_confidence": 74.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 16,
+      "topic": "General Anatomy",
+      "stem": "Circumduction is a movement that involves:",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Right and left halves"
+        },
+        {
+          "key": "B",
+          "text": "Equal right and left halves"
+        },
+        {
+          "key": "C",
+          "text": "Anterior and posterior halves"
+        },
+        {
+          "key": "D",
+          "text": "Upper and lower halves * :"
+        },
+        {
+          "key": "E",
+          "text": "Equal anterior and posterior halves"
+        }
+      ],
+      "ocr_confidence": 79.2,
+      "mode": "text"
+    },
+    {
+      "sort_order": 17,
+      "topic": "General Anatomy",
+      "stem": "Primary ossification centers: .",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Triceps brachii ’"
+        },
+        {
+          "key": "B",
+          "text": "Tibialis anterior"
+        },
+        {
+          "key": "C",
+          "text": "Deltoid - ‘"
+        },
+        {
+          "key": "D",
+          "text": "Dorsal interossei ’ :"
+        },
+        {
+          "key": "E",
+          "text": "Quadriceps femoris"
+        }
+      ],
+      "ocr_confidence": 79.2,
+      "mode": "text"
+    },
+    {
+      "sort_order": 18,
+      "topic": "General Anatomy",
+      "stem": "Which of the following joint is: ellipsoid joint: _ ‘a) Ankle joint ;",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Motor nerve wy"
+        },
+        {
+          "key": "B",
+          "text": "Senssory nerve ,"
+        },
+        {
+          "key": "C",
+          "text": "Sympathetic nerve noth"
+        },
+        {
+          "key": "D",
+          "text": "Mixed nerve €) Parasympathetic nerve"
+        },
+        {
+          "key": "E",
+          "text": "Caracocloyicular joint i . es) 41. A typical spinal nerve is:"
+        }
+      ],
+      "ocr_confidence": 71.3,
+      "mode": "text"
+    },
+    {
+      "sort_order": 19,
+      "topic": "General Anatomy",
+      "stem": "Regarding the sympathetic division of _ the autonomic nervous system. . ood",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 5,
+      "options": [
+        {
+          "key": "B",
+          "text": "Most sympathetic preganglionic ’ fibres secrete noradenaline (norepinephrine)"
+        },
+        {
+          "key": "C",
+          "text": "Sympathetic postganglionic neurons are found: in spinal segments from T1 to L2. ‘"
+        },
+        {
+          "key": "D",
+          "text": "The sympathetic chain extends from - the thoracic to the sacral regions © nate . the spinal cord. :"
+        }
+      ],
+      "ocr_confidence": 71.3,
+      "mode": "text"
+    },
+    {
+      "sort_order": 20,
+      "topic": "General Anatomy",
+      "stem": "Lymphocytes is",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 6,
+      "options": [
+        {
+          "key": "A",
+          "text": "Symphyses Secondary cartilaginous joint"
+        },
+        {
+          "key": "B",
+          "text": "Synovial joints are partially movabie joints. the toot 7 e joint between e tooth ang its °) bony socket is called gomphosis"
+        },
+        {
+          "key": "C",
+          "text": "Infarction"
+        },
+        {
+          "key": "D",
+          "text": "gchindylesis is 2 tyPe Of suturay . joint. In syndesmosis two bones are ° united by interosseous ligaments, oS -- wN _ ~ ‘5"
+        },
+        {
+          "key": "E",
+          "text": "Atrophy ¥ nn, ing joi Il of the follow; . Regarding joints a lowing stavements are true except: ; “"
+        }
+      ],
+      "ocr_confidence": 57.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 21,
+      "topic": "General Anatomy",
+      "stem": "Part of neuron Providing greatest - ~ surface area for synaptic reception: 54. I",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 6,
+      "options": [
+        {
+          "key": "A",
+          "text": "The person lying on his face"
+        },
+        {
+          "key": "B",
+          "text": "A person is standing straight j ¢) Is lying on right side of body"
+        },
+        {
+          "key": "D",
+          "text": "Is lying on left side of body"
+        },
+        {
+          "key": "E",
+          "text": "Dendritic process - ‘I 47. Regarding different positions of body 52. , 1 the supine position:"
+        }
+      ],
+      "ocr_confidence": 75.3,
+      "mode": "text"
+    },
+    {
+      "sort_order": 22,
+      "topic": "General Anatomy",
+      "stem": "Regarding muscle all of the following statements are true except:",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "Skeletal muscle comprises of long, cylindrical multinucleated cells"
+        },
+        {
+          "key": "B",
+          "text": "Smooth muscle cells are spindle shaped"
+        },
+        {
+          "key": "C",
+          "text": "Cardiac muscle cells are striated"
+        },
+        {
+          "key": "D",
+          "text": "All skeletal muscles are under voluntary control"
+        },
+        {
+          "key": "E",
+          "text": "Smooth muscle of the ciliary body is avoluntary muscle"
+        }
+      ],
+      "ocr_confidence": 80.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 23,
+      "topic": "General Anatomy",
+      "stem": "Regarding blood vessels all of the following statements are false except: ‘",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "C",
+          "text": "Elastic arteries have valves"
+        },
+        {
+          "key": "D",
+          "text": "Aorta is an elastic artery. _"
+        },
+        {
+          "key": "E",
+          "text": "Capillaries have semipermeable I walls"
+        }
+      ],
+      "ocr_confidence": 80.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 24,
+      "topic": "General Anatomy",
+      "stem": "All of the following are true regarding the synovial joints except: . : ~",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "’ Symphysis tee i"
+        },
+        {
+          "key": "B",
+          "text": "Sutures"
+        },
+        {
+          "key": "C",
+          "text": "Syndesmosis ‘"
+        },
+        {
+          "key": "D",
+          "text": "Gomphosis = :"
+        },
+        {
+          "key": "E",
+          "text": "Interosseous F"
+        }
+      ],
+      "ocr_confidence": 80.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 25,
+      "topic": "General Anatomy",
+      "stem": "The spinal nerves: i",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "© Hip joint is of saddle variety. ; y"
+        },
+        {
+          "key": "B",
+          "text": "Are partially mobile"
+        },
+        {
+          "key": "C",
+          "text": "In all the joints the articular surfaces zal ~ are lined by hylanie cartilage. a I ~"
+        },
+        {
+          "key": "D",
+          "text": "Stability of a joint is directly related _- to its mobility. _"
+        },
+        {
+          "key": "E",
+          "text": "Articular surface is covered by fibrocartilage. , i"
+        }
+      ],
+      "ocr_confidence": 73.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 26,
+      "topic": "General Anatomy",
+      "stem": "Regarding muscles ll are - except:",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 8,
+      "options": [
+        {
+          "key": "A",
+          "text": "Deltoid is a multipinnate muscle ~ bp) Dorsal interossei are multipinne"
+        },
+        {
+          "key": "C",
+          "text": "Cardiac muscle has striations. _d) Sartorius has parallel muscle fit"
+        },
+        {
+          "key": "E",
+          "text": "‘Parallel muscle. fibers have - range of movement. ee a a ee a ee SS"
+        }
+      ],
+      "ocr_confidence": 75.2,
+      "mode": "text"
+    },
+    {
+      "sort_order": 27,
+      "topic": "General Anatomy",
+      "stem": "Regarding joints all of the follc _statements are true except:",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 8,
+      "options": [
+        {
+          "key": "A",
+          "text": "The study of joints is I arthrology"
+        },
+        {
+          "key": "B",
+          "text": "Sutures are immovable joints"
+        },
+        {
+          "key": "C",
+          "text": "Gomphosis is a type of fibrous *"
+        },
+        {
+          "key": "D",
+          "text": "Syn, Hondrosis is a type of pi cartilaginous joint. -e) Suture is a type of secc cartilaginous joint. _-_e-nh.!_ ---------K-K-K-K-KKKKKKKK-K-K-K-_-_-_----- OO"
+        }
+      ],
+      "ocr_confidence": 75.2,
+      "mode": "text"
+    }
+  ],
+  "notes": "OpenCV deskew + Tesseract. Text MCQs extracted when readable; image mode only for unreadable pages or figure-style options."
+}

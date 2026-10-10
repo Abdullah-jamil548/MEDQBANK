@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from fastapi.responses import StreamingResponse
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.orm import Session
 
 from app.auth import (
@@ -23,6 +23,9 @@ from app.models import (
     College,
     Friendship,
     Highlight,
+    McqOption,
+    McqQuestion,
+    McqSet,
     Note,
     Progress,
     User,
@@ -51,6 +54,11 @@ from app.schemas import (
     HighlightOut,
     HighlightUpsert,
     LoginRequest,
+    McqOptionOut,
+    McqQuestionOut,
+    McqSetDetail,
+    McqSetSummary,
+    McqSubjectOut,
     MuteOut,
     NoteOut,
     NoteUpsert,
@@ -316,6 +324,7 @@ def list_books(
                 format=row.format,
                 r2_key=row.r2_key,
                 content_kind=getattr(row, "content_kind", None) or "book",
+                paper_format=getattr(row, "paper_format", None),
                 outline=outline_for_book(row.book_id, getattr(row, "outline", None)),
                 is_active=row.is_active,
                 source="db",
@@ -401,6 +410,12 @@ def upsert_book(body: BookUpsertRequest, db: Session = Depends(get_db)) -> BookS
     row.r2_key = body.r2_key
     row.content_type = body.content_type
     row.content_kind = body.content_kind or "book"
+    if body.paper_format is not None:
+        row.paper_format = body.paper_format
+    elif body.content_kind == "past_paper" and not getattr(row, "paper_format", None):
+        from app.paper_format import infer_paper_format
+
+        row.paper_format = infer_paper_format(body.title, body.book_id, body.blurb)
     row.is_active = body.is_active
     row.updated_at = datetime.now(timezone.utc)
     db.commit()
@@ -416,6 +431,7 @@ def upsert_book(body: BookUpsertRequest, db: Session = Depends(get_db)) -> BookS
         format=row.format,
         r2_key=row.r2_key,
         content_kind=row.content_kind,
+        paper_format=getattr(row, "paper_format", None),
         outline=outline_for_book(row.book_id, getattr(row, "outline", None)),
         is_active=row.is_active,
         source="db",
@@ -1458,3 +1474,110 @@ async def mark_chat_read(
             },
         )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# ----- MCQ bank (pilot) -----
+
+
+def _mcq_set_summary(row: McqSet, question_count: int) -> McqSetSummary:
+    return McqSetSummary(
+        set_id=row.set_id,
+        subject=row.subject,
+        title=row.title,
+        source_pdf=row.source_pdf,
+        topic=row.topic,
+        question_count=question_count,
+    )
+
+
+@router.get("/mcqs/subjects", response_model=list[McqSubjectOut], tags=["mcqs"])
+def list_mcq_subjects(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> list[McqSubjectOut]:
+    _ = user
+    rows = db.scalars(select(McqSet).where(McqSet.is_active.is_(True)).order_by(McqSet.subject)).all()
+    by_subject: dict[str, list[McqSet]] = {}
+    for row in rows:
+        by_subject.setdefault(row.subject, []).append(row)
+    out: list[McqSubjectOut] = []
+    for subject, sets in by_subject.items():
+        q_count = 0
+        for s in sets:
+            q_count += (
+                db.scalar(
+                    select(func.count()).select_from(McqQuestion).where(McqQuestion.set_id == s.set_id)
+                )
+                or 0
+            )
+        out.append(McqSubjectOut(subject=subject, set_count=len(sets), question_count=int(q_count)))
+    return out
+
+
+@router.get("/mcqs/sets", response_model=list[McqSetSummary], tags=["mcqs"])
+def list_mcq_sets(
+    subject: str | None = Query(default=None),
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> list[McqSetSummary]:
+    _ = user
+    stmt = select(McqSet).where(McqSet.is_active.is_(True)).order_by(McqSet.title)
+    if subject:
+        stmt = stmt.where(McqSet.subject == subject)
+    rows = db.scalars(stmt).all()
+    out: list[McqSetSummary] = []
+    for row in rows:
+        count = (
+            db.scalar(select(func.count()).select_from(McqQuestion).where(McqQuestion.set_id == row.set_id))
+            or 0
+        )
+        out.append(_mcq_set_summary(row, int(count)))
+    return out
+
+
+@router.get("/mcqs/sets/{set_id}/questions", response_model=McqSetDetail, tags=["mcqs"])
+def get_mcq_set_questions(
+    set_id: str,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> McqSetDetail:
+    _ = user
+    row = db.get(McqSet, set_id)
+    if row is None or not row.is_active:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="MCQ set not found")
+    questions = list(
+        db.scalars(
+            select(McqQuestion)
+            .where(McqQuestion.set_id == set_id)
+            .order_by(McqQuestion.sort_order, McqQuestion.question_id)
+        ).all()
+    )
+    payload: list[McqQuestionOut] = []
+    for q in questions:
+        opts = list(
+            db.scalars(
+                select(McqOption).where(McqOption.question_id == q.question_id).order_by(McqOption.key)
+            ).all()
+        )
+        payload.append(
+            McqQuestionOut(
+                question_id=q.question_id,
+                topic=q.topic,
+                stem=q.stem,
+                explanation=q.explanation or "",
+                answer_key=q.answer_key,
+                sort_order=q.sort_order,
+                source_page=q.source_page,
+                stem_image=getattr(q, "stem_image", None),
+                options=[McqOptionOut(key=o.key, text=o.text) for o in opts],
+            )
+        )
+    return McqSetDetail(
+        set_id=row.set_id,
+        subject=row.subject,
+        title=row.title,
+        source_pdf=row.source_pdf,
+        topic=row.topic,
+        question_count=len(payload),
+        questions=payload,
+    )

@@ -1,0 +1,1199 @@
+{
+  "set_id": "histology-key-scan-mcqs",
+  "subject": "Histology",
+  "title": "Histology Key MCQs",
+  "source_pdf": "Histology (key to uhs).pdf",
+  "topic": "Histology",
+  "presentation": "text",
+  "question_count": 40,
+  "answered_count": 27,
+  "text_count": 40,
+  "image_count": 0,
+  "questions": [
+    {
+      "sort_order": 1,
+      "topic": "Histology",
+      "stem": "Lymphocytes are scattered and do I 6. not form nodules in ‘",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 1,
+      "options": [
+        {
+          "key": "B",
+          "text": "Spleen"
+        },
+        {
+          "key": "C",
+          "text": "Palatine tonsils"
+        },
+        {
+          "key": "D",
+          "text": "Thymus. a"
+        },
+        {
+          "key": "E",
+          "text": "Appendix. , ; a"
+        }
+      ],
+      "ocr_confidence": 76.4,
+      "mode": "text"
+    },
+    {
+      "sort_order": 2,
+      "topic": "Histology",
+      "stem": "In smooth muscle -- . I",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Fibers are cylindrical. . I"
+        },
+        {
+          "key": "B",
+          "text": "Fibers are fusiform: e Striations ° microscope. only under electron"
+        },
+        {
+          "key": "D",
+          "text": "Peripheral nuclei are seen,"
+        },
+        {
+          "key": "E",
+          "text": "Chondrocytes are present, ; a I"
+        }
+      ],
+      "ocr_confidence": 65.4,
+      "mode": "text"
+    },
+    {
+      "sort_order": 3,
+      "topic": "Histology",
+      "stem": "Type of collagen present is basement I membrane is 3.",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Typel ~"
+        },
+        {
+          "key": "B",
+          "text": "Type Il , Cc) Type lll"
+        },
+        {
+          "key": "D",
+          "text": "Type lv"
+        },
+        {
+          "key": "E",
+          "text": "TypeV"
+        }
+      ],
+      "ocr_confidence": 76.4,
+      "mode": "text"
+    },
+    {
+      "sort_order": 4,
+      "topic": "Histology",
+      "stem": "Collagen is not seen in : =",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 1,
+      "options": [
+        {
+          "key": "A",
+          "text": "Ligaments. - I)"
+        },
+        {
+          "key": "B",
+          "text": ": Tendons. te ,"
+        },
+        {
+          "key": "C",
+          "text": "Periosteum"
+        },
+        {
+          "key": "D",
+          "text": "Perichondrium. :"
+        },
+        {
+          "key": "E",
+          "text": "Epidermis. :"
+        }
+      ],
+      "ocr_confidence": 65.4,
+      "mode": "text"
+    },
+    {
+      "sort_order": 5,
+      "topic": "Histology",
+      "stem": "Outermost covering of nerve is called",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Ek"
+        },
+        {
+          "key": "B",
+          "text": "Perineurium. 2) Me ¢) Epineurium. Ans. {I 4"
+        },
+        {
+          "key": "D",
+          "text": "Endomysium. 15. Red pr"
+        },
+        {
+          "key": "E",
+          "text": "Epimysium. :"
+        }
+      ],
+      "ocr_confidence": 77.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 6,
+      "topic": "Histology",
+      "stem": "Regarding the cell membrane choose - cB ‘the incorrect statement:",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "S$"
+        },
+        {
+          "key": "B",
+          "text": "Cc bilayer with embedded proteins"
+        },
+        {
+          "key": "C",
+          "text": "T"
+        },
+        {
+          "key": "D",
+          "text": "A the sarcolem a. ‘14"
+        },
+        {
+          "key": "E",
+          "text": "The cell membranes have the same 7 lipid and protein composition in all -__Ans. I body cells. 17. What"
+        }
+      ],
+      "ocr_confidence": 77.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 7,
+      "topic": "Histology",
+      "stem": "All of the following are components of",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 2,
+      "options": [
+        {
+          "key": "A",
+          "text": "Smooth endoplasmic reticulum"
+        },
+        {
+          "key": "B",
+          "text": "Ribosomes"
+        },
+        {
+          "key": "C",
+          "text": "Neurofilaments. i"
+        },
+        {
+          "key": "D",
+          "text": "Mitochondria Ans. * . @) Microtubules. : 18. The"
+        },
+        {
+          "key": "E",
+          "text": "T _*"
+        }
+      ],
+      "ocr_confidence": 77.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 8,
+      "topic": "Histology",
+      "stem": "Regarding muscles, the intercalated - disks are characteristic feature of: a",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "C",
+          "text": "Skeletal muscle cells ‘ I"
+        },
+        {
+          "key": "D",
+          "text": "Transitional epithelium I"
+        },
+        {
+          "key": "E",
+          "text": "Connective tissue cells"
+        }
+      ],
+      "ocr_confidence": 68.3,
+      "mode": "text"
+    },
+    {
+      "sort_order": 9,
+      "topic": "Histology",
+      "stem": "Regarding different types of muscles, ; = PF the smooth muscle comprises of: : 18",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 3,
+      "options": [
+        {
+          "key": "C",
+          "text": "Prominent striations {"
+        },
+        {
+          "key": "D",
+          "text": "Multinucleated cells * '"
+        },
+        {
+          "key": "E",
+          "text": "Multiple intercalated disc"
+        }
+      ],
+      "ocr_confidence": 68.3,
+      "mode": "text"
+    },
+    {
+      "sort_order": 10,
+      "topic": "Histology",
+      "stem": "Hyaline cartilage] 37, Sinsu",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "Skeletal muscles le fibres are of:"
+        },
+        {
+          "key": "B",
+          "text": "k"
+        },
+        {
+          "key": "C",
+          "text": "Smooth muscles : 4)"
+        },
+        {
+          "key": "D",
+          "text": "Cardiac + smooth A"
+        },
+        {
+          "key": "E",
+          "text": "Cardiac + Skeletal muses : -- eba Se aa aa"
+        }
+      ],
+      "ocr_confidence": 68.3,
+      "mode": "text"
+    },
+    {
+      "sort_order": 11,
+      "topic": "Histology",
+      "stem": "\" What type of tissue lines most ducts? I 24. Elasti",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 4,
+      "options": [
+        {
+          "key": "A",
+          "text": "Lymphnode . ° a"
+        },
+        {
+          "key": "B",
+          "text": "M"
+        },
+        {
+          "key": "C",
+          "text": "Spleen ° °c) $s"
+        },
+        {
+          "key": "D",
+          "text": "Tonsil 4d) G “e) Appendix ia 8) In"
+        },
+        {
+          "key": "E",
+          "text": "Stratified cuboidal -_ 2) &"
+        }
+      ],
+      "ocr_confidence": 68.3,
+      "mode": "text"
+    },
+    {
+      "sort_order": 12,
+      "topic": "Histology",
+      "stem": "¢) Structural support toneurons ~",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Is almost equal in size to _ osteoblast I :"
+        },
+        {
+          "key": "B",
+          "text": "Has a single large nucleus N wee a"
+        },
+        {
+          "key": "D",
+          "text": "Phagocytosis in neurons : J"
+        },
+        {
+          "key": "E",
+          "text": "Formation of blood brain barrier 44, The osteoclast! . ‘ j"
+        }
+      ],
+      "ocr_confidence": 65.9,
+      "mode": "text"
+    },
+    {
+      "sort_order": 13,
+      "topic": "Histology",
+      "stem": ". Schwann cells are:",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Found in peripheral nervous system"
+        },
+        {
+          "key": "B",
+          "text": "Found in central nervous system"
+        },
+        {
+          "key": "C",
+          "text": "A form of oligodendrocyte"
+        },
+        {
+          "key": "D",
+          "text": "Found enveloping the non. - I myelinated peripheral axons. t cells of"
+        },
+        {
+          "key": "E",
+          "text": "Able to envelope more than one axon"
+        }
+      ],
+      "ocr_confidence": 75.0,
+      "mode": "text"
+    },
+    {
+      "sort_order": 14,
+      "topic": "Histology",
+      "stem": "When part of apical cytoplasm is lost ‘with secretory material, the gland is - called? ;",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 5,
+      "options": [
+        {
+          "key": "A",
+          "text": "Endocrine gland : :"
+        },
+        {
+          "key": "B",
+          "text": "Merocrine gland ° . which _ ©) Apocrine gland -lines is"
+        },
+        {
+          "key": "D",
+          "text": "Holocrine gland : ‘"
+        },
+        {
+          "key": "E",
+          "text": "Cytogenic gland 7"
+        }
+      ],
+      "ocr_confidence": 75.0,
+      "mode": "text"
+    },
+    {
+      "sort_order": 15,
+      "topic": "Histology",
+      "stem": "Ritesernes -_- &) Nucleus ue Which of the following is not a las membranous organelle?",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 6,
+      "options": [
+        {
+          "key": "B",
+          "text": "Tight Junctions"
+        },
+        {
+          "key": "C",
+          "text": "Anchoring Junctions a"
+        },
+        {
+          "key": "D",
+          "text": "Focal Junctions a"
+        },
+        {
+          "key": "E",
+          "text": "Zonula adherens }"
+        }
+      ],
+      "ocr_confidence": 77.2,
+      "mode": "text"
+    },
+    {
+      "sort_order": 16,
+      "topic": "Histology",
+      "stem": "A piece of a muscle was sent for - Histological comments. It declared to I 57. TI be skeletal muscle by observing that of its fibers were: ty",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 6,
+      "options": [
+        {
+          "key": "A",
+          "text": "Spindle shaped : a q"
+        },
+        {
+          "key": "B",
+          "text": "Showing no cross striation . b"
+        },
+        {
+          "key": "C",
+          "text": "Having many nuclei lying close to ¢ i cell membrane ¢ “i"
+        },
+        {
+          "key": "D",
+          "text": "Supplied by autonomic fibers € j"
+        },
+        {
+          "key": "E",
+          "text": "Containing intercalated disks A"
+        }
+      ],
+      "ocr_confidence": 72.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 17,
+      "topic": "Histology",
+      "stem": "WI",
+      "explanation": "",
+      "answer_key": "A",
+      "source_page": 6,
+      "options": [
+        {
+          "key": "A",
+          "text": "ee ee ee"
+        },
+        {
+          "key": "B",
+          "text": "glycoprotein"
+        },
+        {
+          "key": "C",
+          "text": "Elastic, © reticular & cc glucosaminologycans (GAGs)"
+        },
+        {
+          "key": "D",
+          "text": "Type-lll collagen fibers and"
+        },
+        {
+          "key": "E",
+          "text": "Glucosaminoglycan, proteoglycan ‘ ~ and glycoprotein"
+        }
+      ],
+      "ocr_confidence": 72.8,
+      "mode": "text"
+    },
+    {
+      "sort_order": 18,
+      "topic": "Histology",
+      "stem": "/Perichondrium is made up of: *",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "Haversian canal"
+        },
+        {
+          "key": "B",
+          "text": "Dense regular connective tissue I"
+        },
+        {
+          "key": "C",
+          "text": "Dense irregular connective tissue Ca,"
+        },
+        {
+          "key": "D",
+          "text": "Reticular connective tissue"
+        },
+        {
+          "key": "E",
+          "text": "Elastic tissue I - 8) Baste tissue La 62. Osteons'are connected to periostet - and:toxmarrow:cavity by:' . ’ °"
+        }
+      ],
+      "ocr_confidence": 64.9,
+      "mode": "text"
+    },
+    {
+      "sort_order": 19,
+      "topic": "Histology",
+      "stem": "Adenoids is hypertrophied state 3 S018 x hs sets = OF: = rel - Lingual tonsils or Os",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "' Dendrite ]"
+        },
+        {
+          "key": "B",
+          "text": "Axon :"
+        },
+        {
+          "key": "C",
+          "text": "Myelind j acellular I I"
+        },
+        {
+          "key": "D",
+          "text": "_ Ganglion ; 3"
+        },
+        {
+          "key": "E",
+          "text": "Nucleus and -__Ans. (8)"
+        }
+      ],
+      "ocr_confidence": 69.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 20,
+      "topic": "Histology",
+      "stem": "Another name for nerve cell j wm 4, : iS",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 7,
+      "options": [
+        {
+          "key": "A",
+          "text": "Ganglion"
+        },
+        {
+          "key": "B",
+          "text": "Dendrite"
+        },
+        {
+          "key": "C",
+          "text": "Axon - ue :"
+        },
+        {
+          "key": "D",
+          "text": "en sue _2 ae --_--____ I"
+        }
+      ],
+      "ocr_confidence": 69.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 21,
+      "topic": "Histology",
+      "stem": "The function of rough endoplasmic b). reticulum in secretory cells is:",
+      "explanation": "",
+      "answer_key": "D",
+      "source_page": 8,
+      "options": [
+        {
+          "key": "A",
+          "text": "3 carbohydrates to proteins"
+        },
+        {
+          "key": "B",
+          "text": "eee . ( -__- awn '\"PbN\"_"
+        },
+        {
+          "key": "C",
+          "text": "Synthesis of proteins for intracellular Ans. ym Use P 74, The"
+        },
+        {
+          "key": "D",
+          "text": "Synthesis of proteins for export light ‘"
+        },
+        {
+          "key": "E",
+          "text": "Complexing of fats and"
+        }
+      ],
+      "ocr_confidence": 74.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 22,
+      "topic": "Histology",
+      "stem": "The characteristic of elastic cartilage",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 8,
+      "options": [
+        {
+          "key": "A",
+          "text": "I"
+        },
+        {
+          "key": "B",
+          "text": "I"
+        },
+        {
+          "key": "C",
+          "text": "Itis highly vascular j"
+        },
+        {
+          "key": "D",
+          "text": "It can easily be distorted and it 6) I regain its original shape , 4)"
+        },
+        {
+          "key": "E",
+          "text": "‘ tube"
+        }
+      ],
+      "ocr_confidence": 74.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 23,
+      "topic": "Histology",
+      "stem": "The spherical structures seen in the",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 8,
+      "options": [
+        {
+          "key": "A",
+          "text": "f"
+        },
+        {
+          "key": "B",
+          "text": "Corpora arenacea 75. Palat"
+        },
+        {
+          "key": "C",
+          "text": "Hassall's corpuscles and I"
+        },
+        {
+          "key": "D",
+          "text": "Prostatic concretions"
+        },
+        {
+          "key": "E",
+          "text": "Pacinian corpuscles oN ee i oe ="
+        }
+      ],
+      "ocr_confidence": 74.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 24,
+      "topic": "Histology",
+      "stem": "Regarding microscopic anatomy o skeletal muscle:",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 9,
+      "options": [
+        {
+          "key": "A",
+          "text": "Length of a skeletal muscle cell is P 100um »"
+        },
+        {
+          "key": "B",
+          "text": "Numerous niitochondria are presen! in its cell ‘"
+        },
+        {
+          "key": "C",
+          "text": "Transverse tubule and sarcoplasmic reticulum (SR - T - SR) complex from Triad ». a"
+        },
+        {
+          "key": "D",
+          "text": "Single central is present in each cell ve : :"
+        },
+        {
+          "key": "E",
+          "text": "Diameter of each cell is 15 micron --- -- 0 So"
+        }
+      ],
+      "ocr_confidence": 76.6,
+      "mode": "text"
+    },
+    {
+      "sort_order": 25,
+      "topic": "Histology",
+      "stem": "Modified sweat gland in axilla is a",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 9,
+      "options": [
+        {
+          "key": "A",
+          "text": "Mencrine gland"
+        },
+        {
+          "key": "B",
+          "text": "Holocrine gland ey"
+        },
+        {
+          "key": "C",
+          "text": "Apocrine gland"
+        },
+        {
+          "key": "D",
+          "text": "Cytogenic gland"
+        },
+        {
+          "key": "E",
+          "text": "Compound alveolar gland 4 OO"
+        }
+      ],
+      "ocr_confidence": 76.6,
+      "mode": "text"
+    },
+    {
+      "sort_order": 26,
+      "topic": "Histology",
+      "stem": "About microscopic anatomy of muscular artery (medium sized artery) all are true EXCEPT: i",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 9,
+      "options": [
+        {
+          "key": "A",
+          "text": "Ithas thinner suberdothelial layer"
+        },
+        {
+          "key": "B",
+          "text": "It has abundant smooth muscle cells"
+        },
+        {
+          "key": "C",
+          "text": "It has fenestrated internal elastic lamina . : I"
+        },
+        {
+          "key": "D",
+          "text": "It has vasa vasorum in_ tunica adventitia - L"
+        },
+        {
+          "key": "E",
+          "text": "It has thinner tunica adventitia as compare to elastic artery"
+        }
+      ],
+      "ocr_confidence": 76.6,
+      "mode": "text"
+    },
+    {
+      "sort_order": 27,
+      "topic": "Histology",
+      "stem": "Primary ossification centers are present in long bones and skull by",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 9,
+      "options": [
+        {
+          "key": "A",
+          "text": "Are not attached to the outer leaflet. I"
+        },
+        {
+          "key": "D",
+          "text": "3-8 weeks lot"
+        },
+        {
+          "key": "E",
+          "text": "15th week a] OO h 81. The integral proteins of the cell membrane: y :"
+        }
+      ],
+      "ocr_confidence": 76.6,
+      "mode": "text"
+    },
+    {
+      "sort_order": 28,
+      "topic": "Histology",
+      "stem": "Which of the following is not a membranous organelle",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 9,
+      "options": [
+        {
+          "key": "A",
+          "text": "Zonulla adherens forms a barrier-to 7 esha diffusion ; SS ="
+        },
+        {
+          "key": "B",
+          "text": "Golgi apparatus"
+        },
+        {
+          "key": "C",
+          "text": "Endoplasmic reticulum"
+        },
+        {
+          "key": "D",
+          "text": "Ribosomes -e) Nucleus \" i ri 86. Regarding cell junctions choose the incorrect statement _"
+        },
+        {
+          "key": "E",
+          "text": "Peroxisomes _ lls 84. All of the following are considered as i stic inclusion bodies except: i"
+        }
+      ],
+      "ocr_confidence": 74.4,
+      "mode": "text"
+    },
+    {
+      "sort_order": 29,
+      "topic": "Histology",
+      "stem": "Epitheliai calls ral",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 10,
+      "options": [
+        {
+          "key": "A",
+          "text": "Internal elastic membrane . nN"
+        },
+        {
+          "key": "B",
+          "text": "Tunica adventitia"
+        },
+        {
+          "key": "C",
+          "text": "External elastic membrane r="
+        },
+        {
+          "key": "D",
+          "text": "Tunica media"
+        },
+        {
+          "key": "E",
+          "text": "Tunica intima oem 20 Ghee 7 aia"
+        }
+      ],
+      "ocr_confidence": 76.0,
+      "mode": "text"
+    },
+    {
+      "sort_order": 30,
+      "topic": "Histology",
+      "stem": "Myoepithelial cells are found in all of a ___ the following except: - b",
+      "explanation": "",
+      "answer_key": "E",
+      "source_page": 10,
+      "options": [
+        {
+          "key": "A",
+          "text": "Sweat gland. c"
+        },
+        {
+          "key": "B",
+          "text": "Mammary gland. d ¢) Lacrimal gland. e"
+        },
+        {
+          "key": "D",
+          "text": "Salivery gland. é A €) Sebaceous gland"
+        }
+      ],
+      "ocr_confidence": 80.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 31,
+      "topic": "Histology",
+      "stem": "All of the following structures are",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 10,
+      "options": [
+        {
+          "key": "A",
+          "text": "Centrioles. b,]"
+        },
+        {
+          "key": "B",
+          "text": "Cilia ; d t"
+        },
+        {
+          "key": "C",
+          "text": "Stereocilia"
+        },
+        {
+          "key": "D",
+          "text": "Miotic spindle. Ar =.) Teil of spermn/ I 95._ in"
+        }
+      ],
+      "ocr_confidence": 80.7,
+      "mode": "text"
+    },
+    {
+      "sort_order": 32,
+      "topic": "Histology",
+      "stem": "The terms “soma” and “perikaryon” refer to the: 4",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 11,
+      "options": [
+        {
+          "key": "A",
+          "text": "Hyaline cartilage . I ‘ _"
+        },
+        {
+          "key": "B",
+          "text": "Elastic cartilage ,"
+        },
+        {
+          "key": "C",
+          "text": "Fibrocartilage"
+        },
+        {
+          "key": "D",
+          "text": "Elastic + fibrocartilage ‘"
+        },
+        {
+          "key": "E",
+          "text": "Hyaline + elastic cartilage"
+        }
+      ],
+      "ocr_confidence": 74.4,
+      "mode": "text"
+    },
+    {
+      "sort_order": 33,
+      "topic": "Histology",
+      "stem": "Which call type differentiates into macrophages: : :",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 11,
+      "options": [
+        {
+          "key": "A",
+          "text": "Eosinophil"
+        },
+        {
+          "key": "B",
+          "text": "Monocyte ,"
+        },
+        {
+          "key": "C",
+          "text": "Basophil"
+        },
+        {
+          "key": "D",
+          "text": "Plasma cell ,"
+        },
+        {
+          "key": "E",
+          "text": "Mega karyocyte"
+        }
+      ],
+      "ocr_confidence": 74.4,
+      "mode": "text"
+    },
+    {
+      "sort_order": 34,
+      "topic": "Histology",
+      "stem": "Which cell type lines the ventricles of brain: ‘",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 11,
+      "options": [
+        {
+          "key": "A",
+          "text": "Oligo Idendrocytes . P"
+        },
+        {
+          "key": "B",
+          "text": "Astrocytes ‘"
+        },
+        {
+          "key": "C",
+          "text": "Ependymal cells ’ , ~"
+        },
+        {
+          "key": "D",
+          "text": "Schwann's cells"
+        },
+        {
+          "key": "E",
+          "text": "Neuroglial cells ‘ Ans, (C) 4"
+        }
+      ],
+      "ocr_confidence": 74.4,
+      "mode": "text"
+    },
+    {
+      "sort_order": 35,
+      "topic": "Histology",
+      "stem": "Cells secreting the unmineralized bone matrix (osteoid) are: “a) Chondrocytes. !",
+      "explanation": "",
+      "answer_key": "C",
+      "source_page": 11,
+      "options": [
+        {
+          "key": "B",
+          "text": "Chondroblasts. - _'"
+        },
+        {
+          "key": "C",
+          "text": "Osteoblasts. - _"
+        },
+        {
+          "key": "D",
+          "text": "Osteoclasts. ; f"
+        },
+        {
+          "key": "E",
+          "text": "Osteocytes"
+        }
+      ],
+      "ocr_confidence": 79.6,
+      "mode": "text"
+    },
+    {
+      "sort_order": 36,
+      "topic": "Histology",
+      "stem": "Glial cells of the peripheral nervous i ‘ system are: I",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 11,
+      "options": [
+        {
+          "key": "A",
+          "text": "Stellate cells. :"
+        },
+        {
+          "key": "B",
+          "text": "Oligodén-drocytes. _"
+        },
+        {
+          "key": "C",
+          "text": "Ependymal cells. I 7"
+        },
+        {
+          "key": "D",
+          "text": "Schawn cells. =. I"
+        }
+      ],
+      "ocr_confidence": 79.6,
+      "mode": "text"
+    },
+    {
+      "sort_order": 37,
+      "topic": "Histology",
+      "stem": "Which of the following cytoplasmic 1 inclusions is a storage form of I __ nutrients: “gy Melanin. 109,",
+      "explanation": "",
+      "answer_key": "B",
+      "source_page": 12,
+      "options": [
+        {
+          "key": "A",
+          "text": "Fibroblasts"
+        },
+        {
+          "key": "B",
+          "text": "Basophils. $"
+        },
+        {
+          "key": "C",
+          "text": "Plasma cells"
+        },
+        {
+          "key": "D",
+          "text": "Mast cells"
+        },
+        {
+          "key": "E",
+          "text": "Histiocytes"
+        }
+      ],
+      "ocr_confidence": 79.2,
+      "mode": "text"
+    },
+    {
+      "sort_order": 38,
+      "topic": "Histology",
+      "stem": "The function of rough andoplasmic am reticulurn in secretory calls is: ary -",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 12,
+      "options": [
+        {
+          "key": "A",
+          "text": "Synthesis of cartchydrates"
+        },
+        {
+          "key": "B",
+          "text": "Synthesis of fats. as"
+        },
+        {
+          "key": "C",
+          "text": "Syne hesis cf preteins for intraceliutar use. be"
+        }
+      ],
+      "ocr_confidence": 75.0,
+      "mode": "text"
+    },
+    {
+      "sort_order": 39,
+      "topic": "Histology",
+      "stem": "All of the following are the connective Ls tissue cells except: a",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 12,
+      "options": [
+        {
+          "key": "A",
+          "text": "Fibroblasts. +"
+        },
+        {
+          "key": "B",
+          "text": "Basophils"
+        },
+        {
+          "key": "C",
+          "text": "Plasma cells. ,"
+        },
+        {
+          "key": "D",
+          "text": "Mast cells. ; €) Histiocytes. 7 __Ans.(B) ------_--__________"
+        }
+      ],
+      "ocr_confidence": 75.0,
+      "mode": "text"
+    },
+    {
+      "sort_order": 40,
+      "topic": "Histology",
+      "stem": "Regarding epithelium all of the following are true except:",
+      "explanation": "",
+      "answer_key": null,
+      "source_page": 12,
+      "options": [
+        {
+          "key": "A",
+          "text": "Simple cuboidal epithelium is found in the distal convoluted t the kidney. ‘ubules of"
+        },
+        {
+          "key": "B",
+          "text": "Pseudostratified column: tae . ar epithelium lines the i O oawsagesl pare"
+        },
+        {
+          "key": "C",
+          "text": "Simple squamous epitheli i ‘ the alveoli. ns"
+        }
+      ],
+      "ocr_confidence": 79.2,
+      "mode": "text"
+    }
+  ],
+  "notes": "OpenCV deskew + Tesseract. Text MCQs extracted when readable; image mode only for unreadable pages or figure-style options."
+}

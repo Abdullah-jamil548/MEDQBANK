@@ -76,6 +76,7 @@ def _book_summary(row: Book) -> BookSummary:
         format=row.format,
         r2_key=row.r2_key,
         content_kind=getattr(row, "content_kind", None) or "book",
+        paper_format=getattr(row, "paper_format", None),
         outline=outline_for_book(row.book_id, getattr(row, "outline", None)),
         is_active=row.is_active,
         source="db",

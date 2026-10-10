@@ -202,6 +202,8 @@ class BookSummary(BaseModel):
     format: str | None = None
     r2_key: str | None = None
     content_kind: str | None = "book"  # book | past_paper
+    # past_paper: mcq_options | qa | mixed
+    paper_format: str | None = None
     outline: list[OutlineItem] = []
     is_active: bool | None = None
     prefix: str | None = None
@@ -280,6 +282,7 @@ class BookUpsertRequest(BaseModel):
     r2_key: str | None = None
     content_type: str | None = None
     content_kind: str = "book"
+    paper_format: str | None = None  # mcq_options | qa | mixed (past_paper)
     is_active: bool = True
 
 
@@ -434,3 +437,40 @@ class AdminActivity(BaseModel):
     live_count: int
     live_users: list[AdminLiveUser]
     hours: list[AdminHourPoint]
+
+
+class McqOptionOut(BaseModel):
+    key: str
+    text: str
+
+
+class McqQuestionOut(BaseModel):
+    question_id: UUID | str
+    topic: str | None = None
+    stem: str
+    explanation: str = ""
+    answer_key: str | None = None
+    sort_order: int = 0
+    source_page: int | None = None
+    stem_image: str | None = None
+    options: list[McqOptionOut] = []
+
+
+class McqSetSummary(BaseModel):
+    set_id: str
+    subject: str
+    title: str
+    source_pdf: str | None = None
+    topic: str | None = None
+    question_count: int = 0
+    presentation: str | None = None  # text | image | hybrid
+
+
+class McqSetDetail(McqSetSummary):
+    questions: list[McqQuestionOut] = []
+
+
+class McqSubjectOut(BaseModel):
+    subject: str
+    set_count: int
+    question_count: int

@@ -44,6 +44,7 @@ def init_schemas_and_tables() -> None:
     with engine.begin() as conn:
         conn.execute(text("CREATE SCHEMA IF NOT EXISTS users"))
         conn.execute(text("CREATE SCHEMA IF NOT EXISTS books"))
+        # MCQ tables live in books schema (created via metadata.create_all).
         # Additive columns for existing deployments (create_all does not ALTER).
         for stmt in (
             "ALTER TABLE users.\"user\" ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ",
@@ -51,7 +52,9 @@ def init_schemas_and_tables() -> None:
             "ALTER TABLE users.\"user\" ADD COLUMN IF NOT EXISTS hide_reading_activity BOOLEAN NOT NULL DEFAULT false",
             "ALTER TABLE users.chat_message ADD COLUMN IF NOT EXISTS delivered_at TIMESTAMPTZ",
             "ALTER TABLE books.book ADD COLUMN IF NOT EXISTS content_kind TEXT NOT NULL DEFAULT 'book'",
+            "ALTER TABLE books.book ADD COLUMN IF NOT EXISTS paper_format TEXT",
             "ALTER TABLE books.book ADD COLUMN IF NOT EXISTS outline JSONB",
+            "ALTER TABLE books.mcq_question ADD COLUMN IF NOT EXISTS stem_image TEXT",
         ):
             conn.execute(text(stmt))
 
